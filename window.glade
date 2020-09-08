@@ -50,6 +50,11 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       <object class="GtkNotebook">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
+        <property name="margin_left">10</property>
+        <property name="margin_right">10</property>
+        <property name="margin_top">10</property>
+        <property name="margin_bottom">10</property>
+        <property name="show_border">False</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
@@ -295,13 +300,13 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxText" id="cbDevice1">
+                  <object class="GtkComboBoxText" id="cbAway">
                     <property name="name">cbDevice</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_entry">True</property>
                     <child internal-child="entry">
-                      <object class="GtkEntry" id="cbAway">
+                      <object class="GtkEntry">
                         <property name="can_focus">True</property>
                       </object>
                     </child>
@@ -337,13 +342,13 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxText" id="cbDevice2">
+                  <object class="GtkComboBoxText" id="cbHere">
                     <property name="name">cbDevice</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_entry">True</property>
                     <child internal-child="entry">
-                      <object class="GtkEntry" id="cbHere">
+                      <object class="GtkEntry">
                         <property name="can_focus">True</property>
                       </object>
                     </child>
@@ -362,7 +367,19 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkLabel" id="lblMessages">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Loading bluetooth devices...</property>
+                <attributes>
+                  <attribute name="scale" value="2"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">8</property>
+              </packing>
             </child>
           </object>
         </child>

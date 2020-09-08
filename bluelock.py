@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import sys
-import appdirs
+import os
+#import appdirs
 import configparser
 import bluetooth
+import signal
+import subprocess
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -11,9 +14,11 @@ from gi.repository import Gtk
 
 
 class Application(Gtk.Application):
-    project_name = 'btproxipy'
-    config_path = None
-    enabled = True
+    project_name = 'bluelock'
+    project_version = 0.2
+    config_path = ''
+    bin_path = ''
+    enabled = False
     debug = False
     threshold = 0
     interval = 2
@@ -21,6 +26,7 @@ class Application(Gtk.Application):
     bt_address = 'test'
     here_command = ''
     away_command = ''
+    btproxipy_pid = None
     #bt_devices = Gtk.ListStore(int, str)
 
     window = Gtk.Window()
@@ -29,8 +35,14 @@ class Application(Gtk.Application):
     btnSave = Gtk.Button()
     cbDevice = Gtk.ComboBoxText()
     sThreshold = Gtk.Scale()
+    sbInterval = Gtk.ScaleButton()
+    sbCount = Gtk.ScaleButton()
+    cbAway = Gtk.ComboBoxText()
+    cbHere = Gtk.ComboBoxText()
 
     def do_activate(self):
+        ''' Load config, populate UI '''
+
         self.load_config()
 
         builder = Gtk.Builder()
@@ -55,6 +67,22 @@ class Application(Gtk.Application):
         self.sThreshold.set_range(-20, 0)
         self.sThreshold.set_value(self.threshold)
 
+        self.sbInterval = builder.get_object("sbInterval")
+        self.sbInterval.set_range(0, 60)
+        self.sbInterval.set_value(self.interval)
+
+        self.sbCount = builder.get_object("sbCount")
+        self.sbCount.set_range(0, 20)
+        self.sbCount.set_value(self.count)
+
+        self.cbAway = builder.get_object("cbAway")
+        self.cbAway.append_text("%s (current)" % self.away_command)
+        self.cbAway.set_active(0)
+
+        self.cbHere = builder.get_object("cbHere")
+        self.cbHere.append_text("%s (current)" % self.here_command)
+        self.cbHere.set_active(0)
+
         self.btnSave = builder.get_object("btnSave")
         self.btnSave.connect("activate", self.on_save_clicked)
 
@@ -65,8 +93,16 @@ class Application(Gtk.Application):
         Gtk.main()
 
     def on_enable_clicked(self, widget, state):
-        print("enable clicked!")
+        print("enable clicked! %s" % state)
         self.enabled = self.btnEnabled.get_active()
+        if state:
+            ''' Start service '''
+            proc = subprocess.Popen(self.bin_path)
+            self.btproxipy_pid = proc.pid
+            proc.communicate()
+        else:
+            if self.btproxipy_pid:
+                os.kill(self.btproxipy_pid, signal.SIGTERM)
 
     def on_debug_clicked(self, widget, state):
         print("debug clicked!")
@@ -80,7 +116,8 @@ class Application(Gtk.Application):
 
     def load_config(self):
         # self.config_path = appdirs.user_config_dir(self.project_name) + '.ini'
-        self.config_path = '/home/larsfp/.config/' + self.project_name + '/' + self.project_name + '.ini'
+        self.config_path = '/home/larsfp/.config/btproxipy/btproxipy.ini'
+        self.bin_path = ['/home/larsfp/.local/bin/btproxipy', '&']
 
         print ("Loading config from %s" % self.config_path)
 
@@ -89,6 +126,10 @@ class Application(Gtk.Application):
         self.debug = config.get('CONFIG', 'debug')
         self.bt_address = config.get('CONFIG', 'bt_adress')
         self.threshold = config.getint('CONFIG', 'threshold')
+        self.interval = config.getint('CONFIG', 'interval')
+        self.count = config.getint('CONFIG', 'awaycount')
+        self.away_command = config.get('CONFIG', 'away_command')
+        self.here_command = config.get('CONFIG', 'here_command')
 
         print("threshold %s" % self.threshold)
 
