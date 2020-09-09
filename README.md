@@ -18,6 +18,7 @@ TODO
 * Allow editing bt address
 * Example commands: lock screen, mute sound, play sound
 * Allow more than one action
+* Lazy loading of bluetooth devices
 * Log window
 * About
 
