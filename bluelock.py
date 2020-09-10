@@ -2,11 +2,12 @@
 
 import sys
 import os
-#import appdirs
-import configparser
-import bluetooth
 import signal
 import subprocess
+
+import appdirs
+import configparser
+import bluetooth
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -95,12 +96,10 @@ class Application(Gtk.Application):
         self.btnSave.connect("clicked", self.on_save_clicked)
 
         self.lblMessages = builder.get_object("lblMessages")
-        #self.lblMessages.set_text('Loading bluetooth devices...')
-        print(self.lblMessages.get_text())
+        self.lblMessages.set_text('')
 
         self.window = builder.get_object("window1")
         self.window.connect("destroy", self.on_exit_application)
-        #self.window.set_icon_from_file('/usr/share/icons/Yaru/256x256/apps/passwords-app.png')
         self.window.set_icon_from_file('./images/bluelock.png')
         self.window.show_all()
 
@@ -120,6 +119,8 @@ class Application(Gtk.Application):
                 self.btproxipy_proc.terminate()
                 self.btproxipy_proc.communicate()
                 print("terminated. %s" % self.btproxipy_proc.returncode)
+
+        self.lblMessages.set_text('')
 
     def on_debug_state(self, widget, state):
         ''' When btnDebug changes state '''
@@ -177,6 +178,7 @@ class Application(Gtk.Application):
     def color_button(self):
         ''' Called any time something changes, so user can choose to save '''
         self.btnSave.set_sensitive(True)
+        self.lblMessages.set_text('Settings changed, click Save to keep them.')
 
     def save_config(self):
         ''' Save config '''
@@ -198,8 +200,8 @@ class Application(Gtk.Application):
         ''' Load config '''
 
         config_section = 'CONFIG'
-        # self.config_path = appdirs.user_config_dir(self.project_name) + '.ini'
-        self.config_path = '/home/larsfp/.config/btproxipy/btproxipy.ini'
+
+        self.config_path = appdirs.user_config_dir('btproxipy') + '/btproxipy.ini'
 
         print ("Loading config from %s" % self.config_path)
 

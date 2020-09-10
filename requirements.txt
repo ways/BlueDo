@@ -1,4 +1,10 @@
 appdirs
 btproxipy
 configparser
-pybluez
+wheel
+
+# Limited by btproxipy:
+PyBluez==0.22
+
+pycairo
+PyGObject

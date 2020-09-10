@@ -2,9 +2,11 @@
 
 Frontend for btproxipy.
 
+This app will read btproxipy's config file, and allow you to change values, manage service.
+
 # Requirements
 
-apt install python-gi-dev
+apt install python-gi-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0
 pip3 install -r requirements.txt
 
 # Inspiration
