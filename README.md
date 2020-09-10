@@ -11,14 +11,14 @@ pip3 install -r requirements.txt
 
 https://github.com/LukeSkywalker92/btproxipy
 
-TODO
+# TODO
 
 * Quiet startup parameter
 * Turn Save blue on changes
-* Allow editing bt address
 * Example commands: lock screen, mute sound, play sound
 * Allow more than one action
 * Lazy loading of bluetooth devices
+* Show current rssi, connection status
 * Log window
 * About
 

@@ -100,7 +100,8 @@ class Application(Gtk.Application):
 
         self.window = builder.get_object("window1")
         self.window.connect("destroy", self.on_exit_application)
-        self.window.set_icon_from_file('/usr/share/icons/Yaru/256x256/apps/passwords-app.png')
+        #self.window.set_icon_from_file('/usr/share/icons/Yaru/256x256/apps/passwords-app.png')
+        self.window.set_icon_from_file('./images/bluelock.png')
         self.window.show_all()
 
         Gtk.main()
@@ -158,7 +159,7 @@ class Application(Gtk.Application):
     def on_threshold_changed(self, widget):
         ''' When sThreshold changes '''
         print("sThreshold changed to %s" % widget.get_value())
-        self.threshold = widget.get_value()
+        self.threshold = int(widget.get_value())
         self.color_button()
 
     def on_interval_changed(self, widget):
