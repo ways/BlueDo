@@ -9,6 +9,11 @@ This app will read btproxipy's config file, and allow you to change values, mana
 apt install python-gi-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0
 pip3 install -r requirements.txt
 
+# Command line options
+
+* -e / --enable to start service on app start.
+* -m / --minimize to start minimized
+
 # Inspiration
 
 https://github.com/LukeSkywalker92/btproxipy

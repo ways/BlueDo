@@ -25,13 +25,14 @@ class Application(Gtk.Application):
     threshold = 0
     interval = 2
     awaycound = 5
-    bt_address = 'test'
+    bt_address = ''
     here_command = ''
     away_command = ''
     btproxipy_pid = None
     btproxipy_proc = None
     config = None
     shutdown = False
+    minimized = False
 
     window = Gtk.Window()
     btnEnabled = Gtk.Button()
@@ -59,6 +60,14 @@ class Application(Gtk.Application):
             GLib.OptionFlags.NONE,
             GLib.OptionArg.NONE,
             "Enable service at start",
+            None,
+        )
+        self.add_main_option(
+            "minimize",
+            ord("m"),
+            GLib.OptionFlags.NONE,
+            GLib.OptionArg.NONE,
+            "Minimize window at start",
             None,
         )
 
@@ -105,6 +114,9 @@ class Application(Gtk.Application):
         self.window.connect("destroy", self.on_exit_application)
         self.window.set_icon_from_file('./images/bluelock.png')
         self.window.show_all()
+
+        if self.minimized:
+            self.window.iconify()
 
         self.spinnerScanning.start()
         self.start_scan()
@@ -260,9 +272,11 @@ class Application(Gtk.Application):
         options = options.end().unpack()
 
         if "enable" in options:
-            # This is printed on the main instance
-            print("Test argument recieved: %s" % options["enable"])
+            print("Enable argument recieved: %s" % options["enable"])
             self.enabled = True
+        if "minimize" in options:
+            print("minimize argument recieved: %s" % options["minimize"])
+            self.minimized = True
 
         self.activate()
         return 0
