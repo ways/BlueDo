@@ -2,8 +2,10 @@
 
 import sys
 import os
+import time
 import signal
 import subprocess
+from threading import Thread
 
 import appdirs
 import configparser
@@ -15,7 +17,7 @@ from gi.repository import Gtk, Gdk
 
 class Application(Gtk.Application):
     project_name = 'bluelock'
-    project_version = 0.3
+    project_version = 1.1
     config_path = ''
     bin_path = ['/home/larsfp/.local/bin/btproxipy']
     enabled = False
@@ -29,18 +31,15 @@ class Application(Gtk.Application):
     btproxipy_pid = None
     btproxipy_proc = None
     config = None
+    shutdown = False
 
     window = Gtk.Window()
     btnEnabled = Gtk.Button()
-    btnDebug = Gtk.Button()
-    btnSave = Gtk.Button()
+    liststoreDevices = Gtk.ListStore()
     cbDevice = Gtk.ComboBoxText()
-    sThreshold = Gtk.Scale()
-    sbInterval = Gtk.ScaleButton()
-    sbCount = Gtk.ScaleButton()
-    cbAway = Gtk.ComboBoxText()
-    cbHere = Gtk.ComboBoxText()
-    lblMessages = Gtk.Label()
+    entryAway = Gtk.ComboBoxText()
+    entryHere = Gtk.ComboBoxText()
+    spinnerScanning = Gtk.Spinner()
 
     def do_activate(self):
         ''' Load config, populate UI '''
@@ -54,55 +53,39 @@ class Application(Gtk.Application):
         self.btnEnabled.set_active(self.enabled)
         self.btnEnabled.connect("state-set", self.on_enable_state)
 
-        self.btnDebug = builder.get_object("btnDebug")
-        self.btnDebug.set_active(self.debug)
-        self.btnDebug.connect("state-set", self.on_debug_state)
-
         self.cbDevice = builder.get_object("cbDevice")
+
         self.cbDevice.append_text("%s (current)" % self.bt_address)
         self.cbDevice.set_active(0)
-        for address, name in self.load_devices():
-            self.cbDevice.append_text("%s (%s)" % (address, name))
         self.cbDevice.connect("changed", self.on_device_changed)
 
-        self.sThreshold = builder.get_object("sThreshold")
-        self.sThreshold.set_range(-20, 0)
-        self.sThreshold.set_value(self.threshold)
-        self.sThreshold.connect("value-changed", self.on_threshold_changed)
+        # liststoreDevices = self.cbDevice.get_model()
+        # print(liststoreDevices.get_column_type(0))
+        # for row in liststoreDevices:
+        #     print(row)
+        #     for c in row:
+        #         print (c)
+        #         if 'current' in c:
+        #             break
 
-        self.sbInterval = builder.get_object("sbInterval")
-        self.sbInterval.set_range(0, 60)
-        self.sbInterval.set_increments(1, 1)
-        self.sbInterval.set_value(self.interval)
-        self.sbInterval.connect("value-changed", self.on_interval_changed)
+        self.entryAway = builder.get_object("entryAway")
+        self.entryAway.set_text("%s" % self.away_command)
+        self.entryAway.connect("changed", self.on_away_changed)
 
-        self.sbCount = builder.get_object("sbCount")
-        self.sbCount.set_range(0, 20)
-        self.sbCount.set_increments(1, 1)
-        self.sbCount.set_value(self.count)
-        self.sbCount.connect("value-changed", self.on_count_changed)
+        self.entryHere = builder.get_object("entryHere")
+        self.entryHere.set_text("%s" % self.here_command)
 
-        self.cbAway = builder.get_object("cbAway")
-        self.cbAway.append_text("%s" % self.away_command)
-        self.cbAway.set_active(0)
-        self.cbAway.connect("changed", self.on_away_changed)
-
-        self.cbHere = builder.get_object("cbHere")
-        self.cbHere.append_text("%s" % self.here_command)
-        self.cbHere.set_active(0)
-        self.cbHere.connect("changed", self.on_here_changed)
-
-        self.btnSave = builder.get_object("btnSave")
-        self.btnSave.connect("clicked", self.on_save_clicked)
-
-        self.lblMessages = builder.get_object("lblMessages")
-        self.lblMessages.set_text('')
+        self.spinnerScanning = builder.get_object("spinnerScanning")
 
         self.window = builder.get_object("window1")
         self.window.connect("destroy", self.on_exit_application)
         self.window.set_icon_from_file('./images/bluelock.png')
         self.window.show_all()
 
+        self.spinnerScanning.start()
+        self.start_scan()
+
+    def run(self):
         Gtk.main()
 
     def on_enable_state(self, widget, state):
@@ -120,22 +103,8 @@ class Application(Gtk.Application):
                 self.btproxipy_proc.communicate()
                 print("terminated. %s" % self.btproxipy_proc.returncode)
 
-        self.lblMessages.set_text('')
-
-    def on_debug_state(self, widget, state):
-        ''' When btnDebug changes state '''
-
-        print("debug clicked!")
-        self.debug = self.btnDebug.get_active()
-        self.color_button()
-
-    def on_save_clicked(self, button):
-        ''' When btnSave is clicked '''
-        self.save_config()
-        self.btnSave.set_sensitive(False)
-        self.lblMessages.set_text('Changes saved. Disable and enable to make active.')
-
     def on_exit_application(self, *args):
+        self.shutdown = True
         self.on_enable_state(None, False) # Stop btproxipy on exit
         Gtk.main_quit()
 
@@ -143,42 +112,16 @@ class Application(Gtk.Application):
         ''' When cbDevice changes '''
         print("cbDevice changed to %s" % widget.get_active_text())
         self.bt_address = widget.get_active_text().split(' ')[0]
-        self.color_button()
 
     def on_away_changed(self, widget):
-        ''' When cbAway changes '''
-        print("cbAway changed to %s" % widget.get_active_text())
+        ''' When entryAway changes '''
+        print("entryAway changed to %s" % widget.get_active_text())
         self.away_command = widget.get_active_text()
-        self.color_button()
 
     def on_here_changed(self, widget):
-        ''' When cbHere changes '''
-        print("cbHere changed to %s" % widget.get_active_text())
+        ''' When entryHere changes '''
+        print("entryHere changed to %s" % widget.get_active_text())
         self.here_command = widget.get_active_text()
-        self.color_button()
-
-    def on_threshold_changed(self, widget):
-        ''' When sThreshold changes '''
-        print("sThreshold changed to %s" % widget.get_value())
-        self.threshold = int(widget.get_value())
-        self.color_button()
-
-    def on_interval_changed(self, widget):
-        ''' When sbInterval changes '''
-        print("interval changed to %s" % widget.get_value())
-        self.interval = int(widget.get_value())
-        self.color_button()
-
-    def on_count_changed(self, widget):
-        ''' When sbCount changes '''
-        print("count changed to %s" % widget.get_value())
-        self.count = widget.get_value()
-        self.color_button()
-
-    def color_button(self):
-        ''' Called any time something changes, so user can choose to save '''
-        self.btnSave.set_sensitive(True)
-        self.lblMessages.set_text('Settings changed, click Save to keep them.')
 
     def save_config(self):
         ''' Save config '''
@@ -221,7 +164,6 @@ class Application(Gtk.Application):
         nearby_devices = []
 
         if dryrun:
-            self.lblMessages.set_text('Loaded test devices')
             nearby_devices = [
                 ('FP3', '84:cf:bf:8d:90:d4'),
                 ('LAPTOP-CQOJ07IS', '64:6E:69:E8:9B:22'),
@@ -229,18 +171,63 @@ class Application(Gtk.Application):
                 ('[TV] tv10b', '78:BD:BC:6E:C5:A3'),
             ]
         else:
-            self.lblMessages.set_text('Scanning for bluetooth devices')
-            nearby_devices = bluetooth.discover_devices(lookup_names = True)
-            self.lblMessages.set_text('')
-
-        print ("found %d devices" % len(nearby_devices))
+            #self.lblMessages.set_text('Scanning for bluetooth devices')
+            try:
+                nearby_devices = bluetooth.discover_devices(lookup_names = True)
+            except bluetooth.BluetoothError as err:
+                print ("bluetoothError %s" % err)
+                return None
+            except OSError as err:
+                print ("oserror %s" % err)
+                self.disable_all()
+                print('Error: bluetooth off?')
+                return None
 
         for name, addr in nearby_devices:
-            print (" %s - %s" % (addr, name))
+            print ("* %s - %s" % (addr, name))
             yield (addr, name)
 
-def main(version):
+    def start_scan(self):
+        t = Thread(target = self.background_scan) 
+        t.start()
+
+    def background_scan(self):
+        while True:
+            if self.shutdown:
+                break
+
+            print("Scanning for devices")
+            self.spinnerScanning.start()
+
+            # Save contents of cbdevice, clear and reset
+
+            # liststoreDevices = self.cbDevice.get_model()
+            # for row in liststoreDevices:
+            #     print(row)
+                # for c in row:
+                #     print (c)
+                #     if 'current' in c:
+                #         break
+
+            current = self.cbDevice.get_active_text()
+            self.cbDevice.remove_all()
+            self.cbDevice.append_text(current)
+            self.cbDevice.set_active(0)
+
+            for address, name in self.load_devices():
+                self.cbDevice.append_text("%s (%s)" % (address, name))
+            self.spinnerScanning.stop()
+            time.sleep(10)
+
+    def disable_all(self):
+        self.btnEnabled.sensitive(False)
+
+def main(args):
     app = Application()
     return app.run(sys.argv)
 
-main(1)
+    return 0
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main(sys.argv))
