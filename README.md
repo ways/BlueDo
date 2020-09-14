@@ -17,14 +17,12 @@ https://github.com/LukeSkywalker92/btproxipy
 
 * Quiet startup parameter
 * Example commands: lock screen, mute sound, play sound
-* Allow more than one action
 * Lazy loading of bluetooth devices
 * Show current rssi, connection status
 * Look for renegade btproxipy procs and kill them
-* Log window
 * About
-* Turn Save blue on changes
 * Option to run 'here' or 'away' command on exit.
+* Consider implementing btproxipy code directly, instead of being a frontend.
 
 links
 https://discourse.gnome.org/t/useful-documentation-for-gtk/29

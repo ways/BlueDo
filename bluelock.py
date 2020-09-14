@@ -13,7 +13,7 @@ import bluetooth
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, Gio, GLib
 
 class Application(Gtk.Application):
     project_name = 'bluelock'
@@ -40,6 +40,27 @@ class Application(Gtk.Application):
     entryAway = Gtk.ComboBoxText()
     entryHere = Gtk.ComboBoxText()
     spinnerScanning = Gtk.Spinner()
+    chkHereUnlock = Gtk.CheckButton()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            *args,
+            application_id="bluelock",
+            flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
+            **kwargs
+        )
+        self.window = None
+
+        # Command line options
+        # https://python-gtk-3-tutorial.readthedocs.io/en/latest/application.html
+        self.add_main_option(
+            "enable",
+            ord("e"),
+            GLib.OptionFlags.NONE,
+            GLib.OptionArg.NONE,
+            "Enable service at start",
+            None,
+        )
 
     def do_activate(self):
         ''' Load config, populate UI '''
@@ -51,6 +72,7 @@ class Application(Gtk.Application):
 
         self.btnEnabled = builder.get_object("btnEnabled")
         self.btnEnabled.set_active(self.enabled)
+        self.on_enable_state(self.btnEnabled, self.enabled)
         self.btnEnabled.connect("state-set", self.on_enable_state)
 
         self.cbDevice = builder.get_object("cbDevice")
@@ -77,6 +99,8 @@ class Application(Gtk.Application):
 
         self.spinnerScanning = builder.get_object("spinnerScanning")
 
+        self.chkHereUnlock = builder.get_object("chkHereUnlock")
+
         self.window = builder.get_object("window1")
         self.window.connect("destroy", self.on_exit_application)
         self.window.set_icon_from_file('./images/bluelock.png')
@@ -85,7 +109,6 @@ class Application(Gtk.Application):
         self.spinnerScanning.start()
         self.start_scan()
 
-    def run(self):
         Gtk.main()
 
     def on_enable_state(self, widget, state):
@@ -123,6 +146,11 @@ class Application(Gtk.Application):
         print("entryHere changed to %s" % widget.get_active_text())
         self.here_command = widget.get_active_text()
 
+    def on_hereunlock_changed(self, widget):
+        ''' When hereunlock changes '''
+        print("hereunlock changed to %s" % widget.get_active())
+        self.save_config()
+
     def save_config(self):
         ''' Save config '''
 
@@ -136,6 +164,8 @@ class Application(Gtk.Application):
         self.config.set(config_section, 'away_command', self.away_command)
         self.config.set(config_section, 'here_command', self.here_command)
 
+        self.config.set(config_section, 'here_unlock', self.chkHereUnlock.get_active())
+
         with open(self.config_path, 'w') as f:
             self.config.write(f)
 
@@ -143,9 +173,7 @@ class Application(Gtk.Application):
         ''' Load config '''
 
         config_section = 'CONFIG'
-
         self.config_path = appdirs.user_config_dir('btproxipy') + '/btproxipy.ini'
-
         print ("Loading config from %s" % self.config_path)
 
         self.config = configparser.ConfigParser(interpolation=None)
@@ -157,6 +185,10 @@ class Application(Gtk.Application):
         self.count = self.config.getint(config_section, 'awaycount')
         self.away_command = self.config.get(config_section, 'away_command')
         self.here_command = self.config.get(config_section, 'here_command')
+        try:
+            self.chkHereUnlock.set_active(self.config.get(config_section, 'here_unlock'))
+        except configparser.NoOptionError:
+            self.chkHereUnlock.set_active(False)
 
     def load_devices(self, dryrun=False):
         ''' Load bluetooth devices '''
@@ -222,11 +254,22 @@ class Application(Gtk.Application):
     def disable_all(self):
         self.btnEnabled.sensitive(False)
 
+    def do_command_line(self, command_line):
+        options = command_line.get_options_dict()
+        # convert GVariantDict -> GVariant -> dict
+        options = options.end().unpack()
+
+        if "enable" in options:
+            # This is printed on the main instance
+            print("Test argument recieved: %s" % options["enable"])
+            self.enabled = True
+
+        self.activate()
+        return 0
+
 def main(args):
     app = Application()
     return app.run(sys.argv)
-
-    return 0
 
 if __name__ == '__main__':
     import sys
