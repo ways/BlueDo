@@ -6,8 +6,8 @@ This app will read btproxipy's config file, and allow you to change values, mana
 
 # Requirements
 
-apt install python-gi-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0
-pip3 install -r requirements.txt
+sudo apt install python-gi-dev python3-pip python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config gir1.2-gtk-3.0
+pip3 install -r requirements.txt --user
 
 # Command line options
 
@@ -20,13 +20,13 @@ https://github.com/LukeSkywalker92/btproxipy
 
 # TODO
 
-* Quiet startup parameter
+* Check for bluetooth, btproxipy, disable controls if missing
 * Example commands: lock screen, mute sound, play sound
 * Lazy loading of bluetooth devices
 * Show current rssi, connection status
-* Look for renegade btproxipy procs and kill them
 * About
 * Option to run 'here' or 'away' command on exit.
+* Look for renegade btproxipy procs and kill them
 * Consider implementing btproxipy code directly, instead of being a frontend.
 
 links
