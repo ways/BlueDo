@@ -9,7 +9,6 @@ from threading import Thread
 
 import appdirs
 import configparser
-import bluetooth
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -28,6 +27,7 @@ class Application(Gtk.Application):
     interval = 2
     awaycound = 5
     bt_address = ''
+    bt_name = ''
     here_command = ''
     away_command = ''
     btproxipy_pid = None
@@ -35,6 +35,7 @@ class Application(Gtk.Application):
     config = None
     shutdown = False # Signal background processes to shut down
     minimized = False # Start up minimized
+    nearby_devices = []
 
     # GUI
     window = Gtk.Window()
@@ -102,21 +103,12 @@ class Application(Gtk.Application):
         # Load config, then populate widgets
         self.load_config()
         if self.bt_address:
-            self.cbDevice.append_text(self.bt_address)
+            self.cbDevice.append_text("%s (%s)" % (self.bt_name, self.bt_address))
             self.cbDevice.set_active(0)
         self.entryAway.set_text("%s" % self.away_command)
         self.entryHere.set_text("%s" % self.here_command)
-        # liststoreDevices = self.cbDevice.get_model()
-        # print(liststoreDevices.get_column_type(0))
-        # for row in liststoreDevices:
-        #     print(row)
-        #     for c in row:
-        #         print (c)
-        #         if 'current' in c:
-        #             break
 
         self.window = self.builder.get_object("window1")
-        #self.window.set_icon_from_file('./images/bluelock.png')
 
         self.on_enable_state(self.btnEnabled, self.enabled)
 
@@ -169,9 +161,14 @@ class Application(Gtk.Application):
             self.btnEnabled.set_sensitive(False)
         else:
             print("cbDevice changed to %s" % text)
-            self.bt_address = text.split()[-1].replace('(', '').replace(')', '')
-            self.btnEnabled.set_sensitive(True)
-            self.save_config()
+            newaddress = text.split()[-1].replace('(', '').replace(')', '')
+            newname = text.replace(newaddress, '').replace('(', '').replace(')', '')
+
+            if newaddress != self.bt_address:
+                self.bt_address = newaddress
+                self.bt_name = newname
+                self.btnEnabled.set_sensitive(True)
+                self.save_config()
 
     def on_away_changed(self, widget):
         ''' When entryAway changes '''
@@ -203,6 +200,7 @@ class Application(Gtk.Application):
         self.config.set(config_section, 'away_command', self.away_command)
         self.config.set(config_section, 'here_command', self.here_command)
 
+        self.config.set(config_section, 'bt_name', self.bt_name)
         self.config.set(config_section, 'here_unlock', str(self.chkHereUnlock.get_active()))
         self.config.set(config_section, 'here_run', str(self.chkHereRun.get_active()))
         self.config.set(config_section, 'away_lock', str(self.chkAwayLock.get_active()))
@@ -230,6 +228,10 @@ class Application(Gtk.Application):
         self.count = self.config.getint(config_section, 'awaycount')
         self.away_command = self.config.get(config_section, 'away_command')
         self.here_command = self.config.get(config_section, 'here_command')
+        try:
+            self.bt_name = self.config.get(config_section, 'bt_name')
+        except configparser.NoOptionError:
+            self.bt_name = '(current)'
         try:
             if "true" in self.config.get(config_section, 'here_unlock').lower():
                 self.chkHereUnlock.set_active(True)
@@ -261,34 +263,39 @@ class Application(Gtk.Application):
         except configparser.NoOptionError:
             pass
 
-    def load_devices(self, dryrun=False):
+    def scan_bluetooth(self, dryrun=False):
         ''' Load bluetooth devices '''
 
-        nearby_devices = []
+        cmd = ['/usr/bin/bluetoothctl', 'devices']
+        devices = []
 
         if dryrun:
-            nearby_devices = [
+            self.devices = [
                 ('FP3', '84:cf:bf:8d:90:d4'),
                 ('LAPTOP-CQOJ07IS', '64:6E:69:E8:9B:22'),
                 ('[TV] TV stua', '8C:79:F5:B9:C4:BF'),
                 ('[TV] tv10b', '78:BD:BC:6E:C5:A3'),
             ]
         else:
-            #self.lblMessages.set_text('Scanning for bluetooth devices')
-            try:
-                nearby_devices = bluetooth.discover_devices(lookup_names = True)
-            except bluetooth.BluetoothError as err:
-                print ("bluetoothError %s" % err)
-                return None
-            except OSError as err:
-                print ("oserror %s" % err)
-                self.disable_all()
-                print('Error: bluetooth off?')
-                return None
+            proc = subprocess.Popen(
+                args=cmd, 
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True
+            )
 
-        for name, addr in nearby_devices:
-            print ("* %s - %s" % (addr, name))
-            yield (addr, name)
+            for line in iter(proc.stdout.readline, b''):
+                if line.strip() == '': # iter calls until output is ''
+                    break
+                addr = line.split()[1]
+                name = ' '.join(line.split()[2:])
+                devices += [(name, addr)]
+
+            proc.communicate() # Allow cmd to exit cleanly
+            if proc.returncode != 0:
+                count += 1
+                message += "Error running %s, error %s. " % (' '.join(cmd), proc.returncode)
+        return devices
 
     def start_scan(self):
         t = Thread(target = self.background_scan) 
@@ -303,22 +310,17 @@ class Application(Gtk.Application):
             self.spinnerScanning.start()
 
             # Save contents of cbdevice, clear and reset
+            newscan = self.scan_bluetooth()
+            if newscan != self.nearby_devices:
+                self.nearby_devices = newscan
+                current = self.cbDevice.get_active_text() or ''
+                self.cbDevice.remove_all()
+                self.cbDevice.append_text(current)
+                self.cbDevice.set_active(0)
 
-            # liststoreDevices = self.cbDevice.get_model()
-            # for row in liststoreDevices:
-            #     print(row)
-                # for c in row:
-                #     print (c)
-                #     if 'current' in c:
-                #         break
+                for address, name in newscan:
+                    self.cbDevice.append_text("%s (%s)" % (address, name))
 
-            current = self.cbDevice.get_active_text() or ''
-            self.cbDevice.remove_all()
-            self.cbDevice.append_text(current)
-            self.cbDevice.set_active(0)
-
-            for address, name in self.load_devices():
-                self.cbDevice.append_text("%s (%s)" % (address, name))
             self.spinnerScanning.stop()
             time.sleep(10)
 
