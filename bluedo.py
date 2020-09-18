@@ -120,7 +120,7 @@ class Application(Gtk.Application):
         print("Enable changed to <%s>" % state)
         self.enabled = state
         if state:
-            ''' Start service '''
+            # Start service
             if len(self.bt_address) == 0:
                 #self.btnEnabled.set_active(False)
                 self.btnEnabled.set_sensitive(False)
@@ -130,9 +130,9 @@ class Application(Gtk.Application):
                     self.ping_thread = self.start_thread()
 
         else:
-                self.ping_stop = True
-                if self.debug:
-                    print("ping_stop")
+            self.ping_stop = True
+            if self.debug:
+                print("ping_stop")
 
     def on_exit_application(self, *args):
         self.scan_stop = True
@@ -228,9 +228,9 @@ class Application(Gtk.Application):
         self.here_command = self.config.get(self.config_section, 'here_command', fallback='')
         self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
         if "true" in self.config.get(self.config_section, 'here_unlock', fallback='false').lower():
-                self.chkHereUnlock.set_active(True)
+            self.chkHereUnlock.set_active(True)
         if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
-                self.chkHereRun.set_active(True)
+            self.chkHereRun.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_lock', fallback='false').lower():
             self.chkAwayLock.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_mute', fallback='false').lower():
@@ -268,9 +268,6 @@ class Application(Gtk.Application):
                 devices += [(name, addr)]
 
             proc.communicate() # Allow cmd to exit cleanly
-            if proc.returncode != 0:
-                count += 1
-                message += "Error running %s, error %s. " % (' '.join(cmd), proc.returncode)
         return devices
 
     def start_scan(self):
@@ -328,9 +325,7 @@ class Application(Gtk.Application):
                 'addr': self.bt_address,
                 'threshold': self.threshold,
                 'here_callback': self.here_callback,
-                'away_callback': self.away_callback,
-                'sleep': self.interval,
-                'debug': self.debug
+                'away_callback': self.away_callback
             }
         )
         
@@ -338,7 +333,7 @@ class Application(Gtk.Application):
         thread.start() # Start the thread
         return thread
 
-    def bluetooth_listen(self, addr, threshold, here_callback, away_callback, sleep, debug):
+    def bluetooth_listen(self, addr, threshold, here_callback, away_callback):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
         levelSignal = self.builder.get_object("levelSignal")
@@ -349,19 +344,19 @@ class Application(Gtk.Application):
             rssi = b.get_rssi()
             levelSignal.set_value(10+rssi)
 
-            if debug:
+            if self.debug:
                 print("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
 
             if rssi is None or rssi < threshold:
                 lost_pings += 1
                 if lost_pings >= self.away_count:
                     lost_pings = 0
-                    away_callback(True)
+                    away_callback()
             elif lost_pings > 0:
                 lost_pings = 0
                 here_callback()
 
-            time.sleep(sleep)
+            time.sleep(self.interval)
 
     def here_callback(self):
         if self.debug:
@@ -376,7 +371,7 @@ class Application(Gtk.Application):
         if chkHereRun.get_active():
             self.run_user_command(cmd=entryHere.get_text())
 
-    def away_callback(self, disconnect):
+    def away_callback(self):
         if self.debug:
             print("away_callback")
 
@@ -416,6 +411,7 @@ class Application(Gtk.Application):
 def main(args):
     app = Application()
     return app.run(sys.argv)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
