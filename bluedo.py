@@ -76,8 +76,6 @@ class Application(Gtk.Application):
         self.builder.add_from_file("window.glade")
 
         self.btnEnabled = self.builder.get_object("btnEnabled")
-        self.btnEnabled.set_active(self.enabled)
-
         self.cbDevice = self.builder.get_object("cbDevice")
         self.entryAway = self.builder.get_object("entryAway")
         self.entryHere = self.builder.get_object("entryHere")
@@ -94,6 +92,12 @@ class Application(Gtk.Application):
         if self.bt_address:
             self.cbDevice.append_text("%s (%s)" % (self.bt_name, self.bt_address))
             self.cbDevice.set_active(0)
+
+        if len(self.bt_address) > 0:
+            self.btnEnabled.set_active(self.enabled)
+        else: 
+            self.btnEnabled.set_sensitive(False)
+
         self.entryAway.set_text("%s" % self.away_command)
         self.entryHere.set_text("%s" % self.here_command)
 
@@ -184,7 +188,7 @@ class Application(Gtk.Application):
             self.config.add_section(self.config_section)
 
         self.config.set(self.config_section, 'debug', str(self.debug))
-        self.config.set(self.config_section, 'bt_adress', self.bt_address)
+        self.config.set(self.config_section, 'bt_address', self.bt_address)
         self.config.set(self.config_section, 'threshold', str(self.threshold))
         self.config.set(self.config_section, 'interval', str(self.interval))
         self.config.set(self.config_section, 'away_count', str(self.away_count))
@@ -220,7 +224,7 @@ class Application(Gtk.Application):
             self.config.add_section(self.config_section)
 
         self.debug = self.config.get(self.config_section, 'debug', fallback=False)
-        self.bt_address = self.config.get(self.config_section, 'bt_adress', fallback='')
+        self.bt_address = self.config.get(self.config_section, 'bt_address', fallback='')
         self.threshold = self.config.getint(self.config_section, 'threshold', fallback=-4)
         self.interval = self.config.getint(self.config_section, 'interval', fallback=5)
         self.away_count = self.config.getint(self.config_section, 'away_count', fallback=3)
