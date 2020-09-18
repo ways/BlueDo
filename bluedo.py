@@ -131,7 +131,8 @@ class Application(Gtk.Application):
 
         else:
                 self.ping_stop = True
-                print("ping_stop")
+                if self.debug:
+                    print("ping_stop")
 
     def on_exit_application(self, *args):
         self.scan_stop = True
@@ -248,7 +249,6 @@ class Application(Gtk.Application):
         if dryrun:
             self.devices = [
                 ('FP3', '84:cf:bf:8d:90:d4'),
-                ('LAPTOP-CQOJ07IS', '64:6E:69:E8:9B:22'),
                 ('[TV] TV stua', '8C:79:F5:B9:C4:BF'),
                 ('[TV] tv10b', '78:BD:BC:6E:C5:A3'),
             ]
@@ -304,7 +304,7 @@ class Application(Gtk.Application):
         self.btnEnabled.set_sensitive(False)
 
     def do_command_line(self, command_line):
-        ''' Commandline options '''
+        ''' Parse app startup commandline arguments '''
 
         options = command_line.get_options_dict()
         # convert GVariantDict -> GVariant -> dict
@@ -364,7 +364,8 @@ class Application(Gtk.Application):
             time.sleep(sleep)
 
     def here_callback(self):
-        print("here_callback")
+        if self.debug:
+            print("here_callback")
 
         chkHereUnlock = self.builder.get_object("chkHereUnlock")
         if chkHereUnlock.get_active():
@@ -376,7 +377,8 @@ class Application(Gtk.Application):
             self.run_user_command(cmd=entryHere.get_text())
 
     def away_callback(self, disconnect):
-        print("away_callback")
+        if self.debug:
+            print("away_callback")
 
         chkAwayLock = self.builder.get_object("chkAwayLock")
         if chkAwayLock.get_active():
@@ -394,21 +396,22 @@ class Application(Gtk.Application):
     def unlock(self):
         ''' Unlock desktop session '''
         print("unlock")
-        os.system("/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );")
+        subprocess.run("/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );", shell=True)
 
     def lock(self):
         ''' Lock desktop session '''
         print("Lock")
-        os.system("/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );")
+        subprocess.run("/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );", shell=True)
 
     def run_user_command(self, cmd=''):
         ''' Run user supplied command '''
         print("Running command %s" % cmd)
+        subprocess.run(cmd, shell=True)
 
     def mute(self):
         ''' Mute sound '''
         print("Mute sound")
-        os.system("amixer set Master mute")
+        subprocess.run("amixer set Master mute", shell=True)
 
 def main(args):
     app = Application()
