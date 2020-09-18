@@ -22,7 +22,8 @@ https://github.com/LukeSkywalker92/btproxipy
 
 * Check for bluetooth, btproxipy, disable controls if missing
 * Example commands: lock screen, mute sound, play sound
-* Lazy loading of bluetooth devices
+* Stop name scanning when minimized
+* Minimize to systray
 * Show current rssi, connection status
 * About
 * Option to run 'here' or 'away' command on exit.
@@ -31,3 +32,8 @@ https://github.com/LukeSkywalker92/btproxipy
 
 links
 https://discourse.gnome.org/t/useful-documentation-for-gtk/29
+
+# Docs
+
+scan for devices: bluetoothctl devices
+rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff
