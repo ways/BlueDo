@@ -53,8 +53,11 @@
           <object class="GtkLevelBar" id="levelSignal">
             <property name="width_request">23</property>
             <property name="height_request">38</property>
+            <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
+            <property name="value">10</property>
+            <property name="max_value">20</property>
             <property name="inverted">True</property>
           </object>
           <packing>
@@ -216,6 +219,7 @@
                         <property name="width_request">110</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="draw_indicator">True</property>

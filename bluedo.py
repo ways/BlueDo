@@ -3,7 +3,6 @@
 import sys
 import os
 import time
-import signal
 import subprocess
 import threading
 
@@ -12,7 +11,7 @@ import configparser
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, Gio, GLib
+from gi.repository import Gtk, Gio, GLib
 
 from bt_rssi import BluetoothRSSI
 
@@ -33,26 +32,14 @@ class Application(Gtk.Application):
     here_command = ''
     away_command = ''
     config = None
-    scan_stop = False # Signal background processes to shut down
     minimized = False # Start up minimized
     nearby_devices = []
     ping_thread = None
     ping_stop = True
+    scan_stop = False # Signal background device scan to shut down
 
     # GUI
     window = Gtk.Window()
-    btnEnabled = Gtk.Button()
-    liststoreDevices = Gtk.ListStore()
-    cbDevice = Gtk.ComboBox()
-    entryAway = Gtk.Entry()
-    entryHere = Gtk.Entry()
-    spinnerScanning = Gtk.Spinner()
-    chkHereUnlock = Gtk.CheckButton()
-    chkHereRun = Gtk.CheckButton()
-    chkAwayLock = Gtk.CheckButton()
-    chkAwayRun = Gtk.CheckButton()
-    chkAwayMute = Gtk.CheckButton()
-    chkAwayPause = Gtk.CheckButton()
 
     def __init__(self, *args, **kwargs):
         super().__init__(
@@ -122,7 +109,7 @@ class Application(Gtk.Application):
         if self.minimized:
             self.window.iconify()
 
-        self.spinnerScanning.start()
+        #self.spinnerScanning.start()
         self.start_scan()
 
         Gtk.main()
@@ -140,7 +127,7 @@ class Application(Gtk.Application):
             else:
                 if self.ping_stop:
                     self.ping_stop = False
-                    self.ping_thread = self.start_thread(addr=self.bt_address, here_callback=self.here_callback, away_callback=self.away_callback)
+                    self.ping_thread = self.start_thread()
 
         else:
                 self.ping_stop = True
@@ -195,7 +182,7 @@ class Application(Gtk.Application):
         if not self.config.has_section(self.config_section):
             self.config.add_section(self.config_section)
 
-        self.config.set(self.config_section, 'debug', self.debug)
+        self.config.set(self.config_section, 'debug', str(self.debug))
         self.config.set(self.config_section, 'bt_adress', self.bt_address)
         self.config.set(self.config_section, 'threshold', str(self.threshold))
         self.config.set(self.config_section, 'interval', str(self.interval))
@@ -211,14 +198,16 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'away_mute', str(self.chkAwayMute.get_active()))
         self.config.set(self.config_section, 'away_pause', str(self.chkAwayPause.get_active()))
 
-        print("Saving config to %s" % self.config_path)
+        if self.debug:
+            print("Saving config to %s" % self.config_path)
         with open(self.config_path, 'w') as f:
             self.config.write(f)
 
     def load_config(self):
         ''' Load config '''
 
-        print ("Loading config from %s" % self.config_path)
+        if self.debug:
+            print ("Loading config from %s" % self.config_path)
 
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(self.config_path)
@@ -331,42 +320,47 @@ class Application(Gtk.Application):
         self.activate()
         return 0
 
-    def start_thread(self, addr, here_callback, away_callback, threshold=-4, sleep=5, debug=False):
+    def start_thread(self):
         thread = threading.Thread(
             target=self.bluetooth_listen,
             args=(),
             kwargs={
-                'addr': addr,
-                'threshold': threshold,
-                'here_callback': here_callback,
-                'away_callback': away_callback,
-                'sleep': sleep,
-                'debug': debug
+                'addr': self.bt_address,
+                'threshold': self.threshold,
+                'here_callback': self.here_callback,
+                'away_callback': self.away_callback,
+                'sleep': self.interval,
+                'debug': self.debug
             }
         )
-        # Daemonize
-        thread.daemon = True
-        # Start the thread
-        thread.start()
+        
+        thread.daemon = True # Daemonize
+        thread.start() # Start the thread
         return thread
 
     def bluetooth_listen(self, addr, threshold, here_callback, away_callback, sleep, debug):
+        ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
+
+        levelSignal = self.builder.get_object("levelSignal")
+        away_count = 0
+        b = BluetoothRSSI(addr=addr)
+
         while not self.ping_stop:
-            b = BluetoothRSSI(addr=addr)
             rssi = b.get_rssi()
+            levelSignal.set_value(20-rssi)
+
             if debug:
-                logging.debug("addr: {}, rssi: {}".format(addr, rssi))
-            # Sleep and then skip to next iteration if device not found
-            if rssi is None:
-                away_callback(True)
-                time.sleep(sleep)
-                continue
-            # Trigger if RSSI value is within threshold
-            if rssi < threshold:
-                away_callback(False)
-            else:
+                print("addr: {}, rssi: {}, away_count {}".format(addr, rssi, away_count))
+
+            if rssi is None or rssi < threshold:
+                away_count += 1
+                if away_count >= self.count:
+                    away_count = 0
+                    away_callback(True)
+            elif away_count > 0:
+                away_count = 0
                 here_callback()
-            # Delay between iterations
+
             time.sleep(sleep)
 
     def here_callback(self):
@@ -379,7 +373,7 @@ class Application(Gtk.Application):
         chkHereRun = self.builder.get_object("chkHereRun")
         entryHere = self.builder.get_object("entryHere")
         if chkHereRun.get_active():
-            self.run_command(cmd=entryHere.get_text())
+            self.run_user_command(cmd=entryHere.get_text())
 
     def away_callback(self, disconnect):
         print("away_callback")
@@ -388,23 +382,33 @@ class Application(Gtk.Application):
         if chkAwayLock.get_active():
             self.lock()
 
+        chkAwayMute = self.builder.get_object("chkAwayMute")
+        if chkAwayMute.get_active():
+            self.mute()
+
         chkAwayRun = self.builder.get_object("chkAwayRun")
         entryAway = self.builder.get_object("entryAway")
         if chkAwayRun.get_active():
-            self.run_command(cmd=entryAway.get_text())
+            self.run_user_command(cmd=entryAway.get_text())
 
     def unlock(self):
         ''' Unlock desktop session '''
         print("unlock")
+        os.system("/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );")
 
     def lock(self):
         ''' Lock desktop session '''
         print("Lock")
+        os.system("/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );")
 
-    def run_command(self, cmd=''):
+    def run_user_command(self, cmd=''):
         ''' Run user supplied command '''
         print("Running command %s" % cmd)
 
+    def mute(self):
+        ''' Mute sound '''
+        print("Mute sound")
+        os.system("amixer set Master mute")
 
 def main(args):
     app = Application()
