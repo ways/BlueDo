@@ -6,8 +6,8 @@
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">550</property>
-    <property name="default_height">600</property>
+    <property name="default_width">520</property>
+    <property name="default_height">550</property>
     <property name="icon">images/bluelock.png</property>
     <signal name="destroy" handler="on_exit_application" swapped="no"/>
     <child type="titlebar">
@@ -56,8 +56,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
-            <property name="value">10</property>
-            <property name="max_value">20</property>
+            <property name="max_value">10</property>
             <property name="inverted">True</property>
           </object>
           <packing>

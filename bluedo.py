@@ -25,8 +25,8 @@ class Application(Gtk.Application):
     enabled = False
     debug = False
     threshold = 0
-    interval = 2
-    awaycound = 5
+    interval = 4
+    away_count = 5
     bt_address = ''
     bt_name = ''
     here_command = ''
@@ -76,7 +76,7 @@ class Application(Gtk.Application):
         self.builder.add_from_file("window.glade")
 
         self.btnEnabled = self.builder.get_object("btnEnabled")
-        #self.btnEnabled.set_active(self.enabled)
+        self.btnEnabled.set_active(self.enabled)
 
         self.cbDevice = self.builder.get_object("cbDevice")
         self.entryAway = self.builder.get_object("entryAway")
@@ -186,7 +186,7 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'bt_adress', self.bt_address)
         self.config.set(self.config_section, 'threshold', str(self.threshold))
         self.config.set(self.config_section, 'interval', str(self.interval))
-        self.config.set(self.config_section, 'awaycount', str(self.count))
+        self.config.set(self.config_section, 'away_count', str(self.away_count))
         self.config.set(self.config_section, 'away_command', self.away_command)
         self.config.set(self.config_section, 'here_command', self.here_command)
 
@@ -222,7 +222,7 @@ class Application(Gtk.Application):
         self.bt_address = self.config.get(self.config_section, 'bt_adress', fallback='')
         self.threshold = self.config.getint(self.config_section, 'threshold', fallback=-4)
         self.interval = self.config.getint(self.config_section, 'interval', fallback=5)
-        self.count = self.config.getint(self.config_section, 'awaycount', fallback=3)
+        self.away_count = self.config.getint(self.config_section, 'away_count', fallback=3)
         self.away_command = self.config.get(self.config_section, 'away_command', fallback='')
         self.here_command = self.config.get(self.config_section, 'here_command', fallback='')
         self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
@@ -342,23 +342,23 @@ class Application(Gtk.Application):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
         levelSignal = self.builder.get_object("levelSignal")
-        away_count = 0
+        lost_pings = 0
         b = BluetoothRSSI(addr=addr)
 
         while not self.ping_stop:
             rssi = b.get_rssi()
-            levelSignal.set_value(20-rssi)
+            levelSignal.set_value(10+rssi)
 
             if debug:
-                print("addr: {}, rssi: {}, away_count {}".format(addr, rssi, away_count))
+                print("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
 
             if rssi is None or rssi < threshold:
-                away_count += 1
-                if away_count >= self.count:
-                    away_count = 0
+                lost_pings += 1
+                if lost_pings >= self.away_count:
+                    lost_pings = 0
                     away_callback(True)
-            elif away_count > 0:
-                away_count = 0
+            elif lost_pings > 0:
+                lost_pings = 0
                 here_callback()
 
             time.sleep(sleep)

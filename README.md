@@ -1,8 +1,10 @@
 # Overview
 
-Frontend for btproxipy.
+BlueDo - Bluetooth proximity automation
 
-This app will read btproxipy's config file, and allow you to change values, manage service.
+![Logo](https://github.com/ways/BlueDo/blob/master/images/bluelock.png)
+
+Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
 
 # Requirements
 
@@ -14,26 +16,24 @@ pip3 install -r requirements.txt --user
 * -e / --enable to start service on app start.
 * -m / --minimize to start minimized
 
-# Inspiration
+# Screenshots
 
-https://github.com/LukeSkywalker92/btproxipy
+![v3](https://github.com/ways/BlueDo/blob/master/images/v3.png)
 
 # TODO
 
 * Check for bluetooth, btproxipy, disable controls if missing
-* Example commands: lock screen, mute sound, play sound
 * Stop name scanning when minimized
 * Minimize to systray
-* Show current rssi, connection status
 * About
 * Option to run 'here' or 'away' command on exit.
-* Look for renegade btproxipy procs and kill them
-* Consider implementing btproxipy code directly, instead of being a frontend.
 
-links
-https://discourse.gnome.org/t/useful-documentation-for-gtk/29
-
-# Docs
+# Development docs
 
 scan for devices: bluetoothctl devices
-rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff
+rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable)
+
+# Inspiration
+
+https://github.com/LukeSkywalker92/btproxipy
+https://discourse.gnome.org/t/useful-documentation-for-gtk/29
