@@ -5,7 +5,7 @@ import os
 import time
 import signal
 import subprocess
-from threading import Thread
+import threading
 
 import appdirs
 import configparser
@@ -14,11 +14,13 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, Gio, GLib
 
+from bt_rssi import BluetoothRSSI
+
 class Application(Gtk.Application):
     project_name = 'blocker'
-    project_version = 1.1
-    config_path = ''
-    bin_path = ['/home/larsfp/.local/bin/btproxipy']
+    project_version = 3.1
+    config_path = appdirs.user_config_dir('bluedo') + '/bluedo.ini'
+    config_section = 'CONFIG'
 
     builder = None
     enabled = False
@@ -30,12 +32,12 @@ class Application(Gtk.Application):
     bt_name = ''
     here_command = ''
     away_command = ''
-    btproxipy_pid = None
-    btproxipy_proc = None
     config = None
-    shutdown = False # Signal background processes to shut down
+    scan_stop = False # Signal background processes to shut down
     minimized = False # Start up minimized
     nearby_devices = []
+    ping_thread = None
+    ping_stop = True
 
     # GUI
     window = Gtk.Window()
@@ -126,7 +128,7 @@ class Application(Gtk.Application):
         Gtk.main()
 
     def on_enable_state(self, widget, state):
-        ''' When btnEnable changes state '''
+        ''' When btnEnable changes state, start and stop pings'''
 
         print("Enable changed to <%s>" % state)
         self.enabled = state
@@ -136,16 +138,16 @@ class Application(Gtk.Application):
                 #self.btnEnabled.set_active(False)
                 self.btnEnabled.set_sensitive(False)
             else:
-                self.btproxipy_proc = subprocess.Popen(self.bin_path, close_fds=True)
-                self.btproxipy_pid = self.btproxipy_proc.pid
+                if self.ping_stop:
+                    self.ping_stop = False
+                    self.ping_thread = self.start_thread(addr=self.bt_address, here_callback=self.here_callback, away_callback=self.away_callback)
+
         else:
-            if self.btproxipy_pid:
-                self.btproxipy_proc.terminate()
-                self.btproxipy_proc.communicate()
-                print("terminated. %s" % self.btproxipy_proc.returncode)
+                self.ping_stop = True
+                print("ping_stop")
 
     def on_exit_application(self, *args):
-        self.shutdown = True
+        self.scan_stop = True
         self.on_enable_state(None, False) # Stop btproxipy on exit
         Gtk.main_quit()
 
@@ -190,23 +192,24 @@ class Application(Gtk.Application):
     def save_config(self):
         ''' Save config '''
 
-        config_section = 'CONFIG'
-        #self.config.add_section(config_section)
-        self.config.set(config_section, 'debug', self.debug)
-        self.config.set(config_section, 'bt_adress', self.bt_address)
-        self.config.set(config_section, 'threshold', str(self.threshold))
-        self.config.set(config_section, 'interval', str(self.interval))
-        self.config.set(config_section, 'awaycount', str(self.count))
-        self.config.set(config_section, 'away_command', self.away_command)
-        self.config.set(config_section, 'here_command', self.here_command)
+        if not self.config.has_section(self.config_section):
+            self.config.add_section(self.config_section)
 
-        self.config.set(config_section, 'bt_name', self.bt_name)
-        self.config.set(config_section, 'here_unlock', str(self.chkHereUnlock.get_active()))
-        self.config.set(config_section, 'here_run', str(self.chkHereRun.get_active()))
-        self.config.set(config_section, 'away_lock', str(self.chkAwayLock.get_active()))
-        self.config.set(config_section, 'away_run', str(self.chkAwayRun.get_active()))
-        self.config.set(config_section, 'away_mute', str(self.chkAwayMute.get_active()))
-        self.config.set(config_section, 'away_pause', str(self.chkAwayPause.get_active()))
+        self.config.set(self.config_section, 'debug', self.debug)
+        self.config.set(self.config_section, 'bt_adress', self.bt_address)
+        self.config.set(self.config_section, 'threshold', str(self.threshold))
+        self.config.set(self.config_section, 'interval', str(self.interval))
+        self.config.set(self.config_section, 'awaycount', str(self.count))
+        self.config.set(self.config_section, 'away_command', self.away_command)
+        self.config.set(self.config_section, 'here_command', self.here_command)
+
+        self.config.set(self.config_section, 'bt_name', self.bt_name)
+        self.config.set(self.config_section, 'here_unlock', str(self.chkHereUnlock.get_active()))
+        self.config.set(self.config_section, 'here_run', str(self.chkHereRun.get_active()))
+        self.config.set(self.config_section, 'away_lock', str(self.chkAwayLock.get_active()))
+        self.config.set(self.config_section, 'away_run', str(self.chkAwayRun.get_active()))
+        self.config.set(self.config_section, 'away_mute', str(self.chkAwayMute.get_active()))
+        self.config.set(self.config_section, 'away_pause', str(self.chkAwayPause.get_active()))
 
         print("Saving config to %s" % self.config_path)
         with open(self.config_path, 'w') as f:
@@ -215,53 +218,37 @@ class Application(Gtk.Application):
     def load_config(self):
         ''' Load config '''
 
-        config_section = 'CONFIG'
-        self.config_path = appdirs.user_config_dir('btproxipy') + '/btproxipy.ini'
         print ("Loading config from %s" % self.config_path)
 
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(self.config_path)
-        self.debug = self.config.get(config_section, 'debug')
-        self.bt_address = self.config.get(config_section, 'bt_adress')
-        self.threshold = self.config.getint(config_section, 'threshold')
-        self.interval = self.config.getint(config_section, 'interval')
-        self.count = self.config.getint(config_section, 'awaycount')
-        self.away_command = self.config.get(config_section, 'away_command')
-        self.here_command = self.config.get(config_section, 'here_command')
-        try:
-            self.bt_name = self.config.get(config_section, 'bt_name')
-        except configparser.NoOptionError:
-            self.bt_name = '(current)'
-        try:
-            if "true" in self.config.get(config_section, 'here_unlock').lower():
+
+        if not os.path.isdir(os.path.dirname(self.config_path)):
+            os.mkdir(os.path.dirname(self.config_path))
+
+        if not self.config.has_section(self.config_section):
+            self.config.add_section(self.config_section)
+
+        self.debug = self.config.get(self.config_section, 'debug', fallback=False)
+        self.bt_address = self.config.get(self.config_section, 'bt_adress', fallback='')
+        self.threshold = self.config.getint(self.config_section, 'threshold', fallback=-4)
+        self.interval = self.config.getint(self.config_section, 'interval', fallback=5)
+        self.count = self.config.getint(self.config_section, 'awaycount', fallback=3)
+        self.away_command = self.config.get(self.config_section, 'away_command', fallback='')
+        self.here_command = self.config.get(self.config_section, 'here_command', fallback='')
+        self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
+        if "true" in self.config.get(self.config_section, 'here_unlock', fallback='false').lower():
                 self.chkHereUnlock.set_active(True)
-        except configparser.NoOptionError:
-            pass
-        try:
-            if "true" in self.config.get(config_section, 'here_run').lower():
+        if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
                 self.chkHereRun.set_active(True)
-        except configparser.NoOptionError:
-            pass
-        try:
-            if "true" in self.config.get(config_section, 'away_lock').lower():
-                self.chkAwayLock.set_active(True)
-        except configparser.NoOptionError:
-            pass
-        try:
-            if "true" in self.config.get(config_section, 'away_mute').lower():
-                self.chkAwayMute.set_active(True)
-        except configparser.NoOptionError:
-            pass
-        try:
-            if "true" in self.config.get(config_section, 'away_pause').lower():
-                self.chkAwayPause.set_active(True)
-        except configparser.NoOptionError:
-            pass
-        try:
-            if "true" in self.config.get(config_section, 'away_run').lower():
-                self.chkAwayRun.set_active(True)
-        except configparser.NoOptionError:
-            pass
+        if "true" in self.config.get(self.config_section, 'away_lock', fallback='false').lower():
+            self.chkAwayLock.set_active(True)
+        if "true" in self.config.get(self.config_section, 'away_mute', fallback='false').lower():
+            self.chkAwayMute.set_active(True)
+        if "true" in self.config.get(self.config_section, 'away_pause', fallback='false').lower():
+            self.chkAwayPause.set_active(True)
+        if "true" in self.config.get(self.config_section, 'away_run', fallback='false').lower():
+            self.chkAwayRun.set_active(True)
 
     def scan_bluetooth(self, dryrun=False):
         ''' Load bluetooth devices '''
@@ -298,15 +285,15 @@ class Application(Gtk.Application):
         return devices
 
     def start_scan(self):
-        t = Thread(target = self.background_scan) 
+        t = threading.Thread(target = self.background_scan) 
         t.start()
 
     def background_scan(self):
         while True:
-            if self.shutdown:
+            if self.scan_stop:
                 break
 
-            print("Scanning for devices")
+            #print("Scanning for devices")
             self.spinnerScanning.start()
 
             # Save contents of cbdevice, clear and reset
@@ -322,7 +309,7 @@ class Application(Gtk.Application):
                     self.cbDevice.append_text("%s (%s)" % (address, name))
 
             self.spinnerScanning.stop()
-            time.sleep(10)
+            time.sleep(5)
 
     def disable_all(self):
         self.btnEnabled.set_sensitive(False)
@@ -343,6 +330,81 @@ class Application(Gtk.Application):
 
         self.activate()
         return 0
+
+    def start_thread(self, addr, here_callback, away_callback, threshold=-4, sleep=5, debug=False):
+        thread = threading.Thread(
+            target=self.bluetooth_listen,
+            args=(),
+            kwargs={
+                'addr': addr,
+                'threshold': threshold,
+                'here_callback': here_callback,
+                'away_callback': away_callback,
+                'sleep': sleep,
+                'debug': debug
+            }
+        )
+        # Daemonize
+        thread.daemon = True
+        # Start the thread
+        thread.start()
+        return thread
+
+    def bluetooth_listen(self, addr, threshold, here_callback, away_callback, sleep, debug):
+        while not self.ping_stop:
+            b = BluetoothRSSI(addr=addr)
+            rssi = b.get_rssi()
+            if debug:
+                logging.debug("addr: {}, rssi: {}".format(addr, rssi))
+            # Sleep and then skip to next iteration if device not found
+            if rssi is None:
+                away_callback(True)
+                time.sleep(sleep)
+                continue
+            # Trigger if RSSI value is within threshold
+            if rssi < threshold:
+                away_callback(False)
+            else:
+                here_callback()
+            # Delay between iterations
+            time.sleep(sleep)
+
+    def here_callback(self):
+        print("here_callback")
+
+        chkHereUnlock = self.builder.get_object("chkHereUnlock")
+        if chkHereUnlock.get_active():
+            self.unlock()
+
+        chkHereRun = self.builder.get_object("chkHereRun")
+        entryHere = self.builder.get_object("entryHere")
+        if chkHereRun.get_active():
+            self.run_command(cmd=entryHere.get_text())
+
+    def away_callback(self, disconnect):
+        print("away_callback")
+
+        chkAwayLock = self.builder.get_object("chkAwayLock")
+        if chkAwayLock.get_active():
+            self.lock()
+
+        chkAwayRun = self.builder.get_object("chkAwayRun")
+        entryAway = self.builder.get_object("entryAway")
+        if chkAwayRun.get_active():
+            self.run_command(cmd=entryAway.get_text())
+
+    def unlock(self):
+        ''' Unlock desktop session '''
+        print("unlock")
+
+    def lock(self):
+        ''' Lock desktop session '''
+        print("Lock")
+
+    def run_command(self, cmd=''):
+        ''' Run user supplied command '''
+        print("Running command %s" % cmd)
+
 
 def main(args):
     app = Application()
