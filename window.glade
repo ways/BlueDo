@@ -2,12 +2,82 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkWindow" id="window1">
+  <object class="GtkAboutDialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="program_name">Glade</property>
+    <property name="logo_icon_name">image-missing</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="about_window">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">BlueDo - Bluetooth proximity automation
+See https://github.com/ways/BlueDo</property>
+            <property name="selectable">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMenu" id="dropdown_menu">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="menu_type_hint">menu</property>
+    <child>
+      <object class="GtkMenuItem" id="about_menuitem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">About</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="about_clicked" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkCheckMenuItem" id="advanced_menuitem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Advanced</property>
+        <property name="use_underline">True</property>
+        <signal name="toggled" handler="advanced_clicked" swapped="no"/>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="main_window">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">520</property>
-    <property name="default_height">550</property>
+    <property name="default_width">500</property>
+    <property name="default_height">570</property>
     <property name="icon">images/bluelock.png</property>
     <signal name="destroy" handler="on_exit_application" swapped="no"/>
     <child type="titlebar">
@@ -17,6 +87,21 @@
         <property name="title" translatable="yes">BlueDo</property>
         <property name="subtitle" translatable="yes">Bluetooth proximity automation</property>
         <property name="show_close_button">True</property>
+        <child>
+          <object class="GtkMenuButton" id="menu_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">True</property>
+            <property name="popup">dropdown_menu</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkSwitch" id="btnEnabled">
             <property name="visible">True</property>
@@ -65,21 +150,8 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSpinner" id="spinnerScanning">
-            <property name="width_request">35</property>
-            <property name="height_request">35</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="active">True</property>
-          </object>
-          <packing>
-            <property name="x">484</property>
-            <property name="y">25</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkLabel">
-            <property name="width_request">154</property>
+            <property name="width_request">242</property>
             <property name="height_request">33</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -89,13 +161,13 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">31</property>
-            <property name="y">95</property>
+            <property name="x">30</property>
+            <property name="y">128</property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width_request">125</property>
+            <property name="width_request">217</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -105,8 +177,8 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">277</property>
+            <property name="x">29</property>
+            <property name="y">322</property>
           </packing>
         </child>
         <child>
@@ -145,8 +217,7 @@
                         <property name="label" translatable="yes">Run command:</property>
                         <property name="width_request">127</property>
                         <property name="height_request">40</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
+                        <property name="can_focus">False</property>
                         <property name="receives_default">False</property>
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
@@ -159,7 +230,6 @@
                       <object class="GtkEntry" id="entryHere">
                         <property name="width_request">270</property>
                         <property name="height_request">40</property>
-                        <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <signal name="changed" handler="on_here_changed" swapped="no"/>
                       </object>
@@ -180,8 +250,8 @@
             </child>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">133</property>
+            <property name="x">27</property>
+            <property name="y">163</property>
           </packing>
         </child>
         <child>
@@ -218,7 +288,6 @@
                         <property name="width_request">110</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="draw_indicator">True</property>
@@ -248,8 +317,7 @@
                         <property name="label" translatable="yes">Run command:</property>
                         <property name="width_request">127</property>
                         <property name="height_request">40</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
+                        <property name="can_focus">False</property>
                         <property name="receives_default">False</property>
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
@@ -263,7 +331,6 @@
                       <object class="GtkEntry" id="entryAway">
                         <property name="width_request">270</property>
                         <property name="height_request">40</property>
-                        <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <signal name="changed" handler="on_away_changed" swapped="no"/>
                       </object>
@@ -284,8 +351,8 @@
             </child>
           </object>
           <packing>
-            <property name="x">23</property>
-            <property name="y">326</property>
+            <property name="x">21</property>
+            <property name="y">361</property>
           </packing>
         </child>
         <child>

@@ -27,6 +27,7 @@ class Application(Gtk.Application):
     threshold = 0
     interval = 4
     away_count = 5
+    advanced = False
     bt_address = ''
     bt_name = ''
     here_command = ''
@@ -79,13 +80,13 @@ class Application(Gtk.Application):
         self.cbDevice = self.builder.get_object("cbDevice")
         self.entryAway = self.builder.get_object("entryAway")
         self.entryHere = self.builder.get_object("entryHere")
-        self.spinnerScanning = self.builder.get_object("spinnerScanning")
         self.chkHereUnlock = self.builder.get_object("chkHereUnlock")
         self.chkHereRun = self.builder.get_object("chkHereRun")
         self.chkAwayLock = self.builder.get_object("chkAwayLock")
         self.chkAwayPause = self.builder.get_object("chkAwayPause")
         self.chkAwayMute = self.builder.get_object("chkAwayMute")
         self.chkAwayRun = self.builder.get_object("chkAwayRun")
+        self.advanced_menuitem = self.builder.get_object("advanced_menuitem")
 
         # Load config, then populate widgets
         self.load_config()
@@ -101,7 +102,7 @@ class Application(Gtk.Application):
         self.entryAway.set_text("%s" % self.away_command)
         self.entryHere.set_text("%s" % self.here_command)
 
-        self.window = self.builder.get_object("window1")
+        self.window = self.builder.get_object("main_window")
 
         self.on_enable_state(self.btnEnabled, self.enabled)
 
@@ -110,10 +111,12 @@ class Application(Gtk.Application):
 
         self.window.show_all()
 
+        self.advanced_menuitem.set_active(self.advanced)
+        self.advanced_clicked(self.advanced_menuitem)
+
         if self.minimized:
             self.window.iconify()
 
-        #self.spinnerScanning.start()
         self.start_scan()
 
         Gtk.main()
@@ -202,6 +205,7 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'away_run', str(self.chkAwayRun.get_active()))
         self.config.set(self.config_section, 'away_mute', str(self.chkAwayMute.get_active()))
         self.config.set(self.config_section, 'away_pause', str(self.chkAwayPause.get_active()))
+        self.config.set(self.config_section, 'advanced', str(self.advanced))
 
         if self.debug:
             print("Saving config to %s" % self.config_path)
@@ -243,6 +247,8 @@ class Application(Gtk.Application):
             self.chkAwayPause.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_run', fallback='false').lower():
             self.chkAwayRun.set_active(True)
+        if "true" in self.config.get(self.config_section, 'advanced', fallback='false').lower():
+            self.advanced = True
 
     def scan_bluetooth(self, dryrun=False):
         ''' Load bluetooth devices '''
@@ -283,9 +289,6 @@ class Application(Gtk.Application):
             if self.scan_stop:
                 break
 
-            #print("Scanning for devices")
-            self.spinnerScanning.start()
-
             # Save contents of cbdevice, clear and reset
             newscan = self.scan_bluetooth()
             if newscan != self.nearby_devices:
@@ -298,7 +301,6 @@ class Application(Gtk.Application):
                 for address, name in newscan:
                     self.cbDevice.append_text("%s (%s)" % (address, name))
 
-            self.spinnerScanning.stop()
             time.sleep(5)
 
     def disable_all(self):
@@ -342,9 +344,9 @@ class Application(Gtk.Application):
 
         levelSignal = self.builder.get_object("levelSignal")
         lost_pings = 0
-        b = BluetoothRSSI(addr=addr)
 
         while not self.ping_stop:
+            b = BluetoothRSSI(addr=addr)
             rssi = b.get_rssi()
             levelSignal.set_value(10+rssi)
 
@@ -387,6 +389,10 @@ class Application(Gtk.Application):
         if chkAwayMute.get_active():
             self.mute()
 
+        chkAwayPause = self.builder.get_object("chkAwayPause")
+        if chkAwayPause.get_active():
+            self.pause_music()
+
         chkAwayRun = self.builder.get_object("chkAwayRun")
         entryAway = self.builder.get_object("entryAway")
         if chkAwayRun.get_active():
@@ -395,12 +401,27 @@ class Application(Gtk.Application):
     def unlock(self):
         ''' Unlock desktop session '''
         print("unlock")
-        subprocess.run("/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );", shell=True)
+        # Hard unlock.
+        cmd = "/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
+
+        # Reset soft lock. Set lock time to something reasonable
+        cmd += "/usr/bin/gsettings set org.gnome.desktop.screensaver idle-delay 600; "
+
+        subprocess.run(cmd, shell=True)
 
     def lock(self):
         ''' Lock desktop session '''
         print("Lock")
-        subprocess.run("/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );", shell=True)
+
+        # Hard lock. Is problematic if your phone refuse to connect
+        #cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
+
+        # Soft lock. Set a very short lock time, 10 seconds
+        cmd = "/usr/bin/gsettings set org.gnome.desktop.screensaver lock-enabled true; " +\
+            "/usr/bin/gsettings set org.gnome.desktop.session idle-delay 10; " +\
+            "/usr/bin/gsettings set org.gnome.desktop.screensaver lock-delay 0; "
+
+        subprocess.run(cmd, shell=True)
 
     def run_user_command(self, cmd=''):
         ''' Run user supplied command '''
@@ -411,6 +432,42 @@ class Application(Gtk.Application):
         ''' Mute sound '''
         print("Mute sound")
         subprocess.run("amixer set Master mute", shell=True)
+
+        # unmute: amixer set Master unmute; amixer set Speaker unmute; amixer set Headphone unmute
+
+    def pause_music(self):
+        ''' Pause music '''
+        print("Pause music")
+        subprocess.run("/usr/bin/playerctl pause", shell=True)
+
+    def about_clicked(self, widget):
+        ''' Show about dialog '''
+
+        print("About clicked")
+
+    def advanced_clicked(self, state):
+        ''' Show advancd options '''
+        print("advancd clicked")
+
+        advanced_menuitem = self.builder.get_object("advanced_menuitem")
+        self.advanced = advanced_menuitem.get_active()
+
+        chkHereRun = self.builder.get_object("chkHereRun")
+        entryHere = self.builder.get_object("entryHere")
+        chkAwayRun = self.builder.get_object("chkAwayRun")
+        entryAway = self.builder.get_object("entryAway")
+
+        chkHereRun.set_visible(self.advanced)
+        entryHere.set_visible(self.advanced)
+        chkAwayRun.set_visible(self.advanced)
+        entryAway.set_visible(self.advanced)
+
+        if not self.advanced:
+            chkHereRun.set_active(self.advanced)
+            chkAwayRun.set_active(self.advanced)
+
+        self.save_config()
+
 
 def main(args):
     app = Application()

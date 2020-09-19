@@ -19,7 +19,7 @@ Use these system commands:
 * bluetoothctl
 * amixer
 * loginctl
-* cut
+* playerctl
 
 # Command line options
 
@@ -37,12 +37,16 @@ Use these system commands:
 * Minimize to systray
 * About
 * Option to run 'here' or 'away' command on exit.
-* Tests
+* Unit tests
+* Preliminary icon is a mashup of two icons from Yaru. Find out license, or replace.
 
 # Development docs
 
 * scan for devices: bluetoothctl devices
 * rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable)
+
+* hard locking: lock when no signal
+* soft locking: set screensaver timeout to 1 minute when no signal
 
 # Inspiration
 
