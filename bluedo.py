@@ -8,7 +8,7 @@ import threading
 
 import appdirs
 import configparser
-import logger
+import syslog
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -122,7 +122,7 @@ class Application(Gtk.Application):
     def on_enable_state(self, widget, state):
         ''' When btnEnable changes state, start and stop pings'''
 
-        print("Enable changed to <%s>" % state)
+        syslog.syslog(f"{self.project_name} enabled {state}.")
         self.enabled = state
         if state:
             # Start service
@@ -136,8 +136,8 @@ class Application(Gtk.Application):
 
         else:
             self.ping_stop = True
-            if self.debug:
-                print("ping_stop")
+            # if self.debug:
+            #     print("ping_stop")
 
     def on_exit_application(self, *args):
         self.scan_stop = True
@@ -155,7 +155,7 @@ class Application(Gtk.Application):
         if len(text) == 0:
             self.btnEnabled.set_sensitive(False)
         else:
-            print("cbDevice changed to %s" % text)
+            #print("cbDevice changed to %s" % text)
             newaddress = text.split()[-1].replace('(', '').replace(')', '')
             newname = text.replace(newaddress, '').replace('(', '').replace(')', '')
 
@@ -168,18 +168,18 @@ class Application(Gtk.Application):
     def on_away_changed(self, widget):
         ''' When entryAway changes '''
         self.away_command = widget.get_text()
-        print("entryAway changed to %s" % self.away_command)
+        #print("entryAway changed to %s" % self.away_command)
         self.save_config()
 
     def on_here_changed(self, widget):
         ''' When entryHere changes '''
         self.here_command = widget.get_text()
-        print("entryHere changed to %s" % self.here_command)
+        #print("entryHere changed to %s" % self.here_command)
         self.save_config()
 
     def on_chkbutton_changed(self, widget):
         ''' When a CheckButton changes '''
-        print("CheckButton %s changed to %s" % (widget.get_name(), widget.get_active()))
+        #print("CheckButton %s changed to %s" % (widget.get_name(), widget.get_active()))
         self.save_config()
 
     def save_config(self):
@@ -205,16 +205,16 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'away_pause', str(self.chkAwayPause.get_active()))
         self.config.set(self.config_section, 'advanced', str(self.advanced))
 
-        if self.debug:
-            print("Saving config to %s" % self.config_path)
+        #if self.debug:
+            #print("Saving config to %s" % self.config_path)
         with open(self.config_path, 'w') as f:
             self.config.write(f)
 
     def load_config(self):
         ''' Load config '''
 
-        if self.debug:
-            print ("Loading config from %s" % self.config_path)
+        #if self.debug:
+        #    print ("Loading config from %s" % self.config_path)
 
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(self.config_path)
@@ -312,10 +312,10 @@ class Application(Gtk.Application):
         options = options.end().unpack()
 
         if "enable" in options:
-            print("Enable argument recieved: %s" % options["enable"])
+            #print("Enable argument recieved: %s" % options["enable"])
             self.enabled = True
         if "minimize" in options:
-            print("minimize argument recieved: %s" % options["minimize"])
+            #print("minimize argument recieved: %s" % options["minimize"])
             self.minimized = True
 
         self.activate()
@@ -401,7 +401,7 @@ class Application(Gtk.Application):
 
     def unlock(self):
         ''' Unlock desktop session '''
-        print("unlock")
+        syslog.syslog(f"{self.project_name} unlocked session.")
         # Hard unlock.
         cmd = "/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
 
@@ -412,7 +412,7 @@ class Application(Gtk.Application):
 
     def lock(self):
         ''' Lock desktop session '''
-        print("Lock")
+        syslog.syslog(f"{self.project_name} soft-locked session.")
 
         # Hard lock. Is problematic if your phone refuse to connect
         #cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
@@ -426,19 +426,19 @@ class Application(Gtk.Application):
 
     def run_user_command(self, cmd=''):
         ''' Run user supplied command '''
-        print("Running command %s" % cmd)
+        syslog.syslog(f"{self.project_name} running user command <{cmd}>.")
         subprocess.run(cmd, shell=True)
 
     def mute(self):
         ''' Mute sound '''
-        print("Mute sound")
-        subprocess.run("amixer set Master mute", shell=True)
+        syslog.syslog(f"{self.project_name} muting sound.")
+        subprocess.run("amixer set Master mute > /dev/null", shell=True)
 
         # unmute: amixer set Master unmute; amixer set Speaker unmute; amixer set Headphone unmute
 
     def pause_music(self):
         ''' Pause music '''
-        print("Pause music")
+        syslog.syslog(f"{self.project_name} pausing music.")
         subprocess.run("/usr/bin/playerctl pause", shell=True)
 
     def about_clicked(self, widget):
@@ -447,7 +447,7 @@ class Application(Gtk.Application):
         dialog = Gtk.AboutDialog()
         dialog.set_title("About")
         dialog.set_name(self.project_name)
-        dialog.set_version(self.project_version)
+        dialog.set_version(str(self.project_version))
         dialog.set_comments("Bluetooth proximity automation")
         dialog.set_website("https://github.com/ways/BlueDo")
         dialog.set_authors(["Lars Falk-Petersen"])
@@ -457,7 +457,6 @@ class Application(Gtk.Application):
 
     def advanced_clicked(self, state):
         ''' Show advancd options '''
-        print("advancd clicked")
 
         advanced_menuitem = self.builder.get_object("advanced_menuitem")
         self.advanced = advanced_menuitem.get_active()

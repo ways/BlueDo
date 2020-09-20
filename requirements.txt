@@ -1,8 +1,7 @@
 appdirs
-btproxipy
 configparser
-logger
+syslog
 wheel
-
+PyBluez
 pycairo
 PyGObject
