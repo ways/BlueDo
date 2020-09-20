@@ -56,7 +56,7 @@ setup(
     ],
     keywords='bluetooth',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['configparser', 'appdirs', 'wheel', 'syslog', 'PyBluez', 'pycairo', 'PyGObject'],
+    install_requires=['configparser', 'appdirs', 'wheel', 'syslog', 'PyBluez', 'PyGObject'],
     scripts=['bin/bluedo'],
     data_files=[
         ('share/applications', ['applications/bluedo.desktop']),

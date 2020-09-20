@@ -3,5 +3,4 @@ configparser
 syslog
 wheel
 PyBluez
-pycairo
 PyGObject
