@@ -1,0 +1,14 @@
+# Include the README
+include *.md
+
+# Include the license file
+include LICENSE.txt
+
+# Include UI
+include window.glade
+
+# Include a library
+include bt_rssi.py
+
+# Include icon
+include icons/256x256/bluedo.png

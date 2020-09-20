@@ -1,6 +1,5 @@
 appdirs
 configparser
-syslog
 wheel
 PyBluez
 PyGObject

@@ -14,7 +14,12 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, GLib, GdkPixbuf
 
-from bt_rssi import BluetoothRSSI
+try:
+    from bluedo.bt_rssi import BluetoothRSSI
+except ImportError:
+    from bt_rssi import BluetoothRSSI
+
+PKGDATA_DIR="." #/usr/share/no.graph.bluedo"
 
 class Application(Gtk.Application):
     project_name = 'bluedo'
@@ -72,7 +77,7 @@ class Application(Gtk.Application):
 
         # Load widgets from glade file
         self.builder = Gtk.Builder()
-        self.builder.add_from_file("window.glade")
+        self.builder.add_from_file(PKGDATA_DIR + "/window.glade")
 
         self.btnEnabled = self.builder.get_object("btnEnabled")
         self.cbDevice = self.builder.get_object("cbDevice")
@@ -101,6 +106,10 @@ class Application(Gtk.Application):
         self.entryHere.set_text("%s" % self.here_command)
 
         self.window = self.builder.get_object("main_window")
+        try:
+            self.window.set_icon_from_file(PKGDATA_DIR + "/share/icons/hicolor/256x256/apps/bluedo.png")
+        except gi.repository.GLib.Error:
+            print("Unable to find icon in %s"  % PKGDATA_DIR)
 
         self.on_enable_state(self.btnEnabled, self.enabled)
 
@@ -307,14 +316,11 @@ class Application(Gtk.Application):
         ''' Parse app startup commandline arguments '''
 
         options = command_line.get_options_dict()
-        # convert GVariantDict -> GVariant -> dict
         options = options.end().unpack()
 
         if "enable" in options:
-            #print("Enable argument recieved: %s" % options["enable"])
             self.enabled = True
         if "minimize" in options:
-            #print("minimize argument recieved: %s" % options["minimize"])
             self.minimized = True
 
         self.activate()
@@ -450,7 +456,7 @@ class Application(Gtk.Application):
         dialog.set_comments("Bluetooth proximity automation")
         dialog.set_website("https://github.com/ways/BlueDo")
         dialog.set_authors(["Lars Falk-Petersen"])
-        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size("./images/logo.png", 256, 256))
+        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size("share/icons/hicolor/256x256/apps/bluedo.png", 256, 256))
         dialog.connect('response', lambda dialog, data: dialog.destroy())
         dialog.show_all()
 
@@ -477,10 +483,9 @@ class Application(Gtk.Application):
         self.save_config()
 
 
-def main(args):
+def main(args=None):
     app = Application()
     return app.run(sys.argv)
 
-
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    sys.exit(main(args=sys.argv))

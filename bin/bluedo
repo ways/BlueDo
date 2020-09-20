@@ -1,5 +1,0 @@
-#!/usr/bin/env python3
-
-import bluedo
-app = Application.main()
-app.main()

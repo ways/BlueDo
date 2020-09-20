@@ -1,7 +1,6 @@
 """A setuptools based setup module.
 
 See:
-https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
 
@@ -56,8 +55,14 @@ setup(
     ],
     keywords='bluetooth',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['configparser', 'appdirs', 'wheel', 'syslog', 'PyBluez', 'PyGObject'],
-    scripts=['bin/bluedo'],
+    install_requires=['configparser', 'appdirs', 'wheel', 'PyBluez', 'PyGObject'],
+    entry_points={  # Optional
+        'console_scripts': [
+            'bluedo=bluedo:main',
+            #'bluedo=bluedo.Application:run',
+        ],
+    },
+    #scripts=['bin/bluedo'],
     data_files=[
         ('share/applications', ['applications/bluedo.desktop']),
         ('share/icons/hicolor/48x48/apps', ['icons/48x48/bluedo.png']),
