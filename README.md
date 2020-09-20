@@ -8,7 +8,7 @@ Lock your desktop, mute music or run any other command when leaving your PC. The
 
 # Maturity
 
-Alpha
+Beta
 
 # Requirements
 
@@ -30,12 +30,19 @@ Use these system commands:
 
 ![v3](https://github.com/ways/BlueDo/blob/master/images/v3.png)
 
+# System changes
+
+Note that this app will make these changes to your power management:
+
+* Enable screen lock: ```org.gnome.desktop.screensaver lock-enabled true```
+* Set delay from screen blacking to locking to zero: ```org.gnome.desktop.screensaver lock-delay 0```
+* Set screen saver timeout to 10 seconds when device is away, 5 minutes when device is present: ```org.gnome.desktop.session idle-delay 600```
+
 # TODO
 
 * Check for bluetooth, disable controls if missing
 * Stop device scanning when minimized
 * Minimize to systray
-* Run 'here' command on exit and disable.
 * Unit tests
 * Preliminary icon is a mashup of two icons from Yaru. Find out license, or replace.
 
@@ -50,4 +57,5 @@ Use these system commands:
 # Inspiration
 
 * https://github.com/LukeSkywalker92/btproxipy
+  * bt_rssi.py is from this project and is MIT licensed.
 * https://discourse.gnome.org/t/useful-documentation-for-gtk/29

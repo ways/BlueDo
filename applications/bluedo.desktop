@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=BlueDo
+Comment=Bluetooth proximity automation
+Exec=bluedo
+Icon=bluedo
+Type=Application
+Terminal=False
+StartupWMClass=bluedo
+Categories=Utility;
+Comment=Lock your desktop, mute music or run any other command when leaving your PC.
+

@@ -18,7 +18,7 @@ from bt_rssi import BluetoothRSSI
 
 class Application(Gtk.Application):
     project_name = 'bluedo'
-    project_version = 3.1
+    project_version = .3
     config_path = appdirs.user_config_dir('bluedo') + '/bluedo.ini'
     config_section = 'CONFIG'
 
@@ -122,7 +122,7 @@ class Application(Gtk.Application):
     def on_enable_state(self, widget, state):
         ''' When btnEnable changes state, start and stop pings'''
 
-        syslog.syslog(f"{self.project_name} enabled {state}.")
+        syslog.syslog("%s enabled %s." % (self.project_name,state))
         self.enabled = state
         if state:
             # Start service
@@ -136,8 +136,7 @@ class Application(Gtk.Application):
 
         else:
             self.ping_stop = True
-            # if self.debug:
-            #     print("ping_stop")
+            self.here_callback()
 
     def on_exit_application(self, *args):
         self.scan_stop = True
@@ -350,11 +349,15 @@ class Application(Gtk.Application):
                 levelSignal.set_value(10+rssi)
             except TypeError:
                 levelSignal.set_value(0)
+                rssi = -99
 
             if self.debug:
-                print("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
+                syslog.syslog("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
 
             if rssi is None or rssi < threshold:
+                if self.debug:
+                    print("L", end='')
+
                 lost_pings += 1
                 if lost_pings >= self.away_count:
                     lost_pings = 0
@@ -362,57 +365,53 @@ class Application(Gtk.Application):
             elif lost_pings > 0:
                 lost_pings = 0
                 here_callback()
+            else:
+                if self.debug:
+                    print("P", end='')
 
             time.sleep(self.interval)
 
     def here_callback(self):
         if self.debug:
-            print("here_callback")
+            print("H", end='')
 
-        chkHereUnlock = self.builder.get_object("chkHereUnlock")
-        if chkHereUnlock.get_active():
+        if self.chkHereUnlock.get_active():
             self.unlock()
 
-        chkHereRun = self.builder.get_object("chkHereRun")
-        entryHere = self.builder.get_object("entryHere")
-        if chkHereRun.get_active():
-            self.run_user_command(cmd=entryHere.get_text())
+        if self.chkHereRun.get_active():
+            self.run_user_command(cmd=self.entryHere.get_text())
 
     def away_callback(self):
         if self.debug:
-            print("away_callback")
+            print("A", end='')
 
-        chkAwayLock = self.builder.get_object("chkAwayLock")
-        if chkAwayLock.get_active():
+        if self.chkAwayLock.get_active():
             self.lock()
 
-        chkAwayMute = self.builder.get_object("chkAwayMute")
-        if chkAwayMute.get_active():
+        if self.chkAwayMute.get_active():
             self.mute()
 
-        chkAwayPause = self.builder.get_object("chkAwayPause")
-        if chkAwayPause.get_active():
+        if self.chkAwayPause.get_active():
             self.pause_music()
 
-        chkAwayRun = self.builder.get_object("chkAwayRun")
-        entryAway = self.builder.get_object("entryAway")
-        if chkAwayRun.get_active():
-            self.run_user_command(cmd=entryAway.get_text())
+        if self.chkAwayRun.get_active():
+            self.run_user_command(cmd=self.entryAway.get_text())
 
     def unlock(self):
         ''' Unlock desktop session '''
-        syslog.syslog(f"{self.project_name} unlocked session.")
-        # Hard unlock.
-        cmd = "/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
+        syslog.syslog("%s unlocked session." % self.project_name)
 
         # Reset soft lock. Set lock time to something reasonable
-        cmd += "/usr/bin/gsettings set org.gnome.desktop.screensaver idle-delay 600; "
+        cmd = "/usr/bin/gsettings set org.gnome.desktop.session idle-delay 600; "
+
+        # Hard unlock.
+        cmd += "/usr/bin/loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
 
         subprocess.run(cmd, shell=True)
 
     def lock(self):
         ''' Lock desktop session '''
-        syslog.syslog(f"{self.project_name} soft-locked session.")
+        syslog.syslog("%s soft-locked session." % self.project_name)
 
         # Hard lock. Is problematic if your phone refuse to connect
         #cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
@@ -426,20 +425,20 @@ class Application(Gtk.Application):
 
     def run_user_command(self, cmd=''):
         ''' Run user supplied command '''
-        syslog.syslog(f"{self.project_name} running user command <{cmd}>.")
+        syslog.syslog("%s running user command <%s>." % (self.project_name, cmd))
         subprocess.run(cmd, shell=True)
 
     def mute(self):
         ''' Mute sound '''
-        syslog.syslog(f"{self.project_name} muting sound.")
+        syslog.syslog("%s muting sound." % self.project_name)
         subprocess.run("amixer set Master mute > /dev/null", shell=True)
 
         # unmute: amixer set Master unmute; amixer set Speaker unmute; amixer set Headphone unmute
 
     def pause_music(self):
         ''' Pause music '''
-        syslog.syslog(f"{self.project_name} pausing music.")
-        subprocess.run("/usr/bin/playerctl pause", shell=True)
+        syslog.syslog("%s pausing music." % self.project_name)
+        subprocess.run("/usr/bin/playerctl pause 2> /dev/null", shell=True)
 
     def about_clicked(self, widget):
         ''' Show about dialog '''
