@@ -12,7 +12,7 @@ Alpha
 
 # Requirements
 
-sudo apt install python-gi-dev python3-pip python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config gir1.2-gtk-3.0
+sudo apt install python-gi-dev python3-pip python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config gir1.2-gtk-3.0 playerctl
 pip3 install -r requirements.txt --user
 
 Use these system commands:
@@ -35,8 +35,7 @@ Use these system commands:
 * Check for bluetooth, disable controls if missing
 * Stop device scanning when minimized
 * Minimize to systray
-* About
-* Option to run 'here' or 'away' command on exit.
+* Run 'here' command on exit and disable.
 * Unit tests
 * Preliminary icon is a mashup of two icons from Yaru. Find out license, or replace.
 

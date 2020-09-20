@@ -8,15 +8,16 @@ import threading
 
 import appdirs
 import configparser
+import logger
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GLib
+from gi.repository import Gtk, Gio, GLib, GdkPixbuf
 
 from bt_rssi import BluetoothRSSI
 
 class Application(Gtk.Application):
-    project_name = 'blocker'
+    project_name = 'bluedo'
     project_version = 3.1
     config_path = appdirs.user_config_dir('bluedo') + '/bluedo.ini'
     config_section = 'CONFIG'
@@ -39,13 +40,10 @@ class Application(Gtk.Application):
     ping_stop = True
     scan_stop = False # Signal background device scan to shut down
 
-    # GUI
-    window = Gtk.Window()
-
     def __init__(self, *args, **kwargs):
         super().__init__(
             *args,
-            application_id='no.graph.blocker',
+            application_id='no.graph.bluedo',
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
             **kwargs
         )
@@ -348,7 +346,10 @@ class Application(Gtk.Application):
         while not self.ping_stop:
             b = BluetoothRSSI(addr=addr)
             rssi = b.get_rssi()
-            levelSignal.set_value(10+rssi)
+            try:
+                levelSignal.set_value(10+rssi)
+            except TypeError:
+                levelSignal.set_value(0)
 
             if self.debug:
                 print("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
@@ -443,7 +444,16 @@ class Application(Gtk.Application):
     def about_clicked(self, widget):
         ''' Show about dialog '''
 
-        print("About clicked")
+        dialog = Gtk.AboutDialog()
+        dialog.set_title("About")
+        dialog.set_name(self.project_name)
+        dialog.set_version(self.project_version)
+        dialog.set_comments("Bluetooth proximity automation")
+        dialog.set_website("https://github.com/ways/BlueDo")
+        dialog.set_authors(["Lars Falk-Petersen"])
+        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size("./images/logo.png", 256, 256))
+        dialog.connect('response', lambda dialog, data: dialog.destroy())
+        dialog.show_all()
 
     def advanced_clicked(self, state):
         ''' Show advancd options '''
