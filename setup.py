@@ -1,9 +1,3 @@
-"""A setuptools based setup module.
-
-See:
-https://github.com/pypa/sampleproject
-"""
-
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 # To use a consistent encoding
@@ -31,7 +25,7 @@ setup(
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        # How mature is this project? Common values are
+        # How mature is this project?
         'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for

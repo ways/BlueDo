@@ -21,6 +21,8 @@ Use these system commands:
 * loginctl
 * playerctl
 
+Only tested on Ubuntu 20.04 with GNOME.
+
 # Command line options
 
 * -e / --enable to start service on app start.
