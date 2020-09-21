@@ -366,7 +366,7 @@ class Application(Gtk.Application):
 
                 lost_pings += 1
                 if lost_pings >= self.away_count:
-                    lost_pings = 0
+                    #lost_pings = 0
                     away_callback()
             elif lost_pings > 0:
                 lost_pings = 0
