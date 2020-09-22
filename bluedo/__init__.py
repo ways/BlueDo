@@ -118,15 +118,24 @@ class Application(Gtk.Application):
 
         self.window.show_all()
 
+        # Menu for about, advanced
         self.advanced_menuitem.set_active(self.advanced)
         self.advanced_clicked(self.advanced_menuitem)
 
+        # Systray
+        #self.statusicon = self.builder.get_object("statusicon")
+        
         if self.minimized:
             self.window.iconify()
 
         self.start_scan()
 
         Gtk.main()
+
+    # def status_clicked(self,status):
+    #     #unhide the window
+    #     self.show_all()
+    #     self.statusicon.set_tooltip("the window is visible")
 
     def on_enable_state(self, widget, state):
         ''' When btnEnable changes state, start and stop pings'''

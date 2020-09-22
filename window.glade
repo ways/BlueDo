@@ -90,7 +90,7 @@
         <child>
           <object class="GtkLevelBar" id="levelSignal">
             <property name="width_request">23</property>
-            <property name="height_request">38</property>
+            <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
@@ -98,8 +98,8 @@
             <property name="inverted">True</property>
           </object>
           <packing>
-            <property name="x">463</property>
-            <property name="y">24</property>
+            <property name="x">447</property>
+            <property name="y">23</property>
           </packing>
         </child>
         <child>
@@ -137,7 +137,7 @@
         <child>
           <object class="GtkFrame">
             <property name="width_request">447</property>
-            <property name="height_request">127</property>
+            <property name="height_request">125</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
@@ -210,7 +210,7 @@
         <child>
           <object class="GtkFrame">
             <property name="width_request">454</property>
-            <property name="height_request">184</property>
+            <property name="height_request">181</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
@@ -326,7 +326,7 @@
         </child>
         <child>
           <object class="GtkComboBoxText" id="cbDevice">
-            <property name="width_request">270</property>
+            <property name="width_request">257</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -346,5 +346,9 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkStatusIcon" id="statusicon">
+    <property name="stock">gtk-yes</property>
+    <property name="title" translatable="yes">BlueDo</property>
   </object>
 </interface>

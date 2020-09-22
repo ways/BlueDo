@@ -42,11 +42,11 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
+* Check for dependencies on startup
 * Check for bluetooth, disable controls if missing
 * Stop device scanning when minimized
 * Minimize to systray
 * Unit tests
-* Preliminary icon is a mashup of two icons from Yaru. Find out license, or replace.
 
 # Development docs
 
