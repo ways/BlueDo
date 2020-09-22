@@ -2,7 +2,7 @@
 
 BlueDo - Bluetooth proximity automation
 
-![Logo](https://github.com/ways/BlueDo/blob/master/images/bluelock.png)
+![Logo](https://raw.githubusercontent.com/ways/BlueDo/master/share/icons/hicolor/256x256/apps/bluedo.png)
 
 Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
 
@@ -30,7 +30,8 @@ Only tested on Ubuntu 20.04 with GNOME.
 
 # Screenshots
 
-![v3](https://github.com/ways/BlueDo/blob/master/images/v3.png)
+![v3_2](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3_2.png)
+![v3](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3.png)
 
 # System changes
 

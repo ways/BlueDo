@@ -41,7 +41,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         "Topic :: Desktop Environment",
-        "Topic :: Desktop Environment :: Gnome"
+        "Topic :: Desktop Environment :: Gnome",
         "Topic :: Security",
         "Environment :: X11 Applications :: Gnome",
         "Operating System :: POSIX :: Linux",
