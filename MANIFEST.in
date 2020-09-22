@@ -2,13 +2,13 @@
 include *.md
 
 # Include the license file
-include LICENSE.txt
+include LICENSE
 
 # Include UI
-include window.glade
+include bluedo/window.glade
 
 # Include a library
-include bt_rssi.py
+include bluedo/bt_rssi.py
 
 # Include icon
-include icons/256x256/bluedo.png
+include images/bluedo.png

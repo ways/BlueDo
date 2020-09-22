@@ -19,8 +19,6 @@ try:
 except ImportError:
     from bt_rssi import BluetoothRSSI
 
-PKGDATA_DIR="." #/usr/share/no.graph.bluedo"
-
 class Application(Gtk.Application):
     project_name = 'bluedo'
     project_version = .3
@@ -77,7 +75,7 @@ class Application(Gtk.Application):
 
         # Load widgets from glade file
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(PKGDATA_DIR + "/window.glade")
+        self.builder.add_from_file(os.path.dirname(os.path.realpath(__file__)) + "/window.glade")
 
         self.btnEnabled = self.builder.get_object("btnEnabled")
         self.cbDevice = self.builder.get_object("cbDevice")
@@ -107,9 +105,9 @@ class Application(Gtk.Application):
 
         self.window = self.builder.get_object("main_window")
         try:
-            self.window.set_icon_from_file(PKGDATA_DIR + "/share/icons/hicolor/256x256/apps/bluedo.png")
+            self.window.set_icon_from_file(os.path.dirname(os.path.realpath(__file__)) + "bluedo.png")
         except gi.repository.GLib.Error:
-            print("Unable to find icon in %s"  % PKGDATA_DIR)
+            print("Unable to find icon in %s"  % os.path.dirname(os.path.realpath(__file__)))
 
         self.on_enable_state(self.btnEnabled, self.enabled)
 
