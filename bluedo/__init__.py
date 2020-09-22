@@ -105,7 +105,7 @@ class Application(Gtk.Application):
 
         self.window = self.builder.get_object("main_window")
         try:
-            self.window.set_icon_from_file(os.path.dirname(os.path.realpath(__file__)) + "bluedo.png")
+            self.window.set_icon_from_file(os.path.dirname(os.path.realpath(__file__)) + "/images/bluedo.png")
         except gi.repository.GLib.Error:
             print("Unable to find icon in %s"  % os.path.dirname(os.path.realpath(__file__)))
 
@@ -115,6 +115,17 @@ class Application(Gtk.Application):
         self.builder.connect_signals(self)
 
         self.window.show_all()
+
+        # Check for dependencies
+        try:
+            subprocess.run("which playerctl", shell=True, check=True)
+        except subprocess.CalledProcessError as err:
+            dialog = Gtk.Dialog("Warning")
+            dialog.get_content_area().add(Gtk.Label("Unable to control media. Please run\nsudo apt install playerctl"))
+            dialog.get_content_area().set_size_request(300, 100)
+            dialog.show_all()
+            response = dialog.run()
+            dialog.destroy()
 
         # Menu for about, advanced
         self.advanced_menuitem.set_active(self.advanced)

@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='bluedo',
-    version='0.35',
+    version='0.37',
     description='Bluetooth proximity automation',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -50,15 +50,12 @@ setup(
     keywords='bluetooth',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     install_requires=['configparser', 'appdirs', 'wheel', 'PyBluez', 'PyGObject'],
-    entry_points={  # Optional
+    entry_points={
         'console_scripts': [
             'bluedo=bluedo:main',
-            #'bluedo=bluedo.Application:run',
         ],
     },
-    #scripts=['bin/bluedo'],
     data_files=[
-        #('share/bluedo/window.glade', ['window.glade']),
         ('share/applications', ['applications/bluedo.desktop']),
         ('share/icons/hicolor/48x48/apps', ['share/icons/hicolor/48x48/apps/bluedo.png']),
         ('share/icons/hicolor/256x256/apps', ['share/icons/hicolor/256x256/apps/bluedo.png']),

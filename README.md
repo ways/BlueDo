@@ -12,8 +12,8 @@ Beta
 
 # Requirements
 
-sudo apt install python-gi-dev python3-pip python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config gir1.2-gtk-3.0 playerctl
-pip3 install -r requirements.txt --user
+* sudo apt install python-gi-dev python3-pip python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config gir1.2-gtk-3.0 playerctl
+* pip3 install -r requirements.txt --user
 
 Use these system commands:
 * bluetoothctl
@@ -43,8 +43,9 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
-* Check for dependencies on startup
+* Add "start minimized" as option in config
 * Check for bluetooth, disable controls if missing
+* Create snap package
 * Stop device scanning when minimized
 * Minimize to systray
 * Unit tests
