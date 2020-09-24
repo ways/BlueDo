@@ -1,0 +1,55 @@
+name: bluedo
+version: git
+summary: BlueDo - Bluetooth proximity automation 
+description: |
+  Lock your desktop, mute music or run any other command when leaving
+  your PC. There are dozens of apps like this. This one just aims to
+  make it beautiful, modern and easy.
+base: core18
+confinement: devmode
+
+parts:
+  bluedo:
+    plugin: python
+    python-version: python3
+    requirements: [requirements.txt]
+    source: .
+    build-packages:
+      - python3-setuptools
+      - gcc
+      - pkg-config
+      - libcairo2-dev
+      - libbluetooth-dev
+    stage-packages:
+      - python3-gi
+      - libgirepository1.0-dev
+      - gir1.2-glib-2.0
+      - gir1.2-freedesktop
+      - gobject-introspection
+      - gir1.2-gtk-3.0
+      - libbluetooth3
+      - libcairo-gobject2
+      - libcairo2
+      - libfontconfig1
+      - libfreetype6
+      - libgirepository-1.0-1
+      - libpixman-1-0
+      - libpng16-16
+      - libx11-6
+      - libxau6
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcb1
+      - libxdmcp6
+      - libxext6
+      - libxrender1
+      #- playerctl
+
+apps:
+  bluedo:
+    command: bluedo
+    extensions: [gnome-3-28]
+    plugs:
+      - x11
+      - desktop
+      - gsettings
