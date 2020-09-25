@@ -55,7 +55,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSwitch" id="btnEnabled">
+          <object class="GtkSwitch" id="button_enabled">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <signal name="state-set" handler="on_enable_state" swapped="no"/>
@@ -148,7 +148,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="chkHereUnlock">
+                      <object class="GtkCheckButton" id="check_hereunlock">
                         <property name="label" translatable="yes">Unlock screen</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
@@ -162,7 +162,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="chkHereRun">
+                      <object class="GtkCheckButton" id="check_hererun">
                         <property name="label" translatable="yes">Run command:</property>
                         <property name="height_request">40</property>
                         <property name="can_focus">False</property>
@@ -175,7 +175,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="entryHere">
+                      <object class="GtkEntry" id="entry_here">
                         <property name="width_request">270</property>
                         <property name="height_request">40</property>
                         <property name="can_focus">True</property>
@@ -245,7 +245,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="chkAwayLock">
+                      <object class="GtkCheckButton" id="check_awaylock">
                         <property name="label" translatable="yes">Lock screen</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
@@ -256,7 +256,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="chkAwayPause">
+                      <object class="GtkCheckButton" id="check_awaypause">
                         <property name="label" translatable="yes">Pause music</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
@@ -270,7 +270,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="chkAwayMute">
+                      <object class="GtkCheckButton" id="check_awaymute">
                         <property name="label" translatable="yes">Mute sound</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
@@ -284,7 +284,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="chkAwayRun">
+                      <object class="GtkCheckButton" id="check_awayrun">
                         <property name="label" translatable="yes">Run command:</property>
                         <property name="height_request">40</property>
                         <property name="can_focus">False</property>
@@ -298,7 +298,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="entryAway">
+                      <object class="GtkEntry" id="entry_away">
                         <property name="width_request">270</property>
                         <property name="height_request">40</property>
                         <property name="can_focus">True</property>
@@ -341,7 +341,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkComboBoxText" id="cbDevice">
+          <object class="GtkComboBoxText" id="combo_device">
             <property name="width_request">257</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>

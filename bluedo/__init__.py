@@ -21,7 +21,7 @@ except ImportError:
 
 class Application(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .35
+    project_version = .38
     config_path = appdirs.user_config_dir('bluedo') + '/bluedo.ini'
     config_section = 'CONFIG'
 
@@ -77,33 +77,33 @@ class Application(Gtk.Application):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.dirname(os.path.realpath(__file__)) + "/window.glade")
 
-        self.btnEnabled = self.builder.get_object("btnEnabled")
-        self.cbDevice = self.builder.get_object("cbDevice")
-        self.entryAway = self.builder.get_object("entryAway")
-        self.entryHere = self.builder.get_object("entryHere")
-        self.chkHereUnlock = self.builder.get_object("chkHereUnlock")
-        self.chkHereRun = self.builder.get_object("chkHereRun")
+        self.button_enabled = self.builder.get_object("button_enabled")
+        self.combo_device = self.builder.get_object("combo_device")
+        self.entry_away = self.builder.get_object("entry_away")
+        self.entry_here = self.builder.get_object("entry_here")
+        self.check_hereunlock = self.builder.get_object("check_hereunlock")
+        self.check_hererun = self.builder.get_object("check_hererun")
         self.check_resume = self.builder.get_object("check_resume")
         self.check_unmute = self.builder.get_object("check_unmute")
-        self.chkAwayLock = self.builder.get_object("chkAwayLock")
-        self.chkAwayPause = self.builder.get_object("chkAwayPause")
-        self.chkAwayMute = self.builder.get_object("chkAwayMute")
-        self.chkAwayRun = self.builder.get_object("chkAwayRun")
+        self.check_awaylock = self.builder.get_object("check_awaylock")
+        self.check_awaypause = self.builder.get_object("check_awaypause")
+        self.check_awaymute = self.builder.get_object("check_awaymute")
+        self.check_awayrun = self.builder.get_object("check_awayrun")
         self.advanced_menuitem = self.builder.get_object("advanced_menuitem")
 
         # Load config, then populate widgets
         self.load_config()
         if self.bt_address:
-            self.cbDevice.append_text("%s (%s)" % (self.bt_name, self.bt_address))
-            self.cbDevice.set_active(0)
+            self.combo_device.append_text("%s (%s)" % (self.bt_name, self.bt_address))
+            self.combo_device.set_active(0)
 
         if len(self.bt_address) > 0:
-            self.btnEnabled.set_active(self.enabled)
+            self.button_enabled.set_active(self.enabled)
         else: 
-            self.btnEnabled.set_sensitive(False)
+            self.button_enabled.set_sensitive(False)
 
-        self.entryAway.set_text("%s" % self.away_command)
-        self.entryHere.set_text("%s" % self.here_command)
+        self.entry_away.set_text("%s" % self.away_command)
+        self.entry_here.set_text("%s" % self.here_command)
 
         self.window = self.builder.get_object("main_window")
         try:
@@ -111,7 +111,7 @@ class Application(Gtk.Application):
         except gi.repository.GLib.Error:
             print("Unable to find icon in %s"  % os.path.dirname(os.path.realpath(__file__)))
 
-        self.on_enable_state(self.btnEnabled, self.enabled)
+        self.on_enable_state(self.button_enabled, self.enabled)
 
         # Signals
         self.builder.connect_signals(self)
@@ -120,12 +120,12 @@ class Application(Gtk.Application):
 
         # Check for dependencies
         try:
-            subprocess.run("which playerctlW > /dev/null", shell=True, check=True)
-            self.chkAwayPause.set_sensitive(True)
+            subprocess.run("which playerctl > /dev/null", shell=True, check=True)
+            self.check_awaypause.set_sensitive(True)
             self.check_resume.set_sensitive(True)
         except subprocess.CalledProcessError as err:
-            self.chkAwayPause.set_sensitive(False)
-            self.chkAwayPause.set_label("Pause music - Install playerctl to enable this option")
+            self.check_awaypause.set_sensitive(False)
+            self.check_awaypause.set_label("Pause music - Install playerctl to enable this option")
             self.check_resume.set_sensitive(False)
             self.check_resume.set_label("Unpause music - Install playerctl to enable this option")
 
@@ -156,8 +156,8 @@ class Application(Gtk.Application):
         if state:
             # Start service
             if len(self.bt_address) == 0:
-                #self.btnEnabled.set_active(False)
-                self.btnEnabled.set_sensitive(False)
+                #self.button_enabled.set_active(False)
+                self.button_enabled.set_sensitive(False)
             else:
                 if self.ping_stop:
                     self.ping_stop = False
@@ -173,36 +173,36 @@ class Application(Gtk.Application):
         Gtk.main_quit()
 
     def on_device_changed(self, widget):
-        ''' When cbDevice changes '''
+        ''' When combo_device changes '''
         text = ''
         try:
-            text = self.cbDevice.get_active_text().strip()
+            text = self.combo_device.get_active_text().strip()
         except AttributeError:
             pass
 
         if len(text) == 0:
-            self.btnEnabled.set_sensitive(False)
+            self.button_enabled.set_sensitive(False)
         else:
-            #print("cbDevice changed to %s" % text)
+            #print("combo_device changed to %s" % text)
             newaddress = text.split()[-1].replace('(', '').replace(')', '')
             newname = text.replace(newaddress, '').replace('(', '').replace(')', '')
 
             if newaddress != self.bt_address:
                 self.bt_address = newaddress
                 self.bt_name = newname
-                self.btnEnabled.set_sensitive(True)
+                self.button_enabled.set_sensitive(True)
                 self.save_config()
 
     def on_away_changed(self, widget):
-        ''' When entryAway changes '''
+        ''' When entry_away changes '''
         self.away_command = widget.get_text()
-        #print("entryAway changed to %s" % self.away_command)
+        #print("entry_away changed to %s" % self.away_command)
         self.save_config()
 
     def on_here_changed(self, widget):
-        ''' When entryHere changes '''
+        ''' When entry_here changes '''
         self.here_command = widget.get_text()
-        #print("entryHere changed to %s" % self.here_command)
+        #print("entry_here changed to %s" % self.here_command)
         self.save_config()
 
     def on_chkbutton_changed(self, widget):
@@ -225,12 +225,12 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'here_command', self.here_command)
 
         self.config.set(self.config_section, 'bt_name', self.bt_name)
-        self.config.set(self.config_section, 'here_unlock', str(self.chkHereUnlock.get_active()))
-        self.config.set(self.config_section, 'here_run', str(self.chkHereRun.get_active()))
-        self.config.set(self.config_section, 'away_lock', str(self.chkAwayLock.get_active()))
-        self.config.set(self.config_section, 'away_run', str(self.chkAwayRun.get_active()))
-        self.config.set(self.config_section, 'away_mute', str(self.chkAwayMute.get_active()))
-        self.config.set(self.config_section, 'away_pause', str(self.chkAwayPause.get_active()))
+        self.config.set(self.config_section, 'here_unlock', str(self.check_hereunlock.get_active()))
+        self.config.set(self.config_section, 'here_run', str(self.check_hererun.get_active()))
+        self.config.set(self.config_section, 'away_lock', str(self.check_awaylock.get_active()))
+        self.config.set(self.config_section, 'away_run', str(self.check_awayrun.get_active()))
+        self.config.set(self.config_section, 'away_mute', str(self.check_awaymute.get_active()))
+        self.config.set(self.config_section, 'away_pause', str(self.check_awaypause.get_active()))
         self.config.set(self.config_section, 'advanced', str(self.advanced))
 
         #if self.debug:
@@ -262,17 +262,17 @@ class Application(Gtk.Application):
         self.here_command = self.config.get(self.config_section, 'here_command', fallback='')
         self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
         if "true" in self.config.get(self.config_section, 'here_unlock', fallback='false').lower():
-            self.chkHereUnlock.set_active(True)
+            self.check_hereunlock.set_active(True)
         if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
-            self.chkHereRun.set_active(True)
+            self.check_hererun.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_lock', fallback='false').lower():
-            self.chkAwayLock.set_active(True)
+            self.check_awaylock.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_mute', fallback='false').lower():
-            self.chkAwayMute.set_active(True)
+            self.check_awaymute.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_pause', fallback='false').lower():
-            self.chkAwayPause.set_active(True)
+            self.check_awaypause.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_run', fallback='false').lower():
-            self.chkAwayRun.set_active(True)
+            self.check_awayrun.set_active(True)
         if "true" in self.config.get(self.config_section, 'advanced', fallback='false').lower():
             self.advanced = True
 
@@ -315,22 +315,22 @@ class Application(Gtk.Application):
             if self.scan_stop:
                 break
 
-            # Save contents of cbdevice, clear and reset
+            # Save contents of combo_device, clear and reset
             newscan = self.scan_bluetooth()
             if newscan != self.nearby_devices:
                 self.nearby_devices = newscan
-                current = self.cbDevice.get_active_text() or ''
-                self.cbDevice.remove_all()
-                self.cbDevice.append_text(current)
-                self.cbDevice.set_active(0)
+                current = self.combo_device.get_active_text() or ''
+                self.combo_device.remove_all()
+                self.combo_device.append_text(current)
+                self.combo_device.set_active(0)
 
                 for address, name in newscan:
-                    self.cbDevice.append_text("%s (%s)" % (address, name))
+                    self.combo_device.append_text("%s (%s)" % (address, name))
 
             time.sleep(5)
 
     def disable_all(self):
-        self.btnEnabled.set_sensitive(False)
+        self.button_enabled.set_sensitive(False)
 
     def do_command_line(self, command_line):
         ''' Parse app startup commandline arguments '''
@@ -401,27 +401,27 @@ class Application(Gtk.Application):
         if self.debug:
             print("H", end='')
 
-        if self.chkHereUnlock.get_active():
+        if self.check_hereunlock.get_active():
             self.unlock()
 
-        if self.chkHereRun.get_active():
-            self.run_user_command(cmd=self.entryHere.get_text())
+        if self.check_hererun.get_active():
+            self.run_user_command(cmd=self.entry_here.get_text())
 
     def away_callback(self):
         if self.debug:
             print("A", end='')
 
-        if self.chkAwayLock.get_active():
+        if self.check_awaylock.get_active():
             self.lock()
 
-        if self.chkAwayMute.get_active():
+        if self.check_awaymute.get_active():
             self.mute()
 
-        if self.chkAwayPause.get_active():
+        if self.check_awaypause.get_active():
             self.pause_music()
 
-        if self.chkAwayRun.get_active():
-            self.run_user_command(cmd=self.entryAway.get_text())
+        if self.check_awayrun.get_active():
+            self.run_user_command(cmd=self.entry_away.get_text())
 
     def unlock(self):
         ''' Unlock desktop session '''
@@ -486,19 +486,19 @@ class Application(Gtk.Application):
         advanced_menuitem = self.builder.get_object("advanced_menuitem")
         self.advanced = advanced_menuitem.get_active()
 
-        chkHereRun = self.builder.get_object("chkHereRun")
-        entryHere = self.builder.get_object("entryHere")
-        chkAwayRun = self.builder.get_object("chkAwayRun")
-        entryAway = self.builder.get_object("entryAway")
+        check_hererun = self.builder.get_object("check_hererun")
+        entry_here = self.builder.get_object("entry_here")
+        check_awayrun = self.builder.get_object("check_awayrun")
+        entry_away = self.builder.get_object("entry_away")
 
-        chkHereRun.set_visible(self.advanced)
-        entryHere.set_visible(self.advanced)
-        chkAwayRun.set_visible(self.advanced)
-        entryAway.set_visible(self.advanced)
+        check_hererun.set_visible(self.advanced)
+        entry_here.set_visible(self.advanced)
+        check_awayrun.set_visible(self.advanced)
+        entry_away.set_visible(self.advanced)
 
         if not self.advanced:
-            chkHereRun.set_active(self.advanced)
-            chkAwayRun.set_active(self.advanced)
+            check_hererun.set_active(self.advanced)
+            check_awayrun.set_active(self.advanced)
 
         self.save_config()
 

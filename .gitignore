@@ -5,6 +5,9 @@ version 1/
 version 2/
 btproxipy/
 venv/
+*.snap
+.pypirc
+
 # Compiled python modules.
 *.pyc
 
