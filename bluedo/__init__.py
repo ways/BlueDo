@@ -83,6 +83,8 @@ class Application(Gtk.Application):
         self.entryHere = self.builder.get_object("entryHere")
         self.chkHereUnlock = self.builder.get_object("chkHereUnlock")
         self.chkHereRun = self.builder.get_object("chkHereRun")
+        self.check_resume = self.builder.get_object("check_resume")
+        self.check_unmute = self.builder.get_object("check_unmute")
         self.chkAwayLock = self.builder.get_object("chkAwayLock")
         self.chkAwayPause = self.builder.get_object("chkAwayPause")
         self.chkAwayMute = self.builder.get_object("chkAwayMute")
@@ -118,14 +120,14 @@ class Application(Gtk.Application):
 
         # Check for dependencies
         try:
-            subprocess.run("which playerctl", shell=True, check=True)
+            subprocess.run("which playerctlW > /dev/null", shell=True, check=True)
+            self.chkAwayPause.set_sensitive(True)
+            self.check_resume.set_sensitive(True)
         except subprocess.CalledProcessError as err:
-            dialog = Gtk.Dialog("Warning")
-            dialog.get_content_area().add(Gtk.Label("Unable to control media. Please run\nsudo apt install playerctl"))
-            dialog.get_content_area().set_size_request(300, 100)
-            dialog.show_all()
-            response = dialog.run()
-            dialog.destroy()
+            self.chkAwayPause.set_sensitive(False)
+            self.chkAwayPause.set_label("Pause music - Install playerctl to enable this option")
+            self.check_resume.set_sensitive(False)
+            self.check_resume.set_label("Unpause music - Install playerctl to enable this option")
 
         # Menu for about, advanced
         self.advanced_menuitem.set_active(self.advanced)

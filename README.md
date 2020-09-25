@@ -10,6 +10,17 @@ Lock your desktop, mute music or run any other command when leaving your PC. The
 
 Beta
 
+# Installation
+
+## From pip
+
+    sudo apt install python3-pip libbluetooth-dev playerctl
+    pip3 install --user bluedo
+
+## From snap
+
+    sudo snap install --classic bluedo
+
 # Requirements
 
 * sudo apt install python3-pip libbluetooth-dev playerctl
@@ -45,15 +56,17 @@ Note that this app will make these changes to your power management:
 
 * Add "start minimized" as option in config
 * Check for bluetooth, disable controls if missing
-* Create snap package
 * Stop device scanning when minimized
 * Minimize to systray
+* "Open bluetooth settings"
+* Resume playback on "here"
+* Unmute on "here"
 * Unit tests
 
 ## For snap
-* get access to bluetoothctl
-* see if build config can be cut down
-* install or get access to playerctl
+* See if build config can be cut down
+* Theming doesn't work right (looks ugly)
+* Attempt to confine
 
 # Development docs
 

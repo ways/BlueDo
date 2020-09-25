@@ -30,7 +30,7 @@
     <property name="resizable">False</property>
     <property name="window_position">center</property>
     <property name="default_width">500</property>
-    <property name="default_height">570</property>
+    <property name="default_height">590</property>
     <signal name="destroy" handler="on_exit_application" swapped="no"/>
     <child type="titlebar">
       <object class="GtkHeaderBar">
@@ -73,7 +73,6 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkLabel">
-            <property name="width_request">123</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -83,7 +82,7 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">22</property>
+            <property name="x">30</property>
             <property name="y">22</property>
           </packing>
         </child>
@@ -104,7 +103,6 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width_request">242</property>
             <property name="height_request">33</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -120,7 +118,6 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width_request">217</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -130,14 +127,14 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">29</property>
-            <property name="y">322</property>
+            <property name="x">30</property>
+            <property name="y">356</property>
           </packing>
         </child>
         <child>
           <object class="GtkFrame">
-            <property name="width_request">447</property>
-            <property name="height_request">125</property>
+            <property name="width_request">450</property>
+            <property name="height_request">181</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
@@ -153,7 +150,6 @@
                     <child>
                       <object class="GtkCheckButton" id="chkHereUnlock">
                         <property name="label" translatable="yes">Unlock screen</property>
-                        <property name="width_request">121</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -168,7 +164,6 @@
                     <child>
                       <object class="GtkCheckButton" id="chkHereRun">
                         <property name="label" translatable="yes">Run command:</property>
-                        <property name="width_request">127</property>
                         <property name="height_request">40</property>
                         <property name="can_focus">False</property>
                         <property name="receives_default">False</property>
@@ -176,7 +171,7 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="y">48</property>
+                        <property name="y">114</property>
                       </packing>
                     </child>
                     <child>
@@ -187,8 +182,34 @@
                         <signal name="changed" handler="on_here_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="x">150</property>
-                        <property name="y">48</property>
+                        <property name="x">147</property>
+                        <property name="y">118</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="check_resume">
+                        <property name="label" translatable="yes">Resume music</property>
+                        <property name="height_request">40</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="y">41</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="check_unmute">
+                        <property name="label" translatable="yes">Unmute sound</property>
+                        <property name="height_request">40</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="y">74</property>
                       </packing>
                     </child>
                   </object>
@@ -203,13 +224,13 @@
             </child>
           </object>
           <packing>
-            <property name="x">27</property>
+            <property name="x">30</property>
             <property name="y">163</property>
           </packing>
         </child>
         <child>
           <object class="GtkFrame">
-            <property name="width_request">454</property>
+            <property name="width_request">450</property>
             <property name="height_request">181</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -226,7 +247,6 @@
                     <child>
                       <object class="GtkCheckButton" id="chkAwayLock">
                         <property name="label" translatable="yes">Lock screen</property>
-                        <property name="width_request">100</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -238,7 +258,6 @@
                     <child>
                       <object class="GtkCheckButton" id="chkAwayPause">
                         <property name="label" translatable="yes">Pause music</property>
-                        <property name="width_request">110</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -253,7 +272,6 @@
                     <child>
                       <object class="GtkCheckButton" id="chkAwayMute">
                         <property name="label" translatable="yes">Mute sound</property>
-                        <property name="width_request">107</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -268,7 +286,6 @@
                     <child>
                       <object class="GtkCheckButton" id="chkAwayRun">
                         <property name="label" translatable="yes">Run command:</property>
-                        <property name="width_request">127</property>
                         <property name="height_request">40</property>
                         <property name="can_focus">False</property>
                         <property name="receives_default">False</property>
@@ -304,13 +321,12 @@
             </child>
           </object>
           <packing>
-            <property name="x">21</property>
-            <property name="y">361</property>
+            <property name="x">30</property>
+            <property name="y">389</property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width_request">300</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
