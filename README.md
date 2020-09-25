@@ -50,6 +50,11 @@ Note that this app will make these changes to your power management:
 * Minimize to systray
 * Unit tests
 
+## For snap
+* get access to bluetoothctl
+* see if build config can be cut down
+* install or get access to playerctl
+
 # Development docs
 
 * scan for devices: bluetoothctl devices

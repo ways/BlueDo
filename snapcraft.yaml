@@ -5,14 +5,17 @@ description: |
   Lock your desktop, mute music or run any other command when leaving
   your PC. There are dozens of apps like this. This one just aims to
   make it beautiful, modern and easy.
+
 base: core18
-confinement: devmode
+confinement: classic
 
 parts:
   bluedo:
     plugin: python
     python-version: python3
     requirements: [requirements.txt]
+    python-packages:
+      - bluedo
     source: .
     build-packages:
       - python3-setuptools
@@ -47,9 +50,9 @@ parts:
 
 apps:
   bluedo:
-    command: bluedo
-    extensions: [gnome-3-28]
-    plugs:
-      - x11
-      - desktop
-      - gsettings
+    command: bin/bluedo
+    #extensions: [gnome-3-28]
+    #plugs:
+    #   - x11
+    #   - desktop
+    #  - gsettings
