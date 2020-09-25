@@ -123,7 +123,7 @@ class Application(Gtk.Application):
             subprocess.run("which playerctl > /dev/null", shell=True, check=True)
             self.check_awaypause.set_sensitive(True)
             self.check_resume.set_sensitive(True)
-        except subprocess.CalledProcessError as err:
+        except subprocess.CalledProcessError:
             self.check_awaypause.set_sensitive(False)
             self.check_awaypause.set_label("Pause music - Install playerctl to enable this option")
             self.check_resume.set_sensitive(False)
@@ -233,8 +233,6 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'away_pause', str(self.check_awaypause.get_active()))
         self.config.set(self.config_section, 'advanced', str(self.advanced))
 
-        #if self.debug:
-            #print("Saving config to %s" % self.config_path)
         with open(self.config_path, 'w') as f:
             self.config.write(f)
 
@@ -506,6 +504,7 @@ class Application(Gtk.Application):
 def main(args=None):
     app = Application()
     return app.run(sys.argv)
+
 
 if __name__ == '__main__':
     sys.exit(main(args=sys.argv))
