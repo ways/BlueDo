@@ -89,7 +89,7 @@ class Application(Gtk.Application):
         self.check_awaypause = self.builder.get_object("check_awaypause")
         self.check_awaymute = self.builder.get_object("check_awaymute")
         self.check_awayrun = self.builder.get_object("check_awayrun")
-        self.advanced_menuitem = self.builder.get_object("advanced_menuitem")
+        self.menuitem_advanced = self.builder.get_object("menuitem_advanced")
 
         # Load config, then populate widgets
         self.load_config()
@@ -107,9 +107,9 @@ class Application(Gtk.Application):
 
         self.window = self.builder.get_object("main_window")
         try:
-            self.window.set_icon_from_file(os.path.dirname(os.path.realpath(__file__)) + "/images/bluedo.png")
+            self.window.set_icon_from_file(os.path.dirname(os.path.realpath(__file__)) + "/bluedo.png")
         except gi.repository.GLib.Error:
-            print("Unable to find icon in %s"  % os.path.dirname(os.path.realpath(__file__)))
+            print("Unable to find icon %s"  % os.path.dirname(os.path.realpath(__file__)) + "/bluedo.png")
 
         self.on_enable_state(self.button_enabled, self.enabled)
 
@@ -130,8 +130,8 @@ class Application(Gtk.Application):
             self.check_resume.set_label("Unpause music - Install playerctl to enable this option")
 
         # Menu for about, advanced
-        self.advanced_menuitem.set_active(self.advanced)
-        self.advanced_clicked(self.advanced_menuitem)
+        self.menuitem_advanced.set_active(self.advanced)
+        self.advanced_clicked(self.menuitem_advanced)
 
         # Systray
         #self.statusicon = self.builder.get_object("statusicon")
@@ -367,13 +367,13 @@ class Application(Gtk.Application):
         lost_pings = 0
 
         while not self.ping_stop:
-            b = BluetoothRSSI(addr=addr)
-            rssi = b.get_rssi()
+            rssi = -99
             try:
+                b = BluetoothRSSI(addr=addr)
+                rssi = b.get_rssi()
                 levelSignal.set_value(10+rssi)
-            except TypeError:
+            except (TypeError, Exception):
                 levelSignal.set_value(0)
-                rssi = -99
 
             if self.debug:
                 syslog.syslog("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
@@ -481,8 +481,8 @@ class Application(Gtk.Application):
     def advanced_clicked(self, state):
         ''' Show advancd options '''
 
-        advanced_menuitem = self.builder.get_object("advanced_menuitem")
-        self.advanced = advanced_menuitem.get_active()
+        menuitem_advanced = self.builder.get_object("menuitem_advanced")
+        self.advanced = menuitem_advanced.get_active()
 
         check_hererun = self.builder.get_object("check_hererun")
         entry_here = self.builder.get_object("entry_here")

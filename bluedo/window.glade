@@ -7,7 +7,7 @@
     <property name="can_focus">False</property>
     <property name="menu_type_hint">menu</property>
     <child>
-      <object class="GtkMenuItem" id="about_menuitem">
+      <object class="GtkMenuItem" id="menuitem_about">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">About</property>
@@ -16,10 +16,18 @@
       </object>
     </child>
     <child>
-      <object class="GtkCheckMenuItem" id="advanced_menuitem">
+      <object class="GtkCheckMenuItem" id="menuitem_minimize">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Advanced</property>
+        <property name="label" translatable="yes">Minimize on start</property>
+        <property name="use_underline">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkCheckMenuItem" id="menuitem_advanced">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Show advanced options</property>
         <property name="use_underline">True</property>
         <signal name="toggled" handler="advanced_clicked" swapped="no"/>
       </object>
@@ -352,6 +360,7 @@
               <object class="GtkEntry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="editable">False</property>
               </object>
             </child>
           </object>
