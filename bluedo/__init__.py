@@ -12,7 +12,8 @@ import syslog
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GLib, GdkPixbuf
+gi.require_version('AppIndicator3', '0.1')
+from gi.repository import Gtk, Gio, GLib, GdkPixbuf, AppIndicator3
 
 try:
     from bluedo.bt_rssi import BluetoothRSSI
@@ -21,7 +22,7 @@ except ImportError:
 
 class Application(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .38
+    project_version = .39
     config_path = appdirs.user_config_dir('bluedo') + '/bluedo.ini'
     config_section = 'CONFIG'
 
@@ -90,6 +91,9 @@ class Application(Gtk.Application):
         self.check_awaymute = self.builder.get_object("check_awaymute")
         self.check_awayrun = self.builder.get_object("check_awayrun")
         self.menuitem_advanced = self.builder.get_object("menuitem_advanced")
+        self.menuitem_minimize = self.builder.get_object("menuitem_minimize")
+        self.dropdown_menu = self.builder.get_object("dropdown_menu")
+        self.menuitem_enable = self.builder.get_object("menuitem_enable")
 
         # Load config, then populate widgets
         self.load_config()
@@ -99,22 +103,28 @@ class Application(Gtk.Application):
 
         if len(self.bt_address) > 0:
             self.button_enabled.set_active(self.enabled)
+            self.menuitem_enable.set_active(self.enabled)
         else: 
             self.button_enabled.set_sensitive(False)
+            self.menuitem_enable.set_sensitive(False)
 
         self.entry_away.set_text("%s" % self.away_command)
         self.entry_here.set_text("%s" % self.here_command)
 
+        # Icon
+        self.icon_path = os.path.dirname(os.path.realpath(__file__)) + "/bluedo.png"
+
         self.window = self.builder.get_object("main_window")
         try:
-            self.window.set_icon_from_file(os.path.dirname(os.path.realpath(__file__)) + "/bluedo.png")
+            self.window.set_icon_from_file(self.icon_path)
         except gi.repository.GLib.Error:
-            print("Unable to find icon %s"  % os.path.dirname(os.path.realpath(__file__)) + "/bluedo.png")
+            print("Unable to find icon %s"  % self.icon_path)
 
         self.on_enable_state(self.button_enabled, self.enabled)
 
         # Signals
         self.builder.connect_signals(self)
+        self.handler_id = self.menuitem_enable.connect("toggled", self.menuitemenable_clicked)
 
         self.window.show_all()
 
@@ -133,31 +143,38 @@ class Application(Gtk.Application):
         self.menuitem_advanced.set_active(self.advanced)
         self.advanced_clicked(self.menuitem_advanced)
 
-        # Systray
-        #self.statusicon = self.builder.get_object("statusicon")
-        
+        # Tray icon
+        indicator = AppIndicator3.Indicator.new("customtray", self.icon_path, AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+        indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        indicator.set_menu(self.dropdown_menu)
+
         if self.minimized:
-            self.window.iconify()
+            self.menuitem_minimize.set_active(True)
+            self.window.hide()
 
         self.start_scan()
 
         Gtk.main()
 
-    # def status_clicked(self,status):
-    #     #unhide the window
-    #     self.show_all()
-    #     self.statusicon.set_tooltip("the window is visible")
-
     def on_enable_state(self, widget, state):
         ''' When btnEnable changes state, start and stop pings'''
 
+        if state == self.menuitem_enable.get_active():
+            # Called from menu
+            pass
+        else:
+            # Set by user or config
+            with self.menuitem_enable.handler_block(self.handler_id):
+                self.menuitem_enable.set_active(state)
+
         syslog.syslog("%s enabled %s." % (self.project_name,state))
         self.enabled = state
+
         if state:
             # Start service
             if len(self.bt_address) == 0:
-                #self.button_enabled.set_active(False)
                 self.button_enabled.set_sensitive(False)
+                self.menuitem_enable.set_sensitive(False)
             else:
                 if self.ping_stop:
                     self.ping_stop = False
@@ -182,6 +199,7 @@ class Application(Gtk.Application):
 
         if len(text) == 0:
             self.button_enabled.set_sensitive(False)
+            self.menuitem_enable.set_sensitive(False)
         else:
             #print("combo_device changed to %s" % text)
             newaddress = text.split()[-1].replace('(', '').replace(')', '')
@@ -191,6 +209,7 @@ class Application(Gtk.Application):
                 self.bt_address = newaddress
                 self.bt_name = newname
                 self.button_enabled.set_sensitive(True)
+                self.menuitem_enable.set_sensitive(True)
                 self.save_config()
 
     def on_away_changed(self, widget):
@@ -232,6 +251,7 @@ class Application(Gtk.Application):
         self.config.set(self.config_section, 'away_mute', str(self.check_awaymute.get_active()))
         self.config.set(self.config_section, 'away_pause', str(self.check_awaypause.get_active()))
         self.config.set(self.config_section, 'advanced', str(self.advanced))
+        self.config.set(self.config_section, 'minimized', str(self.minimized))
 
         with open(self.config_path, 'w') as f:
             self.config.write(f)
@@ -273,6 +293,8 @@ class Application(Gtk.Application):
             self.check_awayrun.set_active(True)
         if "true" in self.config.get(self.config_section, 'advanced', fallback='false').lower():
             self.advanced = True
+        if "true" in self.config.get(self.config_section, 'minimized', fallback='false').lower():
+            self.minimized = True
 
     def scan_bluetooth(self, dryrun=False):
         ''' Load bluetooth devices '''
@@ -329,6 +351,7 @@ class Application(Gtk.Application):
 
     def disable_all(self):
         self.button_enabled.set_sensitive(False)
+        self.menuitem_enable.set_sensitive(False)
 
     def do_command_line(self, command_line):
         ''' Parse app startup commandline arguments '''
@@ -474,7 +497,7 @@ class Application(Gtk.Application):
         dialog.set_comments("Bluetooth proximity automation")
         dialog.set_website("https://github.com/ways/BlueDo")
         dialog.set_authors(["Lars Falk-Petersen"])
-        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size("share/icons/hicolor/256x256/apps/bluedo.png", 256, 256))
+        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size(self.icon_path, 256, 256))
         dialog.connect('response', lambda dialog, data: dialog.destroy())
         dialog.show_all()
 
@@ -500,6 +523,22 @@ class Application(Gtk.Application):
 
         self.save_config()
 
+    def minimize_clicked(self, state):
+        ''' Toggle minimize to tray '''
+
+        self.minimized = self.menuitem_minimize.get_active()
+
+
+        if self.minimized:
+            self.window.hide()
+        else:
+            self.window.show()
+
+        self.save_config()
+
+    def menuitemenable_clicked(self, state):
+        ''' Toggle enable '''
+        self.button_enabled.set_active(not self.button_enabled.get_active())
 
 def main(args=None):
     app = Application()

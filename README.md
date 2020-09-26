@@ -54,10 +54,8 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
-* Add "start minimized" as option in config
 * Check for bluetooth, disable controls if missing
 * Stop device scanning when minimized
-* Minimize to systray
 * "Open bluetooth settings"
 * Resume playback on "here"
 * Unmute on "here"
