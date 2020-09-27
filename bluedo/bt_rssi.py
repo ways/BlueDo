@@ -1,3 +1,5 @@
+# This file is from https://github.com/LukeSkywalker92/btproxipy and is MIT licensed.
+
 import bluetooth
 import bluetooth._bluetooth as bt
 import struct

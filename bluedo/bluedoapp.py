@@ -155,6 +155,17 @@ class BlueDo(Gtk.Application):
 
         Gtk.main()
 
+    def on_exit_application(self, *args):
+        self.scan_stop = True
+        self.ping_stop = True
+        self.here_callback()
+
+        Gtk.main_quit()
+
+#
+# Widgets
+#
+
     def on_enable_state(self, widget, state):
         ''' When btnEnable changes state, start and stop pings'''
 
@@ -168,13 +179,6 @@ class BlueDo(Gtk.Application):
 
         syslog.syslog("%s enabled %s." % (self.project_name,state))
         self.enabled = state
-
-    def on_exit_application(self, *args):
-        self.scan_stop = True
-        self.ping_stop = True
-        self.here_callback()
-
-        Gtk.main_quit()
 
     def on_device_changed(self, widget):
         ''' When combo_device changes '''
@@ -211,6 +215,72 @@ class BlueDo(Gtk.Application):
     def on_chkbutton_changed(self, widget):
         ''' When a CheckButton changes '''
         self.save_config()
+
+    def disable_all(self):
+        self.button_enabled.set_sensitive(False)
+        self.menuitem_enable.set_sensitive(False)
+        self.label_info.set_text("Bluetooth disabled")
+
+    def enable_all(self):
+        self.button_enabled.set_sensitive(True)
+        self.menuitem_enable.set_sensitive(True)
+        self.label_info.set_text("Device should already be paired with computer.")
+
+    def about_clicked(self, widget):
+        ''' Show about dialog '''
+
+        dialog = Gtk.AboutDialog()
+        dialog.set_title("About")
+        dialog.set_name(self.project_name)
+        dialog.set_version(str(self.project_version))
+        dialog.set_comments("Bluetooth proximity automation")
+        dialog.set_website("https://github.com/ways/BlueDo")
+        dialog.set_authors(["Lars Falk-Petersen"])
+        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size(self.icon_path, 256, 256))
+        dialog.connect('response', lambda dialog, data: dialog.destroy())
+        dialog.show_all()
+
+    def advanced_clicked(self, state):
+        ''' Show advancd options '''
+
+        menuitem_advanced = self.builder.get_object("menuitem_advanced")
+        self.advanced = menuitem_advanced.get_active()
+
+        check_hererun = self.builder.get_object("check_hererun")
+        entry_here = self.builder.get_object("entry_here")
+        check_awayrun = self.builder.get_object("check_awayrun")
+        entry_away = self.builder.get_object("entry_away")
+
+        check_hererun.set_visible(self.advanced)
+        entry_here.set_visible(self.advanced)
+        check_awayrun.set_visible(self.advanced)
+        entry_away.set_visible(self.advanced)
+
+        if not self.advanced:
+            check_hererun.set_active(self.advanced)
+            check_awayrun.set_active(self.advanced)
+
+        self.save_config()
+
+    def minimize_clicked(self, state):
+        ''' Toggle minimize to tray '''
+
+        self.minimized = self.menuitem_minimize.get_active()
+
+        if self.minimized:
+            self.window.hide()
+        else:
+            self.window.show()
+
+        self.save_config()
+
+    def menuitemenable_clicked(self, state):
+        ''' Toggle enable '''
+        self.button_enabled.set_active(not self.button_enabled.get_active())
+
+#
+# Config
+#
 
     def save_config(self):
         ''' Save config '''
@@ -280,6 +350,10 @@ class BlueDo(Gtk.Application):
         if "true" in self.config.get(self.config_section, 'minimized', fallback='false').lower():
             self.minimized = True
 
+#
+# Bluetooth
+#
+
     def scan_bluetooth(self, dryrun=False):
         ''' Load bluetooth devices '''
 
@@ -340,16 +414,6 @@ class BlueDo(Gtk.Application):
                     self.combo_device.append_text("%s (%s)" % (address, name))
 
             time.sleep(self.interval)
-
-    def disable_all(self):
-        self.button_enabled.set_sensitive(False)
-        self.menuitem_enable.set_sensitive(False)
-        self.label_info.set_text("Bluetooth disabled")
-
-    def enable_all(self):
-        self.button_enabled.set_sensitive(True)
-        self.menuitem_enable.set_sensitive(True)
-        self.label_info.set_text("Device should already be paired with computer.")
 
     def do_command_line(self, command_line):
         ''' Parse app startup commandline arguments '''
@@ -422,6 +486,10 @@ class BlueDo(Gtk.Application):
 
             time.sleep(self.interval)
 
+#
+# Callbacks
+#
+
     def here_callback(self):
         if self.debug:
             syslog.syslog("Here")
@@ -448,58 +516,6 @@ class BlueDo(Gtk.Application):
         if self.check_awayrun.get_active():
             run_user_command(cmd=self.entry_away.get_text())
 
-    def about_clicked(self, widget):
-        ''' Show about dialog '''
-
-        dialog = Gtk.AboutDialog()
-        dialog.set_title("About")
-        dialog.set_name(self.project_name)
-        dialog.set_version(str(self.project_version))
-        dialog.set_comments("Bluetooth proximity automation")
-        dialog.set_website("https://github.com/ways/BlueDo")
-        dialog.set_authors(["Lars Falk-Petersen"])
-        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size(self.icon_path, 256, 256))
-        dialog.connect('response', lambda dialog, data: dialog.destroy())
-        dialog.show_all()
-
-    def advanced_clicked(self, state):
-        ''' Show advancd options '''
-
-        menuitem_advanced = self.builder.get_object("menuitem_advanced")
-        self.advanced = menuitem_advanced.get_active()
-
-        check_hererun = self.builder.get_object("check_hererun")
-        entry_here = self.builder.get_object("entry_here")
-        check_awayrun = self.builder.get_object("check_awayrun")
-        entry_away = self.builder.get_object("entry_away")
-
-        check_hererun.set_visible(self.advanced)
-        entry_here.set_visible(self.advanced)
-        check_awayrun.set_visible(self.advanced)
-        entry_away.set_visible(self.advanced)
-
-        if not self.advanced:
-            check_hererun.set_active(self.advanced)
-            check_awayrun.set_active(self.advanced)
-
-        self.save_config()
-
-    def minimize_clicked(self, state):
-        ''' Toggle minimize to tray '''
-
-        self.minimized = self.menuitem_minimize.get_active()
-
-
-        if self.minimized:
-            self.window.hide()
-        else:
-            self.window.show()
-
-        self.save_config()
-
-    def menuitemenable_clicked(self, state):
-        ''' Toggle enable '''
-        self.button_enabled.set_active(not self.button_enabled.get_active())
 
 
 #

@@ -27,9 +27,11 @@ Beta
 * pip3 install --user bluedo
 
 Use these system commands:
+
 * bluetoothctl
-* amixer
 * loginctl
+* gsettings
+* amixer
 * playerctl
 
 Only tested on Ubuntu 20.04 with GNOME.
@@ -54,7 +56,7 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
-* Check for bluetooth, disable controls if missing
+* Figure out what freezes app sometimes.
 * Stop device scanning when minimized
 * "Open bluetooth settings"
 * Resume playback on "here"
@@ -72,7 +74,7 @@ Note that this app will make these changes to your power management:
 * rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable)
 
 * hard locking: lock when no signal
-* soft locking: set screensaver timeout to 1 minute when no signal
+* soft locking: set screensaver timeout to 10 seconds when no signal
 
 # Inspiration
 
