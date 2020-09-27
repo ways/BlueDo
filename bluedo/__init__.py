@@ -41,7 +41,7 @@ class Application(Gtk.Application):
     minimized = False # Start up minimized
     nearby_devices = []
     ping_thread = None
-    ping_stop = True
+    ping_stop = False
     scan_stop = False # Signal background device scan to shut down
 
     def __init__(self, *args, **kwargs):
@@ -153,7 +153,8 @@ class Application(Gtk.Application):
             self.menuitem_minimize.set_active(True)
             self.window.hide()
 
-        self.start_scan()
+        self.start_scan() # Look for paired bluetooth devices
+        self.ping_thread = self.start_thread() # Ping selected device for RSSI
 
         Gtk.main()
 
@@ -171,23 +172,11 @@ class Application(Gtk.Application):
         syslog.syslog("%s enabled %s." % (self.project_name,state))
         self.enabled = state
 
-        if state:
-            # Start service
-            if len(self.bt_address) == 0:
-                self.button_enabled.set_sensitive(False)
-                self.menuitem_enable.set_sensitive(False)
-            else:
-                if self.ping_stop:
-                    self.ping_stop = False
-                    self.ping_thread = self.start_thread()
-
-        else:
-            self.ping_stop = True
-            self.here_callback()
-
     def on_exit_application(self, *args):
         self.scan_stop = True
-        self.on_enable_state(None, False) # Stop btproxipy on exit
+        self.ping_stop = True
+        self.here_callback()
+
         Gtk.main_quit()
 
     def on_device_changed(self, widget):
@@ -387,8 +376,6 @@ class Application(Gtk.Application):
             target=self.bluetooth_listen,
             args=(),
             kwargs={
-                'addr': self.bt_address,
-                'threshold': self.threshold,
                 'here_callback': self.here_callback,
                 'away_callback': self.away_callback
             }
@@ -398,7 +385,7 @@ class Application(Gtk.Application):
         thread.start() # Start the thread
         return thread
 
-    def bluetooth_listen(self, addr, threshold, here_callback, away_callback):
+    def bluetooth_listen(self, here_callback, away_callback):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
         levelSignal = self.builder.get_object("levelSignal")
@@ -406,37 +393,48 @@ class Application(Gtk.Application):
 
         while not self.ping_stop:
             rssi = -99
+            addr = self.bt_address
+
+            if len(addr) < 17:
+                if self.debug:
+                    print ("Invalid address %s, not scanning." % addr)
+                levelSignal.set_value(0)
+                time.sleep(self.interval)
+                continue
+
             try:
                 b = BluetoothRSSI(addr=addr)
                 rssi = b.get_rssi()
+                if rssi == None:
+                    rssi = -99
                 levelSignal.set_value(10+rssi)
-            except (TypeError, Exception):
-                levelSignal.set_value(0)
+            except Exception as err:
+                if self.debug:
+                    print ("Error %s" % err)
 
             if self.debug:
-                syslog.syslog("addr: {}, rssi: {}, lost_pings {}".format(addr, rssi, lost_pings))
+                syslog.syslog("addr: %s, rssi: %s" % (addr, rssi))
 
-            if rssi is None or rssi < threshold:
+            if rssi is None or rssi < self.threshold:
                 if self.debug:
-                    print("L", end='')
+                    print("Lost", end='')
 
-            if self.enabled:
+                if self.enabled:
                     lost_pings += 1
                     if lost_pings == self.away_count:
-                        #lost_pings = 0
-                        away_callback()
-                elif lost_pings > 0:
-                    lost_pings = 0
-                    here_callback()
-                else:
-                    if self.debug:
-                        print("P", end='')
+                            away_callback()
+            elif lost_pings > 0:
+                lost_pings = 0
+                here_callback()
+            else:
+                if self.debug:
+                    print("Ping", end='')
 
             time.sleep(self.interval)
 
     def here_callback(self):
         if self.debug:
-            print("H", end='')
+            print("Here", end='')
 
         if self.check_hereunlock.get_active():
             self.unlock()
@@ -446,7 +444,7 @@ class Application(Gtk.Application):
 
     def away_callback(self):
         if self.debug:
-            print("A", end='')
+            print("Away", end='')
 
         if self.check_awaylock.get_active():
             self.lock()
