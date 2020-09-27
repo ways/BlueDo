@@ -94,6 +94,7 @@ class Application(Gtk.Application):
         self.menuitem_minimize = self.builder.get_object("menuitem_minimize")
         self.dropdown_menu = self.builder.get_object("dropdown_menu")
         self.menuitem_enable = self.builder.get_object("menuitem_enable")
+        self.label_info = self.builder.get_object("label_info")
 
         # Load config, then populate widgets
         self.load_config()
@@ -319,6 +320,8 @@ class Application(Gtk.Application):
             for line in iter(proc.stdout.readline, b''):
                 if line.strip() == '': # iter calls until output is ''
                     break
+                if line == 'No default controller available\n':
+                    break
                 addr = line.split()[1]
                 name = ' '.join(line.split()[2:])
                 devices += [(name, addr)]
@@ -337,6 +340,12 @@ class Application(Gtk.Application):
 
             # Save contents of combo_device, clear and reset
             newscan = self.scan_bluetooth()
+
+            if len(newscan) == 0:
+                self.disable_all()
+            else:
+                self.enable_all()
+
             if newscan != self.nearby_devices:
                 self.nearby_devices = newscan
                 current = self.combo_device.get_active_text() or ''
@@ -352,6 +361,12 @@ class Application(Gtk.Application):
     def disable_all(self):
         self.button_enabled.set_sensitive(False)
         self.menuitem_enable.set_sensitive(False)
+        self.label_info.set_text("Bluetooth disabled")
+
+    def enable_all(self):
+        self.button_enabled.set_sensitive(True)
+        self.menuitem_enable.set_sensitive(True)
+        self.label_info.set_text("Device should already be paired with computer.")
 
     def do_command_line(self, command_line):
         ''' Parse app startup commandline arguments '''
@@ -405,16 +420,17 @@ class Application(Gtk.Application):
                 if self.debug:
                     print("L", end='')
 
-                lost_pings += 1
-                if lost_pings == self.away_count:
-                    #lost_pings = 0
-                    away_callback()
-            elif lost_pings > 0:
-                lost_pings = 0
-                here_callback()
-            else:
-                if self.debug:
-                    print("P", end='')
+            if self.enabled:
+                    lost_pings += 1
+                    if lost_pings == self.away_count:
+                        #lost_pings = 0
+                        away_callback()
+                elif lost_pings > 0:
+                    lost_pings = 0
+                    here_callback()
+                else:
+                    if self.debug:
+                        print("P", end='')
 
             time.sleep(self.interval)
 
