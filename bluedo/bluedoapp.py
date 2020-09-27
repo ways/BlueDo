@@ -142,7 +142,7 @@ class BlueDo(Gtk.Application):
         self.advanced_clicked(self.menuitem_advanced)
 
         # Tray icon
-        indicator = AppIndicator3.Indicator.new("customtray", self.icon_path, AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+        indicator = AppIndicator3.Indicator.new("customtray", os.path.dirname(os.path.realpath(__file__)) + "/bluedo_indicator.png", AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         indicator.set_menu(self.dropdown_menu)
 
@@ -427,26 +427,26 @@ class BlueDo(Gtk.Application):
             syslog.syslog("Here")
 
         if self.check_hereunlock.get_active():
-            self.unlock()
+            unlock()
 
         if self.check_hererun.get_active():
-            self.run_user_command(cmd=self.entry_here.get_text())
+            run_user_command(cmd=self.entry_here.get_text())
 
     def away_callback(self):
         if self.debug:
             syslog.syslog("Away")
 
         if self.check_awaylock.get_active():
-            self.lock()
+            lock()
 
         if self.check_awaymute.get_active():
-            self.mute()
+            mute()
 
         if self.check_awaypause.get_active():
-            self.pause_music()
+            pause_music()
 
         if self.check_awayrun.get_active():
-            self.run_user_command(cmd=self.entry_away.get_text())
+            run_user_command(cmd=self.entry_away.get_text())
 
     def about_clicked(self, widget):
         ''' Show about dialog '''
@@ -500,3 +500,62 @@ class BlueDo(Gtk.Application):
     def menuitemenable_clicked(self, state):
         ''' Toggle enable '''
         self.button_enabled.set_active(not self.button_enabled.get_active())
+
+
+#
+# Static functions
+#
+
+def run_user_command(cmd=''):
+    ''' Run user supplied command '''
+    syslog.syslog("Running user command <%s>." % cmd)
+    subprocess.run(cmd, shell=True)
+
+def mute():
+    ''' Mute sound '''
+    syslog.syslog("Muting sound.")
+    subprocess.run("amixer set Master mute > /dev/null", shell=True)
+
+def unmute():
+    ''' Unmute sound '''
+    syslog.syslog("Unmuting sound.")
+    subprocess.run("amixer set Master unmute > /dev/null; amixer set Speaker unmute > /dev/null; amixer set Headphone unmute > /dev/null;", shell=True)
+
+def pause_music():
+    ''' Pause music '''
+    syslog.syslog("Pausing music.")
+    subprocess.run("playerctl pause 2> /dev/null", shell=True)
+
+def resume_music():
+    ''' Resume music '''
+    syslog.syslog("Resume music.")
+    subprocess.run("playerctl play 2> /dev/null", shell=True)
+
+def unlock():
+    ''' Unlock desktop session '''
+    idledelay=600
+    syslog.syslog("Unlocked session.")
+
+    # Reset soft lock. Set lock time to something reasonable
+    cmd = "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay
+
+    # Hard unlock.
+    cmd += "loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
+
+    subprocess.run(cmd, shell=True)
+
+def lock():
+    ''' Lock desktop session '''
+    idledelay=10
+    syslog.syslog("Soft-locked session (%ss timeout)." % idledelay)
+
+    # Hard lock. Is problematic if your phone refuse to connect
+    #cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
+
+    # Soft lock. Set a very short lock time, 10 seconds
+    cmd = "gsettings set org.gnome.desktop.screensaver lock-enabled true; " +\
+        "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay +\
+        "gsettings set org.gnome.desktop.screensaver lock-delay 0; "
+
+    subprocess.run(cmd, shell=True)
+

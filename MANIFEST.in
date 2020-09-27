@@ -12,3 +12,4 @@ include bluedo/bt_rssi.py
 
 # Include icon
 include images/bluedo.png
+include images/bluedo_indicator.png
