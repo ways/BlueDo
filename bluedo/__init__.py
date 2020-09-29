@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import bluedoapp
+from . import bluedoapp
 
 def main(args=None):
     app = bluedoapp.BlueDo()
