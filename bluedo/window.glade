@@ -216,6 +216,7 @@
                         <property name="label" translatable="yes">Resume music</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="draw_indicator">True</property>
@@ -229,6 +230,7 @@
                         <property name="label" translatable="yes">Unmute sound</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="draw_indicator">True</property>
