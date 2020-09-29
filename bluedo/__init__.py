@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import sys
-from . import bluedoapp
+try:
+    from . import bluedoapp
+except ImportError:
+    import bluedoapp
 
 def main(args=None):
     app = bluedoapp.BlueDo()

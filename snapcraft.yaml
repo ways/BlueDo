@@ -18,8 +18,13 @@ parts:
   gsettings:
     plugin: nil
     stage-packages: [libglib2.0-bin]
+  amixer:
+    plugin: nil
+    stage-packages: [alsa-utils]
+  #loginctl
+  #playerctl
 
-    bluedo:
+  bluedo:
     plugin: python
     python-version: python3
     requirements: [requirements.txt]
@@ -34,6 +39,7 @@ parts:
       - libbluetooth-dev
     stage-packages:
       - python3-gi
+      - libappindicator3-dev
       - libgirepository1.0-dev
       - gir1.2-glib-2.0
       - gir1.2-freedesktop
@@ -58,6 +64,14 @@ parts:
       #- playerctl
 
 apps:
+  bluedo:
+    command: bin/bluedo
+    extensions: [gnome-3-28]
+    plugs:
+      - x11
+      - desktop
+      - login-session-control
+
   # expose deb commands to end-users
   bluez:
     command: usr/bin/bluetoothctl
@@ -65,10 +79,6 @@ apps:
   gsettings:
     command: usr/bin/gsettings
     plugs: [home]
-  bluedo:
-    command: bin/bluedo
-    #extensions: [gnome-3-28]
-    #plugs:
-    #   - x11
-    #   - desktop
-    #  - gsettings
+  amixer:
+    command: usr/bin/amixer
+    #plugs: [home]
