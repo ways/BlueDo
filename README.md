@@ -56,7 +56,7 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
-* Figure out what freezes app sometimes.
+* Figure out what freezes app sometimes. Only happends when run from codium.
 * Stop device scanning when minimized
 * "Open bluetooth settings"
 * Resume playback on "here"

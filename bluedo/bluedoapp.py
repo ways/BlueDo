@@ -20,7 +20,7 @@ except ImportError:
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
     project_version = .39
-    config_path = appdirs.user_config_dir('bluedo') + '/bluedo.ini'
+    config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
 
     builder = None
@@ -86,15 +86,19 @@ class BlueDo(Gtk.Application):
         self.check_awaylock = self.builder.get_object("check_awaylock")
         self.check_awaypause = self.builder.get_object("check_awaypause")
         self.check_awaymute = self.builder.get_object("check_awaymute")
+        self.check_hereunmute = self.builder.get_object("check_hereunmute")
         self.check_awayrun = self.builder.get_object("check_awayrun")
         self.menuitem_advanced = self.builder.get_object("menuitem_advanced")
         self.menuitem_minimize = self.builder.get_object("menuitem_minimize")
         self.dropdown_menu = self.builder.get_object("dropdown_menu")
         self.menuitem_enable = self.builder.get_object("menuitem_enable")
         self.label_info = self.builder.get_object("label_info")
+        self.levelSignal = self.builder.get_object("levelSignal")
 
-        # Load config, then populate widgets
+        # Load config
         self.load_config()
+
+        # Populate widgets
         if self.bt_address:
             self.combo_device.append_text("%s (%s)" % (self.bt_name, self.bt_address))
             self.combo_device.set_active(0)
@@ -126,7 +130,7 @@ class BlueDo(Gtk.Application):
 
         self.window.show_all()
 
-        # Check for dependencies
+        # Check for dependency playerctl
         try:
             subprocess.run("which playerctl > /dev/null", shell=True, check=True)
             self.check_awaypause.set_sensitive(True)
@@ -136,6 +140,17 @@ class BlueDo(Gtk.Application):
             self.check_awaypause.set_label("Pause music - Install playerctl to enable this option")
             self.check_resume.set_sensitive(False)
             self.check_resume.set_label("Unpause music - Install playerctl to enable this option")
+
+        # Check for dependency amixer
+        try:
+            subprocess.run("which amixer > /dev/null", shell=True, check=True)
+            self.check_awaymute.set_sensitive(True)
+            self.check_hereunmute.set_sensitive(True)
+        except subprocess.CalledProcessError:
+            self.check_awaymute.set_sensitive(False)
+            self.check_awaymute.set_label("Pause music - Install amixer to enable this option")
+            self.check_hereunmute.set_sensitive(False)
+            self.check_hereunmute.set_label("Unpause music - Install amixer to enable this option")
 
         # Menu for about, advanced
         self.menuitem_advanced.set_active(self.advanced)
@@ -217,14 +232,24 @@ class BlueDo(Gtk.Application):
         self.save_config()
 
     def disable_all(self):
-        self.button_enabled.set_sensitive(False)
-        self.menuitem_enable.set_sensitive(False)
-        self.label_info.set_text("Bluetooth disabled")
+        if self.button_enabled.get_sensitive():
+
+            if self.debug:
+                print("disable_all")
+
+            self.button_enabled.set_sensitive(False)
+            self.menuitem_enable.set_sensitive(False)
+            self.label_info.set_text("Bluetooth disabled")
 
     def enable_all(self):
-        self.button_enabled.set_sensitive(True)
-        self.menuitem_enable.set_sensitive(True)
-        self.label_info.set_text("Device should already be paired with computer.")
+        if not self.button_enabled.get_sensitive():
+
+            if self.debug:
+                print("enable_all")
+
+            self.button_enabled.set_sensitive(True)
+            self.menuitem_enable.set_sensitive(True)
+            self.label_info.set_text("Device should already be paired with computer.")
 
     def about_clicked(self, widget):
         ''' Show about dialog '''
@@ -387,6 +412,8 @@ class BlueDo(Gtk.Application):
         return devices
 
     def start_scan(self):
+        if self.debug:
+            syslog.syslog("Staring thread background_scan")
         t = threading.Thread(target = self.background_scan) 
         t.start()
 
@@ -430,6 +457,8 @@ class BlueDo(Gtk.Application):
         return 0
 
     def start_thread(self):
+        if self.debug:
+            syslog.syslog("Staring thread bluetooth_listen")
         thread = threading.Thread(
             target=self.bluetooth_listen,
             args=(),
@@ -446,7 +475,6 @@ class BlueDo(Gtk.Application):
     def bluetooth_listen(self, here_callback, away_callback):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
-        levelSignal = self.builder.get_object("levelSignal")
         lost_pings = 0
 
         while not self.ping_stop:
@@ -456,7 +484,7 @@ class BlueDo(Gtk.Application):
             if len(addr) < 17:
                 if self.debug:
                     syslog.syslog("Invalid address %s, not scanning." % addr)
-                levelSignal.set_value(0)
+                self.levelSignal.set_value(0)
                 time.sleep(self.interval)
                 continue
 
@@ -465,7 +493,7 @@ class BlueDo(Gtk.Application):
                 rssi = b.get_rssi()
                 if rssi == None:
                     rssi = -99
-                levelSignal.set_value(10+rssi)
+                self.levelSignal.set_value(10+rssi)
             except Exception as err:
                 syslog.syslog("Error: %s" % err)
 

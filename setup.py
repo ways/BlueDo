@@ -55,12 +55,12 @@ setup(
             'bluedo=bluedo:main',
         ],
     },
-    data_files=[
-        ('share/applications', ['applications/bluedo.desktop']),
-        ('share/icons/hicolor/48x48/apps', ['share/icons/hicolor/48x48/apps/bluedo.png']),
-        ('share/icons/hicolor/256x256/apps', ['share/icons/hicolor/256x256/apps/bluedo.png']),
+    # data_files=[
+    #     ('share/applications', ['applications/bluedo.desktop']),
+    #     ('share/icons/hicolor/48x48/apps', ['share/icons/hicolor/48x48/apps/bluedo.png']),
+    #     ('share/icons/hicolor/256x256/apps', ['share/icons/hicolor/256x256/apps/bluedo.png']),
 
-    ],
+    # ],
     include_package_data=True,
     python_requires='>=3.5',
     test_suite = 'tests',

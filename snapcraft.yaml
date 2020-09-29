@@ -7,10 +7,19 @@ description: |
   make it beautiful, modern and easy.
 
 base: core18
-confinement: classic
+#confinement: classic
+confinement: strict
 
 parts:
-  bluedo:
+  # Include .debs from the Ubuntu package archive
+  bluez:
+    plugin: nil
+    stage-packages: [bluez]
+  gsettings:
+    plugin: nil
+    stage-packages: [libglib2.0-bin]
+
+    bluedo:
     plugin: python
     python-version: python3
     requirements: [requirements.txt]
@@ -49,6 +58,13 @@ parts:
       #- playerctl
 
 apps:
+  # expose deb commands to end-users
+  bluez:
+    command: usr/bin/bluetoothctl
+    plugs: [bluetooth-control, bluez]
+  gsettings:
+    command: usr/bin/gsettings
+    plugs: [home]
   bluedo:
     command: bin/bluedo
     #extensions: [gnome-3-28]

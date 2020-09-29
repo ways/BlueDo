@@ -8,8 +8,14 @@ include LICENSE
 include bluedo/window.glade
 
 # Include a library
+include bluedo/bluedoapp.py
 include bluedo/bt_rssi.py
 
 # Include icon
-include images/bluedo.png
-include images/bluedo_indicator.png
+include bluedo.png
+include bluedo_indicator.png
+include share/icons/hicolor/48x48/apps/bluedo.png
+include share/icons/hicolor/256x256/apps/bluedo.png
+
+# Desktop file
+include applications/bluedo.desktop
