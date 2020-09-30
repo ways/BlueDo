@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .43
+    project_version = .44
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
 
@@ -86,7 +86,7 @@ class BlueDo(Gtk.Application):
         self.check_awaylock = self.builder.get_object("check_awaylock")
         self.check_awaypause = self.builder.get_object("check_awaypause")
         self.check_awaymute = self.builder.get_object("check_awaymute")
-        self.check_hereunmute = self.builder.get_object("check_hereunmute")
+        self.check_unmute = self.builder.get_object("check_unmute")
         self.check_awayrun = self.builder.get_object("check_awayrun")
         self.menuitem_advanced = self.builder.get_object("menuitem_advanced")
         self.menuitem_minimize = self.builder.get_object("menuitem_minimize")
@@ -145,12 +145,12 @@ class BlueDo(Gtk.Application):
         try:
             subprocess.run("which amixer > /dev/null", shell=True, check=True)
             self.check_awaymute.set_sensitive(True)
-            self.check_hereunmute.set_sensitive(True)
+            self.check_unmute.set_sensitive(True)
         except subprocess.CalledProcessError:
             self.check_awaymute.set_sensitive(False)
             self.check_awaymute.set_label("Pause music - Install amixer to enable this option")
-            self.check_hereunmute.set_sensitive(False)
-            self.check_hereunmute.set_label("Unpause music - Install amixer to enable this option")
+            self.check_unmute.set_sensitive(False)
+            self.check_unmute.set_label("Unpause music - Install amixer to enable this option")
 
         # Menu for about, advanced
         self.menuitem_advanced.set_active(self.advanced)
@@ -324,7 +324,7 @@ class BlueDo(Gtk.Application):
         self.config.set(self.config_section, 'bt_name', self.bt_name)
         self.config.set(self.config_section, 'here_unlock', str(self.check_hereunlock.get_active()))
         self.config.set(self.config_section, 'check_resume', str(self.check_resume.get_active()))
-        self.config.set(self.config_section, 'check_hereunmute', str(self.check_hereunmute.get_active()))
+        self.config.set(self.config_section, 'check_unmute', str(self.check_unmute.get_active()))
         self.config.set(self.config_section, 'here_run', str(self.check_hererun.get_active()))
         self.config.set(self.config_section, 'away_lock', str(self.check_awaylock.get_active()))
         self.config.set(self.config_section, 'away_run', str(self.check_awayrun.get_active()))
@@ -364,8 +364,8 @@ class BlueDo(Gtk.Application):
             self.check_hereunlock.set_active(True)
         if "true" in self.config.get(self.config_section, 'check_resume', fallback='false').lower():
             self.check_resume.set_active(True)
-        if "true" in self.config.get(self.config_section, 'check_hereunmute', fallback='false').lower():
-            self.check_hereunmute.set_active(True)
+        if "true" in self.config.get(self.config_section, 'check_unmute', fallback='false').lower():
+            self.check_unmute.set_active(True)
         if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
             self.check_hererun.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_lock', fallback='false').lower():

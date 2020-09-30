@@ -14,12 +14,8 @@ Beta
 
 ## From pip
 
-    sudo apt install python3-pip libbluetooth-dev playerctl
+    sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl
     pip3 install bluedo
-
-## From snap
-
-    (not yet)
 
 # Requirements
 
