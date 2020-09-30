@@ -382,7 +382,7 @@ class BlueDo(Gtk.Application):
     def scan_bluetooth(self, dryrun=False):
         ''' Load bluetooth devices '''
 
-        cmd = ['/usr/bin/bluetoothctl', 'devices']
+        cmd = ['bluetoothctl', 'devices']
         devices = []
 
         if dryrun:

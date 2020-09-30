@@ -73,6 +73,9 @@ apps:
       - x11
       - desktop
       - login-session-control
+      - mount-observe
+      - network-control
+      - home
 
   # expose deb commands to end-users
   bluez:
