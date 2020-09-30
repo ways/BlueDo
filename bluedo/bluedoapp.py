@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .44
+    project_version = .45
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
 
