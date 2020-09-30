@@ -2,7 +2,7 @@
 
 BlueDo - Bluetooth proximity automation
 
-![Logo](https://raw.githubusercontent.com/ways/BlueDo/master/share/icons/hicolor/256x256/apps/bluedo.png)
+![Logo](https://raw.githubusercontent.com/ways/BlueDo/master/images/bluedo.png)
 
 Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
 
