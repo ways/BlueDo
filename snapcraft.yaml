@@ -7,8 +7,9 @@ description: |
   make it beautiful, modern and easy.
 
 base: core18
-#confinement: classic
-confinement: strict
+grade: devel
+confinement: devmode
+icon: images/bluedo.png
 
 parts:
   # Include .debs from the Ubuntu package archive
@@ -66,6 +67,7 @@ parts:
 apps:
   bluedo:
     command: bin/bluedo
+    slots: [ dbus-svc ]
     extensions: [gnome-3-28]
     plugs:
       - x11
@@ -82,3 +84,9 @@ apps:
   amixer:
     command: usr/bin/amixer
     #plugs: [home]
+
+slots:
+  dbus-svc: # name that is used with 'snap connect' on slots side
+    interface: dbus
+    bus: session
+    name: no.graph.bluedo

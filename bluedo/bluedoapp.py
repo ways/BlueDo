@@ -356,7 +356,7 @@ class BlueDo(Gtk.Application):
         self.away_command = self.config.get(self.config_section, 'away_command', fallback='')
         self.here_command = self.config.get(self.config_section, 'here_command', fallback='')
         self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
-        if "true" in self.config.get(self.config_section, 'debug', fallback=False).lower():
+        if "true" in self.config.get(self.config_section, 'debug', fallback='false').lower():
             self.debug = True
         if "true" in self.config.get(self.config_section, 'here_unlock', fallback='false').lower():
             self.check_hereunlock.set_active(True)
