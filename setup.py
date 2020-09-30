@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='bluedo',
-    version='0.41',
+    version='0.43',
     description='Bluetooth proximity automation',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -62,6 +62,6 @@ setup(
     ],
     include_package_data=True,
     python_requires='>=3.5',
-    test_suite = 'tests',
+    #test_suite = 'tests',
 )
 

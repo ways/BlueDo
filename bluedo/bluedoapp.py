@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .40
+    project_version = .43
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
 
@@ -323,6 +323,8 @@ class BlueDo(Gtk.Application):
 
         self.config.set(self.config_section, 'bt_name', self.bt_name)
         self.config.set(self.config_section, 'here_unlock', str(self.check_hereunlock.get_active()))
+        self.config.set(self.config_section, 'check_resume', str(self.check_resume.get_active()))
+        self.config.set(self.config_section, 'check_hereunmute', str(self.check_hereunmute.get_active()))
         self.config.set(self.config_section, 'here_run', str(self.check_hererun.get_active()))
         self.config.set(self.config_section, 'away_lock', str(self.check_awaylock.get_active()))
         self.config.set(self.config_section, 'away_run', str(self.check_awayrun.get_active()))
@@ -360,6 +362,10 @@ class BlueDo(Gtk.Application):
             self.debug = True
         if "true" in self.config.get(self.config_section, 'here_unlock', fallback='false').lower():
             self.check_hereunlock.set_active(True)
+        if "true" in self.config.get(self.config_section, 'check_resume', fallback='false').lower():
+            self.check_resume.set_active(True)
+        if "true" in self.config.get(self.config_section, 'check_hereunmute', fallback='false').lower():
+            self.check_hereunmute.set_active(True)
         if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
             self.check_hererun.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_lock', fallback='false').lower():
@@ -527,6 +533,12 @@ class BlueDo(Gtk.Application):
 
         if self.check_hererun.get_active():
             run_user_command(cmd=self.entry_here.get_text())
+
+        if self.check_resume.get_active():
+            resume_music()
+
+        if self.check_unmute.get_active():
+            unmute()
 
     def away_callback(self):
         if self.debug:

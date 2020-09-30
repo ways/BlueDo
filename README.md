@@ -15,11 +15,11 @@ Beta
 ## From pip
 
     sudo apt install python3-pip libbluetooth-dev playerctl
-    pip3 install --user bluedo
+    pip3 install bluedo
 
 ## From snap
 
-    sudo snap install --classic bluedo
+    (not yet)
 
 # Requirements
 
@@ -56,11 +56,11 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
-* Figure out what freezes app sometimes. Only happends when run from codium.
 * Stop device scanning when minimized
 * "Open bluetooth settings"
 * Resume playback on "here"
 * Unmute on "here"
+* Figure out what freezes app sometimes. Only happends when run from codium.
 * Unit tests
 
 ## For snap
@@ -75,6 +75,8 @@ Note that this app will make these changes to your power management:
 
 * hard locking: lock when no signal
 * soft locking: set screensaver timeout to 10 seconds when no signal
+
+* build deb package: debuild -us -uc
 
 # Inspiration
 
