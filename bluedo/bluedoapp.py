@@ -235,7 +235,7 @@ class BlueDo(Gtk.Application):
         if self.button_enabled.get_sensitive():
 
             if self.debug:
-                print("disable_all")
+                syslog.syslog("disable_all")
 
             self.button_enabled.set_sensitive(False)
             self.menuitem_enable.set_sensitive(False)
@@ -245,7 +245,7 @@ class BlueDo(Gtk.Application):
         if not self.button_enabled.get_sensitive():
 
             if self.debug:
-                print("enable_all")
+                syslog.syslog("enable_all")
 
             self.button_enabled.set_sensitive(True)
             self.menuitem_enable.set_sensitive(True)
