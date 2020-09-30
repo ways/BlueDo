@@ -14,8 +14,8 @@ include bluedo/bt_rssi.py
 # Include icon
 include bluedo/bluedo.png
 include bluedo/bluedo_indicator.png
-include share/icons/hicolor/48x48/apps/bluedo.png
-include share/icons/hicolor/256x256/apps/bluedo.png
+#include share/icons/hicolor/48x48/apps/bluedo.png
+#include share/icons/hicolor/256x256/apps/bluedo.png
 
 # Desktop file
 include applications/bluedo.desktop
