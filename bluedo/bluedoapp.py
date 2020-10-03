@@ -1,4 +1,4 @@
-import sys
+#import sys
 import os
 import time
 import subprocess
@@ -160,7 +160,9 @@ class BlueDo(Gtk.Application):
         self.advanced_clicked(self.menuitem_advanced)
 
         # Tray icon
-        indicator = AppIndicator3.Indicator.new("customtray", os.path.dirname(os.path.realpath(__file__)) + "/bluedo_indicator.png", AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+        indicator = AppIndicator3.Indicator.new("customtray",
+            os.path.dirname(os.path.realpath(__file__)) + "/bluedo_indicator.png",
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         indicator.set_menu(self.dropdown_menu)
 
@@ -352,7 +354,7 @@ class BlueDo(Gtk.Application):
         ''' Load config '''
 
         if self.debug:
-           syslog.syslog("Loading config from %s" % self.config_path)
+            syslog.syslog("Loading config from %s" % self.config_path)
 
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(self.config_path)
@@ -514,7 +516,7 @@ class BlueDo(Gtk.Application):
             try:
                 b = BluetoothRSSI(addr=addr)
                 rssi = b.get_rssi()
-                if rssi == None:
+                if rssi is None:
                     rssi = -99
                 self.levelSignal.set_value(10+rssi)
             except Exception as err:
@@ -527,7 +529,7 @@ class BlueDo(Gtk.Application):
                 if self.enabled:
                     lost_pings += 1
                     if lost_pings == self.away_count:
-                            away_callback()
+                        away_callback()
             elif lost_pings > 0:
                 lost_pings = 0
                 here_callback()
