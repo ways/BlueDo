@@ -43,6 +43,8 @@ There are lots more options in the config file. Feel free to tune.
 
 # Screenshots
 
+![v49](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49.png)
+![v49_advanced](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49_advanced.png)
 ![v3_2](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3_2.png)
 ![v3](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3.png)
 

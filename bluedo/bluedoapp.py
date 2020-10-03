@@ -1,4 +1,4 @@
-#import sys
+import sys
 import os
 import time
 import subprocess
@@ -40,8 +40,8 @@ class BlueDo(Gtk.Application):
     #start_pingthread = None
     ping_stop = False # Signal background ping thread to shut down
     scan_stop = False # Signal background device thread to shut down
-    window_width = 970
-    window_heigth = 620
+    window_width = 1020
+    window_heigth = 700
 
     def __init__(self, *args, **kwargs):
         super().__init__(
@@ -290,12 +290,12 @@ class BlueDo(Gtk.Application):
         check_awayrun.set_visible(self.advanced)
         entry_away.set_visible(self.advanced)
 
-        self.window.set_size_request(self.window_width, 500)
+        self.window.set_size_request(self.window_width, self.window_heigth)
 
         if not self.advanced:
             check_hererun.set_active(self.advanced)
             check_awayrun.set_active(self.advanced)
-            self.window.set_size_request(self.window_width, self.window_heigth)
+            self.window.set_size_request(self.window_width, 450)
 
         self.save_config()
 
@@ -639,3 +639,6 @@ def lock():
 
     subprocess.run(cmd, shell=True)
 
+if __name__=="__main__":
+    app = BlueDo()
+    sys.exit(app.run(sys.argv))

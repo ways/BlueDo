@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg3723"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="instructions.svg">
+  <defs
+     id="defs3717" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.8847266"
+     inkscape:cx="303.16898"
+     inkscape:cy="728.16909"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1848"
+     inkscape:window-height="1016"
+     inkscape:window-x="72"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3720">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       style="fill:#000000"
+       id="g3755"
+       transform="matrix(1.3273497,0,0,1.3273497,117.08457,117.31519)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3741"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3743"
+         d="M 21,2 H 3 C 1.9,2 1,2.9 1,4 v 12 c 0,1.1 0.9,2 2,2 h 7 v 2 H 8 v 2 h 8 v -2 h -2 v -2 h 7 c 1.1,0 2,-0.9 2,-2 V 4 C 23,2.9 22.1,2 21,2 Z m 0,14 H 3 V 4 h 18 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       style="fill:#000000"
+       id="g3755-3"
+       transform="matrix(1.3273497,0,0,1.3273497,116.66342,76.895442)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3741-6"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3743-7"
+         d="M 21,2 H 3 C 1.9,2 1,2.9 1,4 v 12 c 0,1.1 0.9,2 2,2 h 7 v 2 H 8 v 2 h 8 v -2 h -2 v -2 h 7 c 1.1,0 2,-0.9 2,-2 V 4 C 23,2.9 22.1,2 21,2 Z m 0,14 H 3 V 4 h 18 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       style="fill:#000000"
+       id="g3792"
+       transform="matrix(0.59618896,0,0,0.59618896,125.29696,83.844392)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3778"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3780"
+         d="m 12,17 c 1.1,0 2,-0.9 2,-2 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 0,1.1 0.9,2 2,2 z M 18,8 H 17 V 6 C 17,3.24 14.76,1 12,1 9.24,1 7,3.24 7,6 h 1.9 c 0,-1.71 1.39,-3.1 3.1,-3.1 1.71,0 3.1,1.39 3.1,3.1 V 8 H 6 C 4.9,8 4,8.9 4,10 v 10 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 V 10 C 20,8.9 19.1,8 18,8 Z m 0,12 H 6 V 10 h 12 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       style="fill:#000000"
+       id="g3808"
+       transform="matrix(0.54354539,0,0,0.54354539,126.49023,124.33433)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3794"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3796"
+         d="M 18,8 H 17 V 6 C 17,3.24 14.76,1 12,1 9.24,1 7,3.24 7,6 V 8 H 6 C 4.9,8 4,8.9 4,10 v 10 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 V 10 C 20,8.9 19.1,8 18,8 Z m -6,9 c -1.1,0 -2,-0.9 -2,-2 0,-1.1 0.9,-2 2,-2 1.1,0 2,0.9 2,2 0,1.1 -0.9,2 -2,2 z M 15.1,8 H 8.9 V 6 c 0,-1.71 1.39,-3.1 3.1,-3.1 1.71,0 3.1,1.39 3.1,3.1 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       style="fill:#000000"
+       id="g3843"
+       transform="matrix(0.68392825,0,0,0.68392825,65.072711,81.738642)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3829"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3831"
+         d="M 16,1 H 8 C 6.34,1 5,2.34 5,4 v 16 c 0,1.66 1.34,3 3,3 h 8 c 1.66,0 3,-1.34 3,-3 V 4 C 19,2.34 17.66,1 16,1 Z m -2,20 h -4 v -1 h 4 z m 3.25,-3 H 6.75 V 4 h 10.5 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       style="fill:#000000"
+       id="g3859"
+       transform="matrix(0.43240895,0,0,0.43240895,80.795591,84.967452)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3845"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3847"
+         d="M 7,12 5,10 3,12 5,14 Z M 17.71,7.71 12,2 H 11 V 9.59 L 6.41,5 5,6.41 10.59,12 5,17.59 6.41,19 11,14.41 V 22 h 1 L 17.71,16.29 13.41,12 Z M 13,5.83 14.88,7.71 13,9.59 Z M 14.88,16.29 13,18.17 V 14.41 Z M 19,10 l -2,2 2,2 2,-2 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       style="fill:#000000"
+       id="g3875"
+       transform="matrix(0.46750467,0,0,0.46750467,79.32158,125.317)"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png">
+      <path
+         id="path3861"
+         d="M 0,0 H 24 V 24 H 0 Z"
+         inkscape:connector-curvature="0"
+         style="fill:none" />
+      <path
+         id="path3863"
+         d="m 13,5.83 1.88,1.88 -1.6,1.6 1.41,1.41 L 17.71,7.7 12,2 h -1 v 5.03 l 2,2 z M 5.41,4 4,5.41 10.59,12 5,17.59 6.41,19 11,14.41 V 22 h 1 L 16.29,17.71 18.59,20 20,18.59 Z M 13,18.17 v -3.76 l 1.88,1.88 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.27728519;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19607843;image-rendering:auto"
+       d="m 61.62808,113.09843 h 98.82955"
+       id="path36"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/larsfp/Downloads/git/bluedo/images/instructions_line.png"
+       inkscape:export-xdpi="76.256683"
+       inkscape:export-ydpi="76.256683" />
+  </g>
+</svg>
