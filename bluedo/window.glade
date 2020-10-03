@@ -54,8 +54,8 @@
   <object class="GtkWindow" id="main_window">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
-    <property name="default_width">500</property>
-    <property name="default_height">590</property>
+    <property name="default_width">970</property>
+    <property name="default_height">595</property>
     <signal name="destroy" handler="on_exit_application" swapped="no"/>
     <child type="titlebar">
       <object class="GtkHeaderBar">
@@ -98,6 +98,7 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkLabel">
+            <property name="width_request">107</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -107,8 +108,8 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">22</property>
+            <property name="x">500</property>
+            <property name="y">20</property>
           </packing>
         </child>
         <child>
@@ -122,12 +123,13 @@
             <property name="inverted">True</property>
           </object>
           <packing>
-            <property name="x">447</property>
-            <property name="y">23</property>
+            <property name="x">905</property>
+            <property name="y">58</property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel">
+            <property name="width_request">242</property>
             <property name="height_request">33</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -137,12 +139,13 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">128</property>
+            <property name="x">20</property>
+            <property name="y">360</property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel">
+            <property name="width_request">217</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -152,8 +155,8 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">356</property>
+            <property name="x">500</property>
+            <property name="y">360</property>
           </packing>
         </child>
         <child>
@@ -182,9 +185,6 @@
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
-                      <packing>
-                        <property name="y">6</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="check_hererun">
@@ -196,7 +196,7 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="y">114</property>
+                        <property name="y">105</property>
                       </packing>
                     </child>
                     <child>
@@ -207,13 +207,14 @@
                         <signal name="changed" handler="on_here_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="x">147</property>
-                        <property name="y">118</property>
+                        <property name="x">141</property>
+                        <property name="y">105</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="check_resume">
                         <property name="label" translatable="yes">Resume music</property>
+                        <property name="width_request">123</property>
                         <property name="height_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -222,7 +223,7 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="y">41</property>
+                        <property name="y">35</property>
                       </packing>
                     </child>
                     <child>
@@ -236,7 +237,7 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="y">74</property>
+                        <property name="y">70</property>
                       </packing>
                     </child>
                   </object>
@@ -251,8 +252,8 @@
             </child>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">163</property>
+            <property name="x">20</property>
+            <property name="y">397</property>
           </packing>
         </child>
         <child>
@@ -293,7 +294,7 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="y">36</property>
+                        <property name="y">35</property>
                       </packing>
                     </child>
                     <child>
@@ -307,7 +308,7 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="y">72</property>
+                        <property name="y">70</property>
                       </packing>
                     </child>
                     <child>
@@ -320,7 +321,6 @@
                         <signal name="toggled" handler="on_chkbutton_changed" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="x">1</property>
                         <property name="y">105</property>
                       </packing>
                     </child>
@@ -348,13 +348,13 @@
             </child>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">389</property>
+            <property name="x">500</property>
+            <property name="y">397</property>
           </packing>
         </child>
         <child>
           <object class="GtkComboBoxText" id="combo_device">
-            <property name="width_request">257</property>
+            <property name="width_request">404</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -369,8 +369,8 @@
             </child>
           </object>
           <packing>
-            <property name="x">190</property>
-            <property name="y">23</property>
+            <property name="x">500</property>
+            <property name="y">58</property>
           </packing>
         </child>
         <child>
@@ -386,12 +386,13 @@
             <signal name="activate-link" handler="bluetoothsettings_clicked" swapped="no"/>
           </object>
           <packing>
-            <property name="x">339</property>
-            <property name="y">64</property>
+            <property name="x">806</property>
+            <property name="y">95</property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_info">
+            <property name="width_request">313</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -402,8 +403,36 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">27</property>
-            <property name="y">73</property>
+            <property name="x">500</property>
+            <property name="y">102</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage">
+            <property name="width_request">411</property>
+            <property name="height_request">254</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">../images/instructions.png</property>
+          </object>
+          <packing>
+            <property name="y">70</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="width_request">329</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Lock/unlock computer using bluetooth connection</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">20</property>
           </packing>
         </child>
       </object>

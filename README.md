@@ -83,3 +83,4 @@ Note that this app will make these changes to your power management:
 * https://github.com/LukeSkywalker92/btproxipy
   * bt_rssi.py is from this project and is MIT licensed.
 * https://discourse.gnome.org/t/useful-documentation-for-gtk/29
+* Black/white icons in app from https://material.io

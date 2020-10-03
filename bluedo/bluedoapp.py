@@ -40,6 +40,8 @@ class BlueDo(Gtk.Application):
     #start_pingthread = None
     ping_stop = False # Signal background ping thread to shut down
     scan_stop = False # Signal background device thread to shut down
+    window_width = 970
+    window_heigth = 620
 
     def __init__(self, *args, **kwargs):
         super().__init__(
@@ -275,8 +277,8 @@ class BlueDo(Gtk.Application):
     def advanced_clicked(self, state):
         ''' Show advancd options '''
 
-        menuitem_advanced = self.builder.get_object("menuitem_advanced")
-        self.advanced = menuitem_advanced.get_active()
+        #menuitem_advanced = self.builder.get_object("menuitem_advanced")
+        self.advanced = self.menuitem_advanced.get_active()
 
         check_hererun = self.builder.get_object("check_hererun")
         entry_here = self.builder.get_object("entry_here")
@@ -288,9 +290,12 @@ class BlueDo(Gtk.Application):
         check_awayrun.set_visible(self.advanced)
         entry_away.set_visible(self.advanced)
 
+        self.window.set_size_request(self.window_width, 500)
+
         if not self.advanced:
             check_hererun.set_active(self.advanced)
             check_awayrun.set_active(self.advanced)
+            self.window.set_size_request(self.window_width, self.window_heigth)
 
         self.save_config()
 
