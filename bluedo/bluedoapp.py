@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .48
+    project_version = .49
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
 
@@ -37,9 +37,9 @@ class BlueDo(Gtk.Application):
     config = None
     minimized = False # Start up minimized
     nearby_devices = []
-    ping_thread = None
-    ping_stop = False
-    scan_stop = False # Signal background device scan to shut down
+    #start_pingthread = None
+    ping_stop = False # Signal background ping thread to shut down
+    scan_stop = False # Signal background device thread to shut down
 
     def __init__(self, *args, **kwargs):
         super().__init__(
@@ -168,8 +168,9 @@ class BlueDo(Gtk.Application):
             self.menuitem_minimize.set_active(True)
             self.window.hide()
 
-        self.start_scan() # Look for paired bluetooth devices
-        self.ping_thread = self.start_thread() # Ping selected device for RSSI
+        self.start_devicethread() # Look for paired bluetooth devices
+        #self.start_pingthread = self.start_pingthread() # Ping selected device for RSSI
+        self.start_pingthread() # Ping selected device for RSSI
 
         Gtk.main()
 
@@ -398,7 +399,7 @@ class BlueDo(Gtk.Application):
 # Bluetooth
 #
 
-    def scan_bluetooth(self, dryrun=False):
+    def bluetooth_list(self, dryrun=False):
         ''' Load bluetooth devices '''
 
         cmd = ['bluetoothctl', 'devices']
@@ -430,19 +431,22 @@ class BlueDo(Gtk.Application):
             proc.communicate() # Allow cmd to exit cleanly
         return devices
 
-    def start_scan(self):
+    def start_devicethread(self):
         if self.debug:
-            syslog.syslog("Staring thread background_scan")
-        t = threading.Thread(target = self.background_scan) 
+            syslog.syslog("Staring thread update_combodevices")
+        t = threading.Thread(target = self.update_combodevices) 
         t.start()
 
-    def background_scan(self):
+    def update_combodevices(self):
+        ''' Run bluetooth_list and compare if new bluetoothdevices are
+            present. Update combo_devices with result '''
+
         while True:
-            if self.scan_stop:
+            if self.scan_stop: # Check if asked to shut down
                 break
 
             # Save contents of combo_device, clear and reset
-            newscan = self.scan_bluetooth()
+            newscan = self.bluetooth_list()
 
             if len(newscan) == 0:
                 self.disable_all()
@@ -475,11 +479,11 @@ class BlueDo(Gtk.Application):
         self.activate()
         return 0
 
-    def start_thread(self):
+    def start_pingthread(self):
         if self.debug:
-            syslog.syslog("Staring thread bluetooth_listen")
+            syslog.syslog("Staring thread bluetooth_ping")
         thread = threading.Thread(
-            target=self.bluetooth_listen,
+            target=self.bluetooth_ping,
             args=(),
             kwargs={
                 'here_callback': self.here_callback,
@@ -491,7 +495,7 @@ class BlueDo(Gtk.Application):
         thread.start() # Start the thread
         return thread
 
-    def bluetooth_listen(self, here_callback, away_callback):
+    def bluetooth_ping(self, here_callback, away_callback):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
         lost_pings = 0

@@ -57,7 +57,6 @@ Note that this app will make these changes to your power management:
 # TODO
 
 * Stop device scanning when minimized
-* "Open bluetooth settings"
 * Easy "start on login"
 * Keep two instances from running at the same time.
 * Minimize to tray, instead of having both minimize and minimize to tray.
