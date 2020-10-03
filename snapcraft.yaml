@@ -13,9 +13,9 @@ icon: images/bluedo.png
 
 parts:
   # Include .debs from the Ubuntu package archive
-  bluez:
-    plugin: nil
-    stage-packages: [bluez]
+  # bluez:
+  #   plugin: nil
+  #   stage-packages: [bluez]
   gsettings:
     plugin: nil
     stage-packages: [libglib2.0-bin]
@@ -64,6 +64,58 @@ parts:
       - libxrender1
       #- playerctl
 
+  bluez:
+    command: "usr/lib/bluetooth/bluetoothd -E"
+    daemon: simple
+    plugs:
+      - uhid
+    slots:
+      - service
+  bluez:
+      plugin: autotools
+      source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/bluez
+      source-type: git
+      source-branch: bluez/5.44
+      configflags:
+          - --prefix=/usr
+          - --libexec=/usr/lib/
+          - --enable-experimental
+          - --enable-threads
+          - --disable-cups
+          - --enable-obex
+          - --disable-systemd
+          - --disable-silent-rules
+          - --enable-test
+          - --enable-deprecated
+      build-packages:
+          - libglib2.0-dev
+          - libdbus-1-dev
+          - libical-dev
+          - libreadline6-dev
+          - libudev-dev
+          - udev
+          - pkg-config
+      stage-packages:
+          - libical1a
+      filesets:
+          libical1a:
+            - usr/lib/*/libical*
+      stage:
+          - usr/lib/bluetooth/bluetoothd
+          - usr/lib/bluetooth/obexd
+          - usr/bin/bluetoothctl
+          - usr/bin/obexctl
+          - usr/bin/hciconfig
+          - usr/bin/hcidump
+          - usr/bin/hciattach
+          - usr/bin/hcitool
+          - usr/bin/sdptool
+          - usr/bin/btmon
+          - usr/bin/btmgmt
+          - usr/share/doc/libical1a/copyright
+          - $libical1a
+
+
 apps:
   bluedo:
     command: bin/bluedo
@@ -76,11 +128,16 @@ apps:
       - mount-observe
       - network-control
       - home
+      - bluetooth-control
+      - bluez
+      - client
 
   # expose deb commands to end-users
-  bluez:
-    command: usr/bin/bluetoothctl
-    plugs: [bluetooth-control, bluez]
+  # bluez:
+  #   command: usr/bin/bluetoothctl
+  #   plugs: [bluetooth-control, bluez, client, mount-observe, home, uhid]
+  #   slots:
+  #     - service
   gsettings:
     command: usr/bin/gsettings
     plugs: [home]
@@ -88,8 +145,16 @@ apps:
     command: usr/bin/amixer
     #plugs: [home]
 
+
 slots:
   dbus-svc: # name that is used with 'snap connect' on slots side
     interface: dbus
     bus: session
     name: no.graph.bluedo
+  service:
+    interface: bluez
+
+plugs:
+  client:
+    interface: bluez
+

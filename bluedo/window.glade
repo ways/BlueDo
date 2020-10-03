@@ -353,21 +353,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label_info">
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Device should already be paired with computer.</property>
-            <attributes>
-              <attribute name="foreground" value="#88888a8a8585"/>
-            </attributes>
-          </object>
-          <packing>
-            <property name="x">30</property>
-            <property name="y">62</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkComboBoxText" id="combo_device">
             <property name="width_request">257</property>
             <property name="height_request">40</property>
@@ -386,6 +371,39 @@
           <packing>
             <property name="x">190</property>
             <property name="y">23</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLinkButton" id="link_bluetoothsettings">
+            <property name="label" translatable="yes">button</property>
+            <property name="width_request">80</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <property name="uri">gnome-control-center bluetooth</property>
+            <signal name="activate-link" handler="bluetoothsettings_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">339</property>
+            <property name="y">64</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_info">
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Device should already be paired with computer
+</property>
+            <attributes>
+              <attribute name="foreground" value="#88888a8a8585"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">27</property>
+            <property name="y">73</property>
           </packing>
         </child>
       </object>

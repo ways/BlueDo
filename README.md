@@ -37,6 +37,10 @@ Only tested on Ubuntu 20.04 with GNOME.
 * -e / --enable to start service on app start.
 * -m / --minimize to start minimized
 
+# Configuration
+
+There are lots more options in the config file. Feel free to tune.
+
 # Screenshots
 
 ![v3_2](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3_2.png)
@@ -54,12 +58,15 @@ Note that this app will make these changes to your power management:
 
 * Stop device scanning when minimized
 * "Open bluetooth settings"
-* Resume playback on "here"
-* Unmute on "here"
+* Easy "start on login"
+* Keep two instances from running at the same time.
+* Minimize to tray, instead of having both minimize and minimize to tray.
+* Change to dynamic widget layout instead of fixed.
 * Figure out what freezes app sometimes. Only happends when run from codium.
 * Unit tests
 
 ## For snap
+
 * See if build config can be cut down
 * Theming doesn't work right (looks ugly)
 * Attempt to confine
@@ -71,8 +78,6 @@ Note that this app will make these changes to your power management:
 
 * hard locking: lock when no signal
 * soft locking: set screensaver timeout to 10 seconds when no signal
-
-* build deb package: debuild -us -uc
 
 # Inspiration
 

@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .45
+    project_version = .48
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
 
@@ -94,6 +94,9 @@ class BlueDo(Gtk.Application):
         self.menuitem_enable = self.builder.get_object("menuitem_enable")
         self.label_info = self.builder.get_object("label_info")
         self.levelSignal = self.builder.get_object("levelSignal")
+
+        self.link_bluetoothsettings = self.builder.get_object("link_bluetoothsettings")
+        self.link_bluetoothsettings.set_label("Bluetooth settings")
 
         # Load config
         self.load_config()
@@ -194,6 +197,7 @@ class BlueDo(Gtk.Application):
 
         syslog.syslog("%s enabled %s." % (self.project_name,state))
         self.enabled = state
+        self.save_config()
 
     def on_device_changed(self, widget):
         ''' When combo_device changes '''
@@ -303,6 +307,12 @@ class BlueDo(Gtk.Application):
         ''' Toggle enable '''
         self.button_enabled.set_active(not self.button_enabled.get_active())
 
+    def bluetoothsettings_clicked(self, state):
+        ''' Open gnome-control-center on bluetooth '''
+
+        os.system('gnome-control-center bluetooth')
+
+
 #
 # Config
 #
@@ -332,6 +342,7 @@ class BlueDo(Gtk.Application):
         self.config.set(self.config_section, 'away_pause', str(self.check_awaypause.get_active()))
         self.config.set(self.config_section, 'advanced', str(self.advanced))
         self.config.set(self.config_section, 'minimized', str(self.minimized))
+        self.config.set(self.config_section, 'enabled', str(self.enabled))
 
         with open(self.config_path, 'w') as f:
             self.config.write(f)
@@ -380,6 +391,8 @@ class BlueDo(Gtk.Application):
             self.advanced = True
         if "true" in self.config.get(self.config_section, 'minimized', fallback='false').lower():
             self.minimized = True
+        if "true" in self.config.get(self.config_section, 'enabled', fallback='false').lower():
+            self.enabled = True
 
 #
 # Bluetooth
