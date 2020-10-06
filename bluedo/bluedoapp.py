@@ -19,9 +19,10 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .50
+    project_version = .53
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
+    run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
 
     builder = None
     enabled = False
@@ -75,7 +76,7 @@ class BlueDo(Gtk.Application):
 
         # Load widgets from glade file
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.dirname(os.path.realpath(__file__)) + "/window.glade")
+        self.builder.add_from_file(self.run_path + "/window.glade")
 
         self.button_enabled = self.builder.get_object("button_enabled")
         self.combo_device = self.builder.get_object("combo_device")
@@ -122,7 +123,7 @@ class BlueDo(Gtk.Application):
         self.entry_here.set_text("%s" % self.here_command)
 
         # Icon
-        self.icon_path = os.path.dirname(os.path.realpath(__file__)) + "/bluedo.png"
+        self.icon_path = self.run_path + "/bluedo.png"
 
         self.window = self.builder.get_object("main_window")
         try:
@@ -166,7 +167,7 @@ class BlueDo(Gtk.Application):
 
         # Tray icon
         indicator = AppIndicator3.Indicator.new("customtray",
-            os.path.dirname(os.path.realpath(__file__)) + "/bluedo_indicator.png",
+            self.run_path + "/bluedo_indicator.png",
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         indicator.set_menu(self.dropdown_menu)
@@ -191,7 +192,7 @@ class BlueDo(Gtk.Application):
     def show_animation(self):
         ''' Show a demo animation for 30 sec, then switch to static image '''
 
-        path_animation = "images/lock_animation.gif"
+        path_animation = self.run_path + "lock_animation.gif"
         pixbufanim = GdkPixbuf.PixbufAnimation.new_from_file(path_animation)
         self.demo_image = Gtk.Image()
         self.demo_image.set_from_animation(pixbufanim)
@@ -202,7 +203,7 @@ class BlueDo(Gtk.Application):
     def stop_animation(self):
         ''' Switch demo animation to static image '''
 
-        path_picture = "images/unlocked.png"
+        path_picture = self.run_path + "unlocked.png"
         pixbuf = GdkPixbuf.PixbufAnimation.new_from_file(path_picture)
         self.demo_image.set_from_animation(pixbuf)
         self.instructions_viewport.add(self.demo_image)
