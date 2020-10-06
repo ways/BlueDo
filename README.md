@@ -43,6 +43,7 @@ There are lots more options in the config file. Feel free to tune.
 
 # Screenshots
 
+![v53](https://raw.githubusercontent.com/ways/BlueDo/master/images/v53.png)
 ![v49](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49.png)
 ![v49_advanced](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49_advanced.png)
 ![v3_2](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3_2.png)
@@ -64,6 +65,7 @@ Note that this app will make these changes to your power management:
 * Minimize to tray, instead of having both minimize and minimize to tray.
 * Change to dynamic widget layout instead of fixed.
 * Figure out what freezes app sometimes. Only happends when run from codium.
+* Move media files to some other dir?
 * Unit tests
 
 ## For snap
