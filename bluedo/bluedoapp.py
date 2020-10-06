@@ -96,9 +96,12 @@ class BlueDo(Gtk.Application):
         self.menuitem_enable = self.builder.get_object("menuitem_enable")
         self.label_info = self.builder.get_object("label_info")
         self.levelSignal = self.builder.get_object("levelSignal")
+        self.instructions_viewport = self.builder.get_object("instructions_viewport")
 
         self.link_bluetoothsettings = self.builder.get_object("link_bluetoothsettings")
         self.link_bluetoothsettings.set_label("Bluetooth settings")
+
+        self.show_animation()
 
         # Load config
         self.load_config()
@@ -184,6 +187,26 @@ class BlueDo(Gtk.Application):
         self.here_callback()
 
         Gtk.main_quit()
+
+    def show_animation(self):
+        ''' Show a demo animation for 30 sec, then switch to static image '''
+
+        path_animation = "images/lock_animation.gif"
+        pixbufanim = GdkPixbuf.PixbufAnimation.new_from_file(path_animation)
+        self.demo_image = Gtk.Image()
+        self.demo_image.set_from_animation(pixbufanim)
+        self.instructions_viewport.add(self.demo_image)
+        self.demo_image.show()
+        GLib.timeout_add(30000, self.stop_animation)
+
+    def stop_animation(self):
+        ''' Switch demo animation to static image '''
+
+        path_picture = "images/unlocked.png"
+        pixbuf = GdkPixbuf.PixbufAnimation.new_from_file(path_picture)
+        self.demo_image.set_from_animation(pixbuf)
+        self.instructions_viewport.add(self.demo_image)
+
 
 #
 # Widgets
