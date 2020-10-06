@@ -167,7 +167,7 @@ class BlueDo(Gtk.Application):
 
         # Tray icon
         indicator = AppIndicator3.Indicator.new("customtray",
-            self.run_path + "/bluedo_indicator.png",
+            self.run_path + "bluedo_indicator.svg",
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         indicator.set_menu(self.dropdown_menu)
