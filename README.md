@@ -59,11 +59,13 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
-* Stop device scanning when minimized
-* Easy "start on login"
 * Keep two instances from running at the same time.
+* Easy "start on login"
 * Minimize to tray, instead of having both minimize and minimize to tray.
+* Show status in tray icon.
+* Stop device scanning when minimized
 * Change to dynamic widget layout instead of fixed.
+* Change preferences button to proper burger menu.
 * Figure out what freezes app sometimes. Only happends when run from codium.
 * Move media files to some other dir?
 * Unit tests

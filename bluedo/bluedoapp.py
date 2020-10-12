@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .53
+    project_version = .54
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -166,11 +166,11 @@ class BlueDo(Gtk.Application):
         self.advanced_clicked(self.menuitem_advanced)
 
         # Tray icon
-        indicator = AppIndicator3.Indicator.new("customtray",
-            self.run_path + "bluedo_indicator.svg",
+        self.indicator = AppIndicator3.Indicator.new("customtray",
+            self.run_path + "bluedo.png",
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
-        indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-        indicator.set_menu(self.dropdown_menu)
+        self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        self.indicator.set_menu(self.dropdown_menu)
 
         if self.minimized:
             self.menuitem_minimize.set_active(True)
@@ -576,6 +576,8 @@ class BlueDo(Gtk.Application):
         if self.debug:
             syslog.syslog("Here")
 
+        self.indicator.set_icon_full(self.run_path + "phonelink-white-18dp.svg", "Here")
+
         if self.check_hereunlock.get_active():
             unlock()
 
@@ -591,6 +593,8 @@ class BlueDo(Gtk.Application):
     def away_callback(self):
         if self.debug:
             syslog.syslog("Away")
+
+        self.indicator.set_icon_full(self.run_path + "phonelink_off-white-18dp.svg", "Away")
 
         if self.check_awaylock.get_active():
             lock()

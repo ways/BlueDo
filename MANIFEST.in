@@ -13,7 +13,8 @@ include bluedo/bt_rssi.py
 
 # Include icon
 include bluedo/bluedo.png
-include bluedo/bluedo_indicator.png
+include bluedo/phonelink-white-18dp.svg
+include bluedo/phonelink_off-white-18dp.svg
 include bluedo/unlocked.png
 include bluedo/lock_animation.gif
 #include share/icons/hicolor/48x48/apps/bluedo.png
