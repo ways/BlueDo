@@ -19,10 +19,11 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = .54
+    project_version = .55
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
+    autostart_dir = os.getenv("HOME") + '/.config/autostart/'
 
     builder = None
     enabled = False
@@ -101,6 +102,8 @@ class BlueDo(Gtk.Application):
 
         self.link_bluetoothsettings = self.builder.get_object("link_bluetoothsettings")
         self.link_bluetoothsettings.set_label("Bluetooth settings")
+        self.menuitem_autostart = self.builder.get_object("menuitem_autostart")
+        self.menuitem_autostart.set_active(self.check_autostart())
 
         self.show_animation()
 
@@ -339,6 +342,11 @@ class BlueDo(Gtk.Application):
         ''' Toggle enable '''
         self.button_enabled.set_active(not self.button_enabled.get_active())
 
+    def autostart_clicked(self, state):
+        ''' Toggle autostart '''
+        
+        self.create_autostart(ensure=self.menuitem_autostart.get_active())
+
     def bluetoothsettings_clicked(self, state):
         ''' Open gnome-control-center on bluetooth '''
 
@@ -425,6 +433,26 @@ class BlueDo(Gtk.Application):
             self.minimized = True
         if "true" in self.config.get(self.config_section, 'enabled', fallback='false').lower():
             self.enabled = True
+
+    def create_autostart(self, ensure=True):
+        """ Create autostart file. Or deletes if not ensure. """
+
+        if ensure:
+            with open(self.autostart_dir + self.project_name + '.desktop', 'w') as f:
+                f.write("""[Desktop Entry]
+Name=BlueDo
+Comment=Bluetooth proximity automation
+Exec=bluedo
+Icon=bluedo
+Terminal=false
+Type=Application
+Categories=Utility;
+""")
+        else:
+            os.remove(self.autostart_dir + self.project_name + '.desktop')
+
+    def check_autostart(self):
+        return os.path.isfile(self.autostart_dir + self.project_name + '.desktop')
 
 #
 # Bluetooth
@@ -607,7 +635,6 @@ class BlueDo(Gtk.Application):
 
         if self.check_awayrun.get_active():
             run_user_command(cmd=self.entry_away.get_text())
-
 
 
 #
