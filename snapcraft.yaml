@@ -75,7 +75,7 @@ parts:
       plugin: autotools
       source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/bluez
       source-type: git
-      source-branch: bluez/5.53
+      source-branch: bluez/5.50
       configflags:
           - --prefix=/usr
           - --libexec=/usr/lib/
@@ -95,25 +95,28 @@ parts:
           - libudev-dev
           - udev
           - pkg-config
-      stage-packages:
-          - libical3
-      filesets:
-          libical3:
-            - usr/lib/*/libical*
+      # stage-packages:
+      #     - libical3
+#      filesets:
+          # libical3:
+          #   - usr/lib/*/libical*
+          # btmgmt:
+          #   - bluez/build/tools/btmgmt
       stage:
           - usr/lib/bluetooth/bluetoothd
-          - usr/lib/bluetooth/obexd
+          #- usr/lib/bluetooth/obexd
           - usr/bin/bluetoothctl
-          - usr/bin/obexctl
+          #- usr/bin/obexctl
           - usr/bin/hciconfig
           - usr/bin/hcidump
           - usr/bin/hciattach
           - usr/bin/hcitool
           - usr/bin/sdptool
           - usr/bin/btmon
-          - usr/bin/btmgmt
+          #- usr/bin/btmgmt
+#          - $btmgmt
           #- usr/share/doc/libical1a/copyright
-          - $libical3
+          # - $libical3
 
 
 apps:

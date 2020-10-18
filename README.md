@@ -22,6 +22,8 @@ Beta
 * sudo apt install python3-pip libbluetooth-dev playerctl
 * pip3 install --user bluedo
 
+Needs bluetoothctl ~5.50 or newer.
+
 Use these system commands:
 
 * bluetoothctl
