@@ -96,9 +96,9 @@ parts:
           - udev
           - pkg-config
       stage-packages:
-          - libical1a
+          - libical3
       filesets:
-          libical1a:
+          libical3:
             - usr/lib/*/libical*
       stage:
           - usr/lib/bluetooth/bluetoothd
@@ -112,8 +112,8 @@ parts:
           - usr/bin/sdptool
           - usr/bin/btmon
           - usr/bin/btmgmt
-          - usr/share/doc/libical1a/copyright
-          - $libical1a
+          #- usr/share/doc/libical1a/copyright
+          - $libical3
 
 
 apps:

@@ -7,6 +7,21 @@
     <property name="can_focus">False</property>
     <property name="menu_type_hint">menu</property>
     <child>
+      <object class="GtkMenuItem">
+        <property name="visible">True</property>
+        <property name="sensitive">False</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Bluedo</property>
+        <property name="use_underline">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="menuitem_about">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
