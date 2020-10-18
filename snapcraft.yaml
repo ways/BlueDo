@@ -75,7 +75,7 @@ parts:
       plugin: autotools
       source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/bluez
       source-type: git
-      source-branch: bluez/5.44
+      source-branch: bluez/5.53
       configflags:
           - --prefix=/usr
           - --libexec=/usr/lib/
@@ -133,11 +133,12 @@ apps:
       - client
 
   # expose deb commands to end-users
-  # bluez:
-  #   command: usr/bin/bluetoothctl
-  #   plugs: [bluetooth-control, bluez, client, mount-observe, home, uhid]
-  #   slots:
-  #     - service
+  bluez:
+    command: "usr/lib/bluetooth/bluetoothd"
+    daemon: simple
+    plugs: [bluetooth-control, bluez, client, mount-observe, home, uhid]
+    slots:
+      - service
   gsettings:
     command: usr/bin/gsettings
     plugs: [home]

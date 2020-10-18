@@ -479,11 +479,17 @@ Categories=Utility;
             )
 
             for line in iter(proc.stdout.readline, b''):
+                print("bluetoothctl line: " + line)
                 if line.strip() == '': # iter calls until output is ''
                     break
                 if line == 'No default controller available\n':
                     break
-                addr = line.split()[1]
+                addr = ''
+                try:
+                    addr = line.split()[1]
+                except IndexError:
+                    print("Info: Skipping empty line from bluetoothctl.")
+                    continue
                 name = ' '.join(line.split()[2:])
                 devices += [(name, addr)]
 
