@@ -17,6 +17,14 @@ Beta
     sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl
     pip3 install --upgrade bluedo
 
+## From snap store
+
+    snap install bluedo
+    give permissions:
+    * "Use bluetooth device": "bluedo:service"
+    * "Login session control"
+    * "gsettings: allows access to any gsettings item of current user"
+
 # Requirements
 
 * sudo apt install python3-pip libbluetooth-dev playerctl
@@ -61,6 +69,7 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
+* Default lock / unlock ON.
 * Keep two instances from running at the same time.
 * Minimize to tray, instead of having both minimize and minimize to tray.
 * Stop device scanning when minimized
@@ -72,9 +81,11 @@ Note that this app will make these changes to your power management:
 
 ## For snap
 
+* /bin/sh: 1: loginctl: Permission denied
 * See if build config can be cut down
-* Theming doesn't work right (looks ugly)
-* Attempt to confine
+* See if permissions can be cut down
+* Warn when permissions are missing (some need to be given manually), bluetooth, session control
+* Autostart when snap?
 
 # Development docs
 

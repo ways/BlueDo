@@ -8,7 +8,8 @@ description: |
 
 base: core18
 grade: devel
-confinement: devmode
+#confinement: devmode
+confinement: strict
 icon: bluedo/bluedo.png
 
 parts:
