@@ -1,0 +1,8 @@
+app-id: org.flatpak.bluedo
+runtime: org.freedesktop.Platform
+runtime-version: '19.08'
+sdk: org.freedesktop.Sdk
+command: hello.sh
+modules:
+  - python3-bluedo.json
+  # Generated with: python3 ~/Downloads/flatpak-pip-generator bluedo

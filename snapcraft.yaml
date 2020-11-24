@@ -66,52 +66,53 @@ parts:
       - uhid
     slots:
       - service
+
   bluez:
-      plugin: autotools
-      source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/bluez
-      source-type: git
-      source-branch: bluez/5.50
-      configflags:
-          - --prefix=/usr
-          - --libexec=/usr/lib/
-          - --enable-experimental
-          - --enable-threads
-          - --disable-cups
-          - --enable-obex
-          - --disable-systemd
-          - --disable-silent-rules
-          - --enable-test
-          - --enable-deprecated
-      build-packages:
-          - libglib2.0-dev
-          - libdbus-1-dev
-          - libical-dev
-          - libreadline6-dev
-          - libudev-dev
-          - udev
-          - pkg-config
-      stage:
-          - usr/lib/bluetooth/bluetoothd
-          - usr/bin/bluetoothctl
-          - usr/bin/hciconfig
-          - usr/bin/hcidump
-          - usr/bin/hciattach
-          - usr/bin/hcitool
-          - usr/bin/sdptool
-          - usr/bin/btmon
+    plugin: autotools
+    source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/bluez
+    source-type: git
+    source-branch: bluez/5.50
+    configflags:
+        - --prefix=/usr
+        - --libexec=/usr/lib/
+        - --enable-experimental
+        - --enable-threads
+        - --disable-cups
+        - --enable-obex
+        - --disable-systemd
+        - --disable-silent-rules
+        - --enable-test
+        - --enable-deprecated
+    build-packages:
+        - libglib2.0-dev
+        - libdbus-1-dev
+        - libical-dev
+        - libreadline6-dev
+        - libudev-dev
+        - udev
+        - pkg-config
+    stage:
+        - usr/lib/bluetooth/bluetoothd
+        - usr/bin/bluetoothctl
+        - usr/bin/hciconfig
+        - usr/bin/hcidump
+        - usr/bin/hciattach
+        - usr/bin/hcitool
+        - usr/bin/sdptool
+        - usr/bin/btmon
 
 apps:
   bluedo:
     command: bin/bluedo
-    slots: [ dbus-svc ]
+    #slots: [ dbus-svc ]
     extensions: [gnome-3-28]
     plugs:
       - x11
       - desktop
       - login-session-control
-      - mount-observe
-      - network-control
-      - home
+      #- mount-observe
+      #- network-control
+      #- home
       - bluetooth-control
       - bluez
       - client
@@ -120,7 +121,7 @@ apps:
   bluez:
     command: "usr/lib/bluetooth/bluetoothd"
     daemon: simple
-    plugs: [bluetooth-control, bluez, client, mount-observe, home, uhid]
+    plugs: [bluetooth-control, bluez, client] #, mount-observe, home, uhid]
     slots:
       - service
   gsettings:
