@@ -27,10 +27,7 @@ Beta
 
 # Requirements
 
-* sudo apt install python3-pip libbluetooth-dev playerctl
-* pip3 install --user bluedo
-
-Needs bluetoothctl ~5.50 or newer.
+Needs bluetoothctl ~5.50 or newer. Version above .55 needs Python 3.9.
 
 Use these system commands:
 
@@ -40,7 +37,7 @@ Use these system commands:
 * amixer
 * playerctl
 
-Only tested on Ubuntu 20.04 with GNOME.
+Only tested on Ubuntu 20.04-21.04 with GNOME.
 
 # Command line options
 

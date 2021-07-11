@@ -4,6 +4,11 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+import xdg
+icon_path = 'share/icons/hicolor/256x256/apps'
+if xdg.xdg_data_dirs:
+    icon_path = os.path.join(xdg.xdg_data_dirs, '/icons/hicolor/256x256/apps')
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -57,7 +62,7 @@ setup(
     },
     data_files=[
         ('share/applications', ['applications/bluedo.desktop']),
-        ('share/icons/hicolor/256x256/apps', ['bluedo/bluedo.png']),
+        (icon_path, ['bluedo/bluedo.png']),
     ],
     include_package_data=True,
     python_requires='>=3.5',

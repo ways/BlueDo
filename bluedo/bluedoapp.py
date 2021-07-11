@@ -27,7 +27,7 @@ class BlueDo(Gtk.Application):
 
     builder = None
     enabled = False
-    debug = True
+    debug = False
     threshold = 0
     interval = 4
     away_count = 5
@@ -479,7 +479,8 @@ Categories=Utility;
             )
 
             for line in iter(proc.stdout.readline, b''):
-                print("bluetoothctl line: " + line)
+                if BlueDo.debug:
+                    print("bluetoothctl line: " + line)
                 if line.strip() == '': # iter calls until output is ''
                     break
                 if line == 'No default controller available\n':

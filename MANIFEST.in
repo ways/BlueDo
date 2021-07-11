@@ -17,8 +17,8 @@ include bluedo/phonelink-white-18dp.svg
 include bluedo/phonelink_off-white-18dp.svg
 include bluedo/unlocked.png
 include bluedo/lock_animation.gif
-#include share/icons/hicolor/48x48/apps/bluedo.png
-#include share/icons/hicolor/256x256/apps/bluedo.png
+include share/icons/hicolor/48x48/apps/bluedo.png
+include share/icons/hicolor/256x256/apps/bluedo.png
 
 # Desktop file
 include applications/bluedo.desktop
