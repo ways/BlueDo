@@ -13,7 +13,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='bluedo',
-    version='0.55',
+    version='0.56',
     description='Bluetooth proximity automation',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -37,10 +37,7 @@ setup(
 
         # Specify the Python versions you support here.
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         "Topic :: Desktop Environment",
         "Topic :: Desktop Environment :: Gnome",
         "Topic :: Security",
@@ -61,7 +58,7 @@ setup(
         (icon_path, ['bluedo/bluedo.png']),
     ],
     include_package_data=True,
-    python_requires='>=3.5',
+    python_requires='>=3.9',
     #test_suite = 'tests',
 )
 
