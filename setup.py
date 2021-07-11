@@ -4,12 +4,8 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-import xdg
-icon_path = 'share/icons/hicolor/256x256/apps'
-if xdg.xdg_data_dirs:
-    icon_path = os.path.join(xdg.xdg_data_dirs, '/icons/hicolor/256x256/apps')
-
 here = path.abspath(path.dirname(__file__))
+icon_path = 'share/icons/hicolor/256x256/apps'
 
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
