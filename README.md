@@ -72,17 +72,8 @@ Note that this app will make these changes to your power management:
 * Stop device scanning when minimized
 * Change to dynamic widget layout instead of fixed.
 * Change preferences button to proper burger menu.
-* Figure out what freezes app sometimes. Only happends when run from codium.
 * Move media files to some other dir?
 * Unit tests
-
-## For snap
-
-* /bin/sh: 1: loginctl: Permission denied
-* See if build config can be cut down
-* See if permissions can be cut down
-* Warn when permissions are missing (some need to be given manually), bluetooth, session control
-* Autostart when snap?
 
 # Development docs
 
