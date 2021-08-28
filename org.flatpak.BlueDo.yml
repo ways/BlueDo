@@ -1,8 +1,17 @@
+# https://docs.flatpak.org/en/latest/python.html
+
 app-id: org.flatpak.bluedo
 runtime: org.freedesktop.Platform
-runtime-version: '19.08'
+runtime-version: '20.08' # python3.8
 sdk: org.freedesktop.Sdk
-command: hello.sh
+command: bluedo
 modules:
   - python3-bluedo.json
-  # Generated with: python3 ~/Downloads/flatpak-pip-generator bluedo
+  - name: bluedo
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=/app --no-deps .
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/bb/a0/6a3fb7ea107707719b765dbf4f65439dd92f2bca4d7ef670db5126fad690/bluedo-0.54.tar.gz
+        sha256: 2c1c755aaffc725e57549e2a26d205cbe63488937e4a039a2ca0ab29455899a1
