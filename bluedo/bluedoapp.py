@@ -1,3 +1,5 @@
+from gi.repository import Gtk, Gio, GLib, GdkPixbuf, AppIndicator3
+
 import sys
 import os
 import time
@@ -6,11 +8,9 @@ import threading
 import syslog
 import appdirs
 import configparser
-
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
-from gi.repository import Gtk, Gio, GLib, GdkPixbuf, AppIndicator3
 
 try:
     from bluedo.bt_rssi import BluetoothRSSI
@@ -384,7 +384,7 @@ class BlueDo(Gtk.Application):
         self.config.set(self.config_section, 'minimized', str(self.minimized))
         self.config.set(self.config_section, 'enabled', str(self.enabled))
 
-        with open(self.config_path, 'w') as f:
+        with open(self.config_path, mode='w', encoding="utf8") as f:
             self.config.write(f)
 
     def load_config(self):
@@ -438,7 +438,7 @@ class BlueDo(Gtk.Application):
         """ Create autostart file. Or deletes if not ensure. """
 
         if ensure:
-            with open(self.autostart_dir + self.project_name + '.desktop', 'w') as f:
+            with open(self.autostart_dir + self.project_name + '.desktop', mode='w', encoding="utf8") as f:
                 f.write("""[Desktop Entry]
 Name=BlueDo
 Comment=Bluetooth proximity automation
@@ -471,30 +471,30 @@ Categories=Utility;
                 ('[TV] tv10b', '78:BD:BC:6E:C5:A3'),
             ]
         else:
-            proc = subprocess.Popen(
-                args=cmd, 
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True
-            )
+            with subprocess.Popen(
+                    args=cmd, 
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True
+            ) as proc:
 
-            for line in iter(proc.stdout.readline, b''):
-                if BlueDo.debug:
-                    print("bluetoothctl line: " + line)
-                if line.strip() == '': # iter calls until output is ''
-                    break
-                if line == 'No default controller available\n':
-                    break
-                addr = ''
-                try:
-                    addr = line.split()[1]
-                except IndexError:
-                    print("Info: Skipping empty line from bluetoothctl.")
-                    continue
-                name = ' '.join(line.split()[2:])
-                devices += [(name, addr)]
+                for line in iter(proc.stdout.readline, b''):
+                    if BlueDo.debug:
+                        print("bluetoothctl line: " + line)
+                    if line.strip() == '': # iter calls until output is ''
+                        break
+                    if line == 'No default controller available\n':
+                        break
+                    addr = ''
+                    try:
+                        addr = line.split()[1]
+                    except IndexError:
+                        print("Info: Skipping empty line from bluetoothctl.")
+                        continue
+                    name = ' '.join(line.split()[2:])
+                    devices += [(name, addr)]
 
-            proc.communicate() # Allow cmd to exit cleanly
+                proc.communicate() # Allow cmd to exit cleanly
         return devices
 
     def start_devicethread(self):
@@ -651,27 +651,29 @@ Categories=Utility;
 def run_user_command(cmd=''):
     ''' Run user supplied command '''
     syslog.syslog("Running user command <%s>." % cmd)
-    subprocess.run(cmd, shell=True)
+    subprocess.run(cmd, shell=True, check=True)
 
 def mute():
     ''' Mute sound '''
     syslog.syslog("Muting sound.")
-    subprocess.run("amixer set Master mute > /dev/null", shell=True)
+    subprocess.run("amixer set Master mute > /dev/null", shell=True, check=True)
 
 def unmute():
     ''' Unmute sound '''
     syslog.syslog("Unmuting sound.")
-    subprocess.run("amixer set Master unmute > /dev/null; amixer set Speaker unmute > /dev/null; amixer set Headphone unmute > /dev/null;", shell=True)
+    subprocess.run("amixer set Master unmute > /dev/null; amixer set Speaker " +\
+        "unmute > /dev/null; amixer set Headphone unmute > /dev/null;",
+        shell=True, check=True)
 
 def pause_music():
     ''' Pause music '''
     syslog.syslog("Pausing music.")
-    subprocess.run("playerctl pause 2> /dev/null", shell=True)
+    subprocess.run("playerctl pause 2> /dev/null", shell=True, check=True)
 
 def resume_music():
     ''' Resume music '''
     syslog.syslog("Resume music.")
-    subprocess.run("playerctl play 2> /dev/null", shell=True)
+    subprocess.run("playerctl play 2> /dev/null", shell=True, check=True)
 
 def unlock():
     ''' Unlock desktop session '''
@@ -684,7 +686,7 @@ def unlock():
     # Hard unlock.
     cmd += "loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
 
-    subprocess.run(cmd, shell=True)
+    subprocess.run(cmd, shell=True, check=True)
 
 def lock():
     ''' Lock desktop session '''
@@ -699,7 +701,8 @@ def lock():
         "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay +\
         "gsettings set org.gnome.desktop.screensaver lock-delay 0; "
 
-    subprocess.run(cmd, shell=True)
+    subprocess.run(cmd, shell=True, check=True)
+
 
 if __name__=="__main__":
     app = BlueDo()

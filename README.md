@@ -17,17 +17,9 @@ Beta
     sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl
     pip3 install --upgrade bluedo
 
-## From snap store
-
-    snap install bluedo
-    give permissions:
-    * "Use bluetooth device": "bluedo:service"
-    * "Login session control"
-    * "gsettings: allows access to any gsettings item of current user"
-
 # Requirements
 
-Needs bluetoothctl ~5.50 or newer. Version above .55 needs Python 3.9.
+Needs bluetoothctl ~5.50 or newer.
 
 Use these system commands:
 
@@ -79,6 +71,7 @@ Note that this app will make these changes to your power management:
 
 * scan for devices: bluetoothctl devices
 * rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable)
+* Version below .56 needs Python < 3.9
 
 * hard locking: lock when no signal
 * soft locking: set screensaver timeout to 10 seconds when no signal
