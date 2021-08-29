@@ -1,3 +1,6 @@
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('AppIndicator3', '0.1')
 from gi.repository import Gtk, Gio, GLib, GdkPixbuf, AppIndicator3
 
 import sys
@@ -8,9 +11,6 @@ import threading
 import syslog
 import appdirs
 import configparser
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('AppIndicator3', '0.1')
 
 try:
     from bluedo.bt_rssi import BluetoothRSSI

@@ -1,0 +1,13 @@
+Source: bluedo
+Section: contrib/python
+Priority: extra
+Maintainer: Lars Falk-Petersen <dev@falkp.no>
+Build-Depends: debhelper (>= 9), python3, python3-venv, python3-dev, dh-virtualenv (>= 1.1), tar
+Standards-Version: 3.9.5
+Homepage: https://github.com/ways/bluedo
+
+Package: bluedo
+Architecture: any
+Pre-Depends: dpkg (>= 1.16.1), python3, python3-venv, python3-setuptools, ${misc:Pre-Depends}
+Depends: ${python:Depends}, ${misc:Depends}, playerctl
+Description: BlueDo - Bluetooth proximity automation. Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
