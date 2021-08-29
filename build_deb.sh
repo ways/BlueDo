@@ -1,3 +1,4 @@
 #!/bin/bash
 
-debuild --no-tgz-check
+debuild \
+  --no-tgz-check

@@ -1,5 +1,5 @@
-bluedo (0.57) unstable; urgency=low
+bluedo (0.57) stable; urgency=low
 
   * Initial deb release.
 
- -- Lars <dev@falkp.no>  Sun, 29 Aug 2021 09:51:38 +0200
+ -- Lars Falk-Petersen <dev@falkp.no>  Sun, 29 Aug 2021 09:51:38 +0200
