@@ -411,7 +411,7 @@ class BlueDo(Gtk.Application):
         self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
         if "true" in self.config.get(self.config_section, 'debug', fallback='false').lower():
             self.debug = True
-        if "true" in self.config.get(self.config_section, 'here_unlock', fallback='false').lower():
+        if "true" in self.config.get(self.config_section, 'here_unlock', fallback='true').lower():
             self.check_hereunlock.set_active(True)
         if "true" in self.config.get(self.config_section, 'check_resume', fallback='false').lower():
             self.check_resume.set_active(True)
@@ -419,7 +419,7 @@ class BlueDo(Gtk.Application):
             self.check_unmute.set_active(True)
         if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
             self.check_hererun.set_active(True)
-        if "true" in self.config.get(self.config_section, 'away_lock', fallback='false').lower():
+        if "true" in self.config.get(self.config_section, 'away_lock', fallback='true').lower():
             self.check_awaylock.set_active(True)
         if "true" in self.config.get(self.config_section, 'away_mute', fallback='false').lower():
             self.check_awaymute.set_active(True)
@@ -588,7 +588,7 @@ Categories=Utility;
 
             if rssi is None or rssi < self.threshold:
                 if self.debug:
-                    syslog.syslog("Lost")
+                    syslog.syslog("Lost %s" % lost_pings)
 
                 if self.enabled:
                     lost_pings += 1

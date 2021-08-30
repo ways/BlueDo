@@ -14,6 +14,7 @@ venv/
 # Setuptools distribution folder.
 /dist/
 build/
+.pybuild/
 
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
