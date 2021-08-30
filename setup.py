@@ -3,9 +3,17 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+import re
 
 here = path.abspath(path.dirname(__file__))
 icon_path = 'share/icons/hicolor/256x256/apps'
+
+version="unknown"
+with open('bluedo/bluedoapp.py', 'r') as fd:
+    for line in fd.readlines():
+        if 'project_version = ' in line:
+            version=line.split()[-1]
+            break
 
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
@@ -13,7 +21,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='bluedo',
-    version='0.57',
+    version=version,
     description='Bluetooth proximity automation',
     long_description=long_description,
     long_description_content_type="text/markdown",

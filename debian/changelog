@@ -1,4 +1,10 @@
-bluedo (0.57) stable; urgency=low
+bluedo (0.58) unstable; urgency=medium
+
+  * Support python 3.8 and 3.9.
+
+ -- Lars Falk-Petersen <dev@falkp.no>  Sun, 30 Aug 2021 00:00:00 +0200
+
+bluedo (0.57) unstable; urgency=medium
 
   * Initial deb release.
 
