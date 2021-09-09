@@ -19,7 +19,7 @@ except ImportError:
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = 0.58
+    project_version = 0.59
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -43,7 +43,7 @@ class BlueDo(Gtk.Application):
     ping_stop = False # Signal background ping thread to shut down
     scan_stop = False # Signal background device thread to shut down
     window_width = 1020
-    window_heigth = 700
+    window_heigth = 750
 
     def __init__(self, *args, **kwargs):
         super().__init__(
