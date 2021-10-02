@@ -1,7 +1,13 @@
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('AppIndicator3', '0.1')
-from gi.repository import Gtk, Gio, GLib, GdkPixbuf, AppIndicator3
+from gi.repository import Gtk, Gio, GLib, GdkPixbuf
+
+try:
+    gi.require_version('AppIndicator3', '0.1')
+    from gi.repository import AppIndicator3
+except:
+    gi.require_version('AyatanaAppIndicator3', '0.1')
+    from gi.repository import AyatanaAppIndicator3 as AppIndicator3
 
 import sys
 import os
@@ -118,7 +124,7 @@ class BlueDo(Gtk.Application):
         if len(self.bt_address) > 0:
             self.button_enabled.set_active(self.enabled)
             self.menuitem_enable.set_active(self.enabled)
-        else: 
+        else:
             self.button_enabled.set_sensitive(False)
             self.menuitem_enable.set_sensitive(False)
 
@@ -344,7 +350,7 @@ class BlueDo(Gtk.Application):
 
     def autostart_clicked(self, state):
         ''' Toggle autostart '''
-        
+
         self.create_autostart(ensure=self.menuitem_autostart.get_active())
 
     def bluetoothsettings_clicked(self, state):
@@ -472,7 +478,7 @@ Categories=Utility;
             ]
         else:
             with subprocess.Popen(
-                    args=cmd, 
+                    args=cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     universal_newlines=True
@@ -500,7 +506,7 @@ Categories=Utility;
     def start_devicethread(self):
         if self.debug:
             syslog.syslog("Staring thread update_combodevices")
-        t = threading.Thread(target = self.update_combodevices) 
+        t = threading.Thread(target = self.update_combodevices)
         t.start()
 
     def update_combodevices(self):
@@ -556,7 +562,7 @@ Categories=Utility;
                 'away_callback': self.away_callback
             }
         )
-        
+
         thread.daemon = True # Daemonize
         thread.start() # Start the thread
         return thread
