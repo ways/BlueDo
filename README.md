@@ -70,6 +70,9 @@ Note that this app will make these changes to your power management:
 * Change preferences button to proper burger menu.
 * Move media files to some other dir?
 * Unit tests
+* When on xfce:
+  * for bluetooth settings, open blueman-manager
+  * to lock/unlock change xscreensaver timeout, to match functionality from gnome
 
 # Development docs
 
