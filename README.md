@@ -4,6 +4,9 @@ BlueDo - Bluetooth proximity automation
 
 ![Logo](https://raw.githubusercontent.com/ways/BlueDo/master/images/bluedo.png)
 
+Warning: probably broken since python 3.10 due to pybluez (and possibly other libs) no longer being maintained. See https://github.com/home-assistant/core/issues/73881
+
+
 Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
 
 # Maturity
@@ -14,7 +17,7 @@ Beta
 
 ## From pip
 
-    sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl
+    sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl libgirepository1.0-dev
     pip3 install --upgrade bluedo
 
 ## From deb
