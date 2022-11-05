@@ -55,7 +55,7 @@ setup(
     ],
     keywords='bluetooth',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['setuptools', 'configparser', 'appdirs', 'wheel', 'PyGObject'],
+    install_requires=['setuptools', 'configparser', 'wheel', 'PyGObject', 'appdirs'],
     entry_points={
         'console_scripts': [
             'bluedo=bluedo:main',
@@ -69,4 +69,3 @@ setup(
     python_requires='>=3.10',
     #test_suite = 'tests',
 )
-
