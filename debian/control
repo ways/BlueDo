@@ -5,11 +5,11 @@ Maintainer: Lars Falk-Petersen <dev@falkp.no>
 Build-Depends: debhelper (>= 10), python3, dh-python
 Standards-Version: 3.9.5
 Homepage: https://github.com/ways/bluedo
-X-Python3-Version: >= 3.8
+X-Python3-Version: >= 3.10
 
 Package: bluedo
 Architecture: any
-Pre-Depends: dpkg (>= 1.16.1), python3, python3-setuptools, libappindicator3-dev, ${misc:Pre-Depends}
+Pre-Depends: dpkg (>= 1.16.1), python3, python3-setuptools, libbluetooth-dev, libgirepository1.0-dev, libcairo2-dev, gir1.2-appindicator3-0.1, ${misc:Pre-Depends}
 Depends: ${python3:Depends}, ${misc:Depends}, playerctl
 Description: BlueDo - Bluetooth proximity automation.
   Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.

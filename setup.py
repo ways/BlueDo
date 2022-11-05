@@ -45,7 +45,7 @@ setup(
 
         # Specify the Python versions you support here.
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         "Topic :: Desktop Environment",
         "Topic :: Desktop Environment :: Gnome",
         "Topic :: Security",
@@ -55,7 +55,7 @@ setup(
     ],
     keywords='bluetooth',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['setuptools', 'configparser', 'appdirs', 'wheel', 'PyBluez', 'PyGObject'],
+    install_requires=['setuptools', 'configparser', 'appdirs', 'wheel', 'PyGObject'],
     entry_points={
         'console_scripts': [
             'bluedo=bluedo:main',
@@ -66,7 +66,7 @@ setup(
         (icon_path, ['bluedo/bluedo.png']),
     ],
     include_package_data=True,
-    python_requires='>=3.8',
+    python_requires='>=3.10',
     #test_suite = 'tests',
 )
 

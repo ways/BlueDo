@@ -4,10 +4,9 @@ BlueDo - Bluetooth proximity automation
 
 ![Logo](https://raw.githubusercontent.com/ways/BlueDo/master/images/bluedo.png)
 
-Warning: probably broken since python 3.10 due to pybluez (and possibly other libs) no longer being maintained. See https://github.com/home-assistant/core/issues/73881
-
-
 Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
+
+Not all bluetooth devices works for this, so some trial and error may be needed.
 
 # Maturity
 
@@ -17,7 +16,7 @@ Beta
 
 ## From pip
 
-    sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl libgirepository1.0-dev libcairo2-dev gir1.2-appindicator3-0.1
+    sudo apt install python3-pip libbluetooth-dev playerctl libgirepository1.0-dev libcairo2-dev gir1.2-appindicator3-0.1
     pip3 install --upgrade bluedo
 
 ## From deb
@@ -26,17 +25,17 @@ Beta
 
 # Requirements
 
-Needs bluetoothctl ~5.50 or newer.
-
 Use these system commands:
 
 * bluetoothctl
+* hcitool
 * loginctl
 * gsettings
-* amixer
-* playerctl
+* amixer (if using mute)
+* playerctl (if using pause)
 
-Only tested on Ubuntu 20.04-21.04 with GNOME.
+Version > 2.0 is only tested on Ubuntu 22.04 with GNOME.
+Version < 2.0 is only tested on Ubuntu 20.04-21.04 with GNOME.
 
 # Command line options
 
@@ -82,7 +81,7 @@ Note that this app will make these changes to your power management:
 
 * scan for devices: bluetoothctl devices
 * rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable)
-* Version below .56 needs Python < 3.9
+* Version below .56 needs Python < 3.9, bluetoothctl ~5.50 or newer.
 
 * hard locking: lock when no signal
 * soft locking: set screensaver timeout to 10 seconds when no signal

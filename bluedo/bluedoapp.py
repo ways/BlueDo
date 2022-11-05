@@ -41,7 +41,6 @@ class BlueDo(Gtk.Application):
     config = None
     minimized = False # Start up minimized
     nearby_devices = []
-    #start_pingthread = None
     ping_stop = False # Signal background ping thread to shut down
     scan_stop = False # Signal background device thread to shut down
     window_width = 1020
@@ -182,7 +181,6 @@ class BlueDo(Gtk.Application):
             self.window.hide()
 
         self.start_devicethread() # Look for paired bluetooth devices
-        #self.start_pingthread = self.start_pingthread() # Ping selected device for RSSI
         self.start_pingthread() # Ping selected device for RSSI
 
         Gtk.main()
@@ -352,7 +350,7 @@ class BlueDo(Gtk.Application):
     def bluetoothsettings_clicked(self, state):
         ''' Open gnome-control-center on bluetooth '''
 
-        os.system('gnome-control-center bluetooth')
+        os.system('gnome-control-center bluetooth &')
 
 
 #
@@ -482,7 +480,7 @@ Categories=Utility;
 
                 for line in iter(proc.stdout.readline, b''):
                     if BlueDo.debug:
-                        print("bluetoothctl line: " + line)
+                        syslog.syslog("bluetoothctl line: " + line)
                     if line.strip() == '': # iter calls until output is ''
                         break
                     if line == 'No default controller available\n':
@@ -491,7 +489,7 @@ Categories=Utility;
                     try:
                         addr = line.split()[1]
                     except IndexError:
-                        print("Info: Skipping empty line from bluetoothctl.")
+                        syslog.syslog("Info: Skipping empty line from bluetoothctl.")
                         continue
                     name = ' '.join(line.split()[2:])
                     devices += [(name, addr)]
@@ -566,7 +564,7 @@ Categories=Utility;
     def bluetooth_ping(self, here_callback, away_callback):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
-        hcibin = '/usr/bin/hcitool'
+        hcibin = 'hcitool'
         getrssicmd = [hcibin, "rssi"]
 
         lost_pings = 0
@@ -582,7 +580,7 @@ Categories=Utility;
                 continue
 
             if self.debug:
-                print("Running BT scanning command <%s" % ' '.join(getrssicmd + [self.bt_address]))
+                syslog.syslog("Running BT scanning command <%s" % ' '.join(getrssicmd + [self.bt_address]))
             with subprocess.Popen(
                     args=getrssicmd + [self.bt_address],
                     stdout=subprocess.PIPE,
@@ -592,7 +590,7 @@ Categories=Utility;
 
                 for line in iter(proc.stdout.readline, b''):
                     if self.debug and len(line) > 0:
-                        print("hcitool line: <%s>" % line)
+                        syslog.syslog("hcitool line: <%s>" % line)
                     if line.strip() == '': # iter calls until output is ''
                         break
                     rssi = int(line.strip().split()[-1])
