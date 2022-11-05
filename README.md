@@ -17,7 +17,7 @@ Beta
 
 ## From pip
 
-    sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl libgirepository1.0-dev
+    sudo apt install python3-pip libbluetooth-dev libappindicator3-dev playerctl libgirepository1.0-dev libcairo2-dev gir1.2-appindicator3-0.1
     pip3 install --upgrade bluedo
 
 ## From deb
@@ -65,6 +65,7 @@ Note that this app will make these changes to your power management:
 
 # TODO
 
+* Check for dependencies on startup
 * Default lock / unlock ON.
 * Keep two instances from running at the same time.
 * Minimize to tray, instead of having both minimize and minimize to tray.

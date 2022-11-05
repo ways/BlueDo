@@ -18,10 +18,10 @@ import syslog
 import appdirs
 import configparser
 
-try:
-    from bluedo.bt_rssi import BluetoothRSSI
-except ImportError:
-    from bt_rssi import BluetoothRSSI
+# try:
+#     from bluedo.bt_rssi import BluetoothRSSI
+# except ImportError:
+#     from bt_rssi import BluetoothRSSI
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
@@ -570,31 +570,50 @@ Categories=Utility;
     def bluetooth_ping(self, here_callback, away_callback):
         ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
 
+        hcibin = '/usr/bin/hcitool'
+        getrssicmd = [hcibin, "rssi"]
+
         lost_pings = 0
 
         while not self.ping_stop:
             rssi = -99
-            addr = self.bt_address
 
-            if len(addr) < 17:
+            if len(self.bt_address) < 17:
                 if self.debug:
-                    syslog.syslog("Invalid address %s, not scanning." % addr)
+                    syslog.syslog("Invalid address %s, not scanning." % self.bt_address)
                 self.levelSignal.set_value(0)
                 time.sleep(self.interval)
                 continue
 
-            try:
-                b = BluetoothRSSI(addr=addr)
-                rssi = b.get_rssi()
-                if rssi is None:
-                    rssi = -99
-                self.levelSignal.set_value(10+rssi)
-            except Exception as err:
-                syslog.syslog("Error: %s" % err)
+            if self.debug:
+                print("Running BT scanning command <%s" % ' '.join(getrssicmd + [self.bt_address]))
+            with subprocess.Popen(
+                    args=getrssicmd + [self.bt_address],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True
+            ) as proc:
+
+                for line in iter(proc.stdout.readline, b''):
+                    if self.debug:
+                        print("hcitool line: <%s>" % line)
+                    if line.strip() == '': # iter calls until output is ''
+                        break
+                    rssi = line.strip()
+
+            if rssi is None:
+                rssi = -99
+            if self.debug:
+                syslog.syslog("Rssi %s" % rssi)
+            self.levelSignal.set_value(10+rssi)
+            # except Exception as err:
+            #     syslog.syslog("Error: %s" % err)
 
             if rssi is None or rssi < self.threshold:
                 if self.debug:
-                    syslog.syslog("Lost %s" % lost_pings)
+                    syslog.syslog("No connection")
+                    if lost_pings > 0:
+                        syslog.syslog("Lost %s" % lost_pings)
 
                 if self.enabled:
                     lost_pings += 1
