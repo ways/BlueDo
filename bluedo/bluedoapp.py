@@ -18,14 +18,10 @@ import syslog
 import appdirs
 import configparser
 
-# try:
-#     from bluedo.bt_rssi import BluetoothRSSI
-# except ImportError:
-#     from bt_rssi import BluetoothRSSI
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = 0.59
+    project_version = 2.0
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -595,11 +591,11 @@ Categories=Utility;
             ) as proc:
 
                 for line in iter(proc.stdout.readline, b''):
-                    if self.debug:
+                    if self.debug and len(line) > 0:
                         print("hcitool line: <%s>" % line)
                     if line.strip() == '': # iter calls until output is ''
                         break
-                    rssi = line.strip()
+                    rssi = int(line.strip().split()[-1])
 
             if rssi is None:
                 rssi = -99
@@ -622,9 +618,9 @@ Categories=Utility;
             elif lost_pings > 0:
                 lost_pings = 0
                 here_callback()
-            else:
-                if self.debug:
-                    syslog.syslog("Ping, rssi %s" % rssi)
+            # else:
+            #     if self.debug:
+            #         syslog.syslog("Ping, rssi %s" % rssi)
 
             time.sleep(self.interval)
 
