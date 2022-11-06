@@ -6,7 +6,7 @@ BlueDo - Bluetooth proximity automation
 
 Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
 
-Not all bluetooth devices works for this, so some trial and error may be needed.
+Not all bluetooth devices works for this. Some devices randomizes the bluetooth address as a privacy feature, some disconnects to save power. If you have trouble using your phone, try a headset, watch, etc.
 
 # Maturity
 

@@ -1,3 +1,9 @@
+bluedo (2.1) unstable; urgency=medium
+
+  * Clear viewport before replacing demo animation with static picture. Other small changes.
+
+ -- Lars Falk-Petersen <dev@falkp.no>  Sun, 05 Nov 2022 00:00:00 +0200
+
 bluedo (2.0) unstable; urgency=medium
 
   * Support python 3.10

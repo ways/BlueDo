@@ -21,7 +21,7 @@ import configparser
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = 2.0
+    project_version = 2.1
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -207,9 +207,13 @@ class BlueDo(Gtk.Application):
         ''' Switch demo animation to static image '''
 
         path_picture = self.run_path + "unlocked.png"
-        pixbuf = GdkPixbuf.PixbufAnimation.new_from_file(path_picture)
-        self.demo_image.set_from_animation(pixbuf)
+        if self.debug:
+            syslog.syslog("Showing picture <%s>" % path_picture)
+
+        self.demo_image.set_from_animation(GdkPixbuf.PixbufAnimation.new_from_file(path_picture))
+        self.instructions_viewport.remove(self.instructions_viewport.get_child())
         self.instructions_viewport.add(self.demo_image)
+        self.demo_image.show()
 
 
 #
@@ -511,6 +515,11 @@ Categories=Utility;
             if self.scan_stop: # Check if asked to shut down
                 break
 
+            # Don't update combo if open
+            if self.combo_device.get_property("popup-shown"):
+                time.sleep(self.interval)
+                continue
+
             # Save contents of combo_device, clear and reset
             newscan = self.bluetooth_list()
 
@@ -590,15 +599,13 @@ Categories=Utility;
 
                 for line in iter(proc.stdout.readline, b''):
                     if self.debug and len(line) > 0:
-                        syslog.syslog("hcitool line: <%s>" % line)
+                        syslog.syslog("hcitool line: <%s>" % line.strip())
                     if line.strip() == '': # iter calls until output is ''
                         break
                     rssi = int(line.strip().split()[-1])
 
             if rssi is None:
                 rssi = -99
-            if self.debug:
-                syslog.syslog("Rssi %s" % rssi)
             self.levelSignal.set_value(10+rssi)
             # except Exception as err:
             #     syslog.syslog("Error: %s" % err)
