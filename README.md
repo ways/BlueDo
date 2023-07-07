@@ -8,15 +8,18 @@ Lock your desktop, mute music or run any other command when leaving your PC. The
 
 Not all bluetooth devices works for this. Some devices randomizes the bluetooth address as a privacy feature, some disconnects to save power. If you have trouble using your phone, try a headset, watch, etc.
 
+Only Bluetooth is supported, not Bluetooth Low-Energy (BLE).
+
 # Maturity
 
-Beta
+2 is in beta
+1 is deprecated
 
 # Installation
 
 ## From pip
 
-    sudo apt install python3-pip libbluetooth-dev playerctl libgirepository1.0-dev libcairo2-dev gir1.2-appindicator3-0.1
+    sudo apt install python3-pip gir1.2-appindicator3-0.1
     pip3 install --upgrade bluedo
 
 ## From deb
@@ -80,7 +83,7 @@ Note that this app will make these changes to your power management:
 # Development docs
 
 * scan for devices: bluetoothctl devices
-* rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable)
+* rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable?)
 * Version below .56 needs Python < 3.9, bluetoothctl ~5.50 or newer.
 
 * hard locking: lock when no signal
