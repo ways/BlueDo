@@ -12,8 +12,8 @@ Only Bluetooth is supported, not Bluetooth Low-Energy (BLE).
 
 # Maturity
 
-2 is in beta
-1 is deprecated
+* 2 is in beta
+* 1 is deprecated
 
 # Installation
 
@@ -38,6 +38,7 @@ Use these system commands:
 * playerctl (if using pause)
 
 Version > 2.0 is only tested on Ubuntu 22.04 with GNOME.
+
 Version < 2.0 is only tested on Ubuntu 20.04-21.04 with GNOME.
 
 # Command line options
