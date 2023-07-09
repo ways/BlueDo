@@ -2,5 +2,8 @@
 
 # sudo apt install devscripts dh-python debhelper
 
-debuild \
-  --no-tgz-check
+# Doesn't work:
+#debuild --no-tgz-check
+
+# Works, I think
+dpkg-buildpackage -us -uc -ui
