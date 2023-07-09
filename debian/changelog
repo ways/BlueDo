@@ -1,3 +1,9 @@
+bluedo (2.4) unstable; urgency=medium
+
+  * Reach out to bluetooth device if not connected.
+
+ -- Lars Falk-Petersen <dev@falkp.no>  Sun, 09 Jul 2023 00:00:00 +0200
+
 bluedo (2.1) unstable; urgency=medium
 
   * Clear viewport before replacing demo animation with static picture. Minimum gtk 3.22. Move settings link to look OK when using large font. Other small changes.

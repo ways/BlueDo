@@ -46,6 +46,7 @@ setup(
         # Specify the Python versions you support here.
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         "Topic :: Desktop Environment",
         "Topic :: Desktop Environment :: Gnome",
         "Topic :: Security",

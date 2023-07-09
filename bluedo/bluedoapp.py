@@ -21,7 +21,7 @@ import configparser
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = 2.3
+    project_version = 2.4
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -615,6 +615,8 @@ Categories=Utility;
                     syslog.syslog("No connection")
                     if lost_pings > 0:
                         syslog.syslog("Lost %s" % lost_pings)
+                        if lost_pings%5 == 0:
+                            attempt_bluetooth_connection(self.bt_address)
 
                 if self.enabled:
                     lost_pings += 1
@@ -673,6 +675,11 @@ Categories=Utility;
 #
 # Static functions
 #
+
+def attempt_bluetooth_connection(device):
+    """ Sometimes ubuntu seems to not reconnect automatically. """
+    syslog.syslog("Attempting to start a bluetooth connection.")
+    subprocess.run(f"/usr/bin/bluetoothctl connect {device} > /dev/null", shell=True, check=False)
 
 def run_user_command(cmd=''):
     ''' Run user supplied command '''
