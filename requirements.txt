@@ -1,4 +1,4 @@
-setuptools==58
+setuptools==78.1.1
 appdirs
 configparser
 wheel
