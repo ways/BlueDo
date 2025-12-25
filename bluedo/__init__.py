@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import sys
+
+__version__ = "2.5.0"
+
 try:
     from . import bluedoapp
 except ImportError:

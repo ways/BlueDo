@@ -1,6 +1,7 @@
 import gi
+
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GLib, GdkPixbuf
+from gi.repository import GdkPixbuf, Gio, GLib, Gtk
 
 try:
     gi.require_version('AppIndicator3', '0.1')
@@ -9,19 +10,19 @@ except:
     gi.require_version('AyatanaAppIndicator3', '0.1')
     from gi.repository import AyatanaAppIndicator3 as AppIndicator3
 
-import sys
-import os
-import time
-import subprocess
-import threading
-import syslog
-import appdirs
 import configparser
+import os
+import subprocess
+import sys
+import syslog
+import threading
+import time
+
+import appdirs
 
 
 class BlueDo(Gtk.Application):
     project_name = 'bluedo'
-    project_version = 2.4
     config_path = appdirs.user_config_dir(project_name) + '/' + project_name + '.ini'
     config_section = 'CONFIG'
     run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -297,7 +298,7 @@ class BlueDo(Gtk.Application):
         dialog = Gtk.AboutDialog()
         dialog.set_title("About")
         dialog.set_name(self.project_name)
-        dialog.set_version(str(self.project_version))
+        dialog.set_version("?")
         dialog.set_comments("Bluetooth proximity automation")
         dialog.set_website("https://github.com/ways/BlueDo")
         dialog.set_authors(["Lars Falk-Petersen"])

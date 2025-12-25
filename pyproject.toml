@@ -29,11 +29,11 @@ classifiers = [
     "Natural Language :: English"
 ]
 dependencies = [
-    setuptools==58
-    appdirs
-    configparser
-    wheel
-    PyGObject
+    "setuptools",
+    "appdirs",
+    "configparser",
+    "wheel",
+    "PyGObject",
 ]
 
 optional-dependencies.dev = [
