@@ -80,7 +80,11 @@ Note that this app will make these changes to your power management:
 
 ## Development docs
 
-## Tests
+## Run
+
+    uv run bluedo
+
+## Run tests
 
     uv tool run tox
 

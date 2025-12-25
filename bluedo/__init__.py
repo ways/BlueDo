@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-
 import sys
 
 __version__ = "2.5.0"
+__name__ = 'bluedo'
 
 try:
     from . import bluedoapp
