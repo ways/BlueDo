@@ -2,12 +2,10 @@ import gi
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
-
-from gi.repository import GdkPixbuf, Gio, GLib, Gtk  # noqa: E402
-
-from . import __name__, __version__  # noqa: E402
+from gi.repository import GdkPixbuf, Gio, GLib, Gtk
 
 import configparser
+from contextlib import suppress
 import os
 import subprocess
 import sys
@@ -17,11 +15,15 @@ import time
 
 import appdirs
 
+from . import __name__, __version__
+
 try:
     gi.require_version("AppIndicator3", "0.1")
     from gi.repository import AppIndicator3
 except ValueError:  # Namespace AppIndicator3 not available
-    syslog.syslog(syslog.LOG_INFO, "Unable to find AppIndicator3, trying AyatanaAppIndicator3")
+    syslog.syslog(
+        syslog.LOG_INFO, "Unable to find AppIndicator3, trying AyatanaAppIndicator3"
+    )
     gi.require_version("AyatanaAppIndicator3", "0.1")
     from gi.repository import AyatanaAppIndicator3 as AppIndicator3
 
@@ -256,10 +258,8 @@ class BlueDo(Gtk.Application):
     def on_device_changed(self, widget):
         """When combo_device changes"""
         text = ""
-        try:
+        with suppress(AttributeError):
             text = self.combo_device.get_active_text().strip()
-        except AttributeError:
-            pass
 
         if len(text) == 0:
             self.button_enabled.set_sensitive(False)
@@ -595,7 +595,9 @@ Categories=Utility;
                     try:
                         addr = line.split()[1]
                     except IndexError:
-                        syslog.syslog(syslog.LOG_INFO, "Skipping empty line from bluetoothctl.")
+                        syslog.syslog(
+                            syslog.LOG_INFO, "Skipping empty line from bluetoothctl."
+                        )
                         continue
                     name = " ".join(line.split()[2:])
                     devices += [(name, addr)]
@@ -685,14 +687,19 @@ Categories=Utility;
 
             if len(self.bt_address) < 17:
                 if self.debug:
-                    syslog.syslog(syslog.LOG_DEBUG, "Invalid address %s, not scanning." % self.bt_address)
+                    syslog.syslog(
+                        syslog.LOG_DEBUG,
+                        "Invalid address %s, not scanning." % self.bt_address,
+                    )
                 self.levelSignal.set_value(0)
                 time.sleep(self.interval)
                 continue
 
             if self.debug:
-                syslog.syslog(syslog.LOG_DEBUG, "Running BT scanning command <%s"
-                    % " ".join(getrssicmd + [self.bt_address])
+                syslog.syslog(
+                    syslog.LOG_DEBUG,
+                    "Running BT scanning command <%s"
+                    % " ".join(getrssicmd + [self.bt_address]),
                 )
             with subprocess.Popen(
                 args=getrssicmd + [self.bt_address],
@@ -702,7 +709,9 @@ Categories=Utility;
             ) as proc:
                 for line in iter(proc.stdout.readline, b""):
                     if self.debug and len(line) > 0:
-                        syslog.syslog(syslog.LOG_DEBUG, "hcitool line: <%s>" % line.strip())
+                        syslog.syslog(
+                            syslog.LOG_DEBUG, "hcitool line: <%s>" % line.strip()
+                        )
                     if line.strip() == "":  # iter calls until output is ''
                         break
                     rssi = int(line.strip().split()[-1])
