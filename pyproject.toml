@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bluedo"
+authors = [
+    {name = "Lars Falk-Petersen", email = "dev@falkp.no"},
+]
+description = "Bluetooth proximity automation"
+keywords = ["desktop", "automation", "bluetooth"]
+license = { file = "LICENSE" }
+readme = "README.md"
+
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Desktop Environment",
+    "Topic :: Desktop Environment :: Gnome",
+    "Topic :: Security",
+    "Environment :: X11 Applications :: Gnome",
+    "Operating System :: POSIX :: Linux",
+    "Natural Language :: English"
+]
+dependencies = [
+    setuptools==58
+    appdirs
+    configparser
+    wheel
+    PyGObject
+]
+
+optional-dependencies.dev = [
+  "tox",
+]
+
+dynamic = ["version"]
+
+urls.Documentation = "https://github.com/ways/BlueDo"
+urls.Homepage = "https://github.com/ways/BlueDo"
+urls.Issues = "https://github.com/ways/BlueDo/issues"
+urls.Repository = "https://github.com/ways/BlueDo"
+
+[project.scripts]
+bluedo = "bluedo:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["bluedo"]
+
+[tool.setuptools.dynamic]
+version = {attr = "bluedo.__version__"}
+
+[tool.setuptools.package-data]
+bris = ["bluedo/window.glade"]
+
+[tool.ruff]
+
+[tool.ruff.lint]
+fixable = ["I"]
+select = [
+    "E",  # pycodestyle
+    "F",  # Pyflakes
+    "UP", # pyupgrade
+    "B",  # flake8-bugbear
+    "SIM",# flake8-simplify
+    "I",  # isort
+]
