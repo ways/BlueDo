@@ -29,7 +29,7 @@ classifiers = [
     "Natural Language :: English"
 ]
 dependencies = [
-    "setuptools",
+    "setuptools>=78.1.1",
     "appdirs",
     "configparser",
     "wheel",

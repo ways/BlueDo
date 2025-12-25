@@ -32,7 +32,7 @@ requires-dist = [
     { name = "appdirs" },
     { name = "configparser" },
     { name = "pygobject" },
-    { name = "setuptools" },
+    { name = "setuptools", specifier = ">=78.1.1" },
     { name = "tox", marker = "extra == 'dev'" },
     { name = "wheel" },
 ]
