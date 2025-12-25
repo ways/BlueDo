@@ -3,16 +3,9 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
 
-from gi.repository import GdkPixbuf, Gio, GLib, Gtk
+from gi.repository import GdkPixbuf, Gio, GLib, Gtk  # noqa: E402
 
-from . import __version__, __name__
-
-try:
-    gi.require_version("AppIndicator3", "0.1")
-    from gi.repository import AppIndicator3
-except:
-    gi.require_version("AyatanaAppIndicator3", "0.1")
-    from gi.repository import AyatanaAppIndicator3 as AppIndicator3
+from . import __name__, __version__  # noqa: E402
 
 import configparser
 import os
@@ -23,6 +16,14 @@ import threading
 import time
 
 import appdirs
+
+try:
+    gi.require_version("AppIndicator3", "0.1")
+    from gi.repository import AppIndicator3
+except ValueError:  # Namespace AppIndicator3 not available
+    syslog.syslog(syslog.LOG_INFO, "Unable to find AppIndicator3, trying AyatanaAppIndicator3")
+    gi.require_version("AyatanaAppIndicator3", "0.1")
+    from gi.repository import AyatanaAppIndicator3 as AppIndicator3
 
 
 class BlueDo(Gtk.Application):
@@ -224,7 +225,7 @@ class BlueDo(Gtk.Application):
 
         path_picture = self.run_path + "unlocked.png"
         if self.debug:
-            syslog.syslog("Showing picture <%s>" % path_picture)
+            syslog.syslog(syslog.LOG_DEBUG, "Showing picture <%s>" % path_picture)
 
         self.demo_image.set_from_animation(
             GdkPixbuf.PixbufAnimation.new_from_file(path_picture)
@@ -248,7 +249,7 @@ class BlueDo(Gtk.Application):
             with self.menuitem_enable.handler_block(self.handler_id):
                 self.menuitem_enable.set_active(state)
 
-        syslog.syslog("%s enabled %s." % (__name__, state))
+        syslog.syslog(syslog.LOG_INFO, "%s enabled %s." % (__name__, state))
         self.enabled = state
         self.save_config()
 
@@ -291,7 +292,7 @@ class BlueDo(Gtk.Application):
     def disable_all(self):
         if self.button_enabled.get_sensitive():
             if self.debug:
-                syslog.syslog("disable_all")
+                syslog.syslog(syslog.LOG_DEBUG, "disable_all")
 
             self.button_enabled.set_sensitive(False)
             self.menuitem_enable.set_sensitive(False)
@@ -300,7 +301,7 @@ class BlueDo(Gtk.Application):
     def enable_all(self):
         if not self.button_enabled.get_sensitive():
             if self.debug:
-                syslog.syslog("enable_all")
+                syslog.syslog(syslog.LOG_DEBUG, "enable_all")
 
             self.button_enabled.set_sensitive(True)
             self.menuitem_enable.set_sensitive(True)
@@ -427,7 +428,7 @@ class BlueDo(Gtk.Application):
         """Load config"""
 
         if self.debug:
-            syslog.syslog("Loading config from %s" % self.config_path)
+            syslog.syslog(syslog.LOG_DEBUG, "Loading config from %s" % self.config_path)
 
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(self.config_path)
@@ -585,7 +586,7 @@ Categories=Utility;
             ) as proc:
                 for line in iter(proc.stdout.readline, b""):
                     if BlueDo.debug:
-                        syslog.syslog("bluetoothctl line: " + line)
+                        syslog.syslog(syslog.LOG_DEBUG, "bluetoothctl line: " + line)
                     if line.strip() == "":  # iter calls until output is ''
                         break
                     if line == "No default controller available\n":
@@ -594,7 +595,7 @@ Categories=Utility;
                     try:
                         addr = line.split()[1]
                     except IndexError:
-                        syslog.syslog("Info: Skipping empty line from bluetoothctl.")
+                        syslog.syslog(syslog.LOG_INFO, "Skipping empty line from bluetoothctl.")
                         continue
                     name = " ".join(line.split()[2:])
                     devices += [(name, addr)]
@@ -604,7 +605,7 @@ Categories=Utility;
 
     def start_devicethread(self):
         if self.debug:
-            syslog.syslog("Staring thread update_combodevices")
+            syslog.syslog(syslog.LOG_DEBUG, "Staring thread update_combodevices")
         t = threading.Thread(target=self.update_combodevices)
         t.start()
 
@@ -657,7 +658,7 @@ Categories=Utility;
 
     def start_pingthread(self):
         if self.debug:
-            syslog.syslog("Staring thread bluetooth_ping")
+            syslog.syslog(syslog.LOG_DEBUG, "Staring thread bluetooth_ping")
         thread = threading.Thread(
             target=self.bluetooth_ping,
             args=(),
@@ -684,14 +685,13 @@ Categories=Utility;
 
             if len(self.bt_address) < 17:
                 if self.debug:
-                    syslog.syslog("Invalid address %s, not scanning." % self.bt_address)
+                    syslog.syslog(syslog.LOG_DEBUG, "Invalid address %s, not scanning." % self.bt_address)
                 self.levelSignal.set_value(0)
                 time.sleep(self.interval)
                 continue
 
             if self.debug:
-                syslog.syslog(
-                    "Running BT scanning command <%s"
+                syslog.syslog(syslog.LOG_DEBUG, "Running BT scanning command <%s"
                     % " ".join(getrssicmd + [self.bt_address])
                 )
             with subprocess.Popen(
@@ -702,7 +702,7 @@ Categories=Utility;
             ) as proc:
                 for line in iter(proc.stdout.readline, b""):
                     if self.debug and len(line) > 0:
-                        syslog.syslog("hcitool line: <%s>" % line.strip())
+                        syslog.syslog(syslog.LOG_DEBUG, "hcitool line: <%s>" % line.strip())
                     if line.strip() == "":  # iter calls until output is ''
                         break
                     rssi = int(line.strip().split()[-1])
@@ -710,14 +710,12 @@ Categories=Utility;
             if rssi is None:
                 rssi = -99
             self.levelSignal.set_value(10 + rssi)
-            # except Exception as err:
-            #     syslog.syslog("Error: %s" % err)
 
             if rssi is None or rssi < self.threshold:
                 if self.debug:
-                    syslog.syslog("No connection")
+                    syslog.syslog(syslog.LOG_DEBUG, "No connection")
                     if lost_pings > 0:
-                        syslog.syslog("Lost %s" % lost_pings)
+                        syslog.syslog(syslog.LOG_DEBUG, "Lost %s" % lost_pings)
                         if lost_pings % 5 == 0:
                             attempt_bluetooth_connection(self.bt_address)
 
@@ -728,9 +726,6 @@ Categories=Utility;
             elif lost_pings > 0:
                 lost_pings = 0
                 here_callback()
-            # else:
-            #     if self.debug:
-            #         syslog.syslog("Ping, rssi %s" % rssi)
 
             time.sleep(self.interval)
 
@@ -740,7 +735,7 @@ Categories=Utility;
 
     def here_callback(self):
         if self.debug:
-            syslog.syslog("Here")
+            syslog.syslog(syslog.LOG_DEBUG, "Here")
 
         self.indicator.set_icon_full(self.run_path + "phonelink-white-18dp.svg", "Here")
 
@@ -758,7 +753,7 @@ Categories=Utility;
 
     def away_callback(self):
         if self.debug:
-            syslog.syslog("Away")
+            syslog.syslog(syslog.LOG_DEBUG, "Away")
 
         self.indicator.set_icon_full(
             self.run_path + "phonelink_off-white-18dp.svg", "Away"
@@ -784,7 +779,7 @@ Categories=Utility;
 
 def attempt_bluetooth_connection(device):
     """Sometimes ubuntu seems to not reconnect automatically."""
-    syslog.syslog("Attempting to start a bluetooth connection.")
+    syslog.syslog(syslog.LOG_INFO, "Attempting to start a bluetooth connection.")
     subprocess.run(
         f"/usr/bin/bluetoothctl connect {device} > /dev/null", shell=True, check=False
     )
@@ -792,19 +787,19 @@ def attempt_bluetooth_connection(device):
 
 def run_user_command(cmd=""):
     """Run user supplied command"""
-    syslog.syslog("Running user command <%s>." % cmd)
+    syslog.syslog(syslog.LOG_INFO, "Running user command <%s>." % cmd)
     subprocess.run(cmd, shell=True, check=True)
 
 
 def mute():
     """Mute sound"""
-    syslog.syslog("Muting sound.")
+    syslog.syslog(syslog.LOG_INFO, "Muting sound.")
     subprocess.run("amixer set Master mute > /dev/null", shell=True, check=True)
 
 
 def unmute():
     """Unmute sound"""
-    syslog.syslog("Unmuting sound.")
+    syslog.syslog(syslog.LOG_INFO, "Unmuting sound.")
     subprocess.run(
         "amixer set Master unmute > /dev/null; amixer set Speaker "
         + "unmute > /dev/null; amixer set Headphone unmute > /dev/null;",
@@ -815,20 +810,20 @@ def unmute():
 
 def pause_music():
     """Pause music"""
-    syslog.syslog("Pausing music.")
+    syslog.syslog(syslog.LOG_INFO, "Pausing music.")
     subprocess.run("playerctl pause 2> /dev/null", shell=True, check=True)
 
 
 def resume_music():
     """Resume music"""
-    syslog.syslog("Resume music.")
+    syslog.syslog(syslog.LOG_INFO, "Resume music.")
     subprocess.run("playerctl play 2> /dev/null", shell=True, check=True)
 
 
 def unlock():
     """Unlock desktop session"""
     idledelay = 600
-    syslog.syslog("Unlocked session.")
+    syslog.syslog(syslog.LOG_INFO, "Unlocked session.")
 
     # Reset soft lock. Set lock time to something reasonable
     cmd = "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay
@@ -842,7 +837,7 @@ def unlock():
 def lock():
     """Lock desktop session"""
     idledelay = 10
-    syslog.syslog("Soft-locked session (%ss timeout)." % idledelay)
+    syslog.syslog(syslog.LOG_INFO, "Soft-locked session (%ss timeout)." % idledelay)
 
     # Hard lock. Is problematic if your phone refuse to connect
     # cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
