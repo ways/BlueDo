@@ -1,16 +1,17 @@
 import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('GdkPixbuf', '2.0')
+
+gi.require_version("Gtk", "3.0")
+gi.require_version("GdkPixbuf", "2.0")
 
 from gi.repository import GdkPixbuf, Gio, GLib, Gtk
 
 from . import __version__, __name__
 
 try:
-    gi.require_version('AppIndicator3', '0.1')
+    gi.require_version("AppIndicator3", "0.1")
     from gi.repository import AppIndicator3
 except:
-    gi.require_version('AyatanaAppIndicator3', '0.1')
+    gi.require_version("AyatanaAppIndicator3", "0.1")
     from gi.repository import AyatanaAppIndicator3 as AppIndicator3
 
 import configparser
@@ -25,10 +26,10 @@ import appdirs
 
 
 class BlueDo(Gtk.Application):
-    config_path = appdirs.user_config_dir(__name__) + '/' + __name__ + '.ini'
-    config_section = 'CONFIG'
-    run_path = os.path.dirname(os.path.realpath(__file__)) + '/'
-    autostart_dir = os.getenv("HOME") + '/.config/autostart/'
+    config_path = appdirs.user_config_dir(__name__) + "/" + __name__ + ".ini"
+    config_section = "CONFIG"
+    run_path = os.path.dirname(os.path.realpath(__file__)) + "/"
+    autostart_dir = os.getenv("HOME") + "/.config/autostart/"
 
     builder = None
     enabled = False
@@ -37,24 +38,24 @@ class BlueDo(Gtk.Application):
     interval = 4
     away_count = 5
     advanced = False
-    bt_address = ''
-    bt_name = ''
-    here_command = ''
-    away_command = ''
+    bt_address = ""
+    bt_name = ""
+    here_command = ""
+    away_command = ""
     config = None
-    minimized = False # Start up minimized
+    minimized = False  # Start up minimized
     nearby_devices = []
-    ping_stop = False # Signal background ping thread to shut down
-    scan_stop = False # Signal background device thread to shut down
+    ping_stop = False  # Signal background ping thread to shut down
+    scan_stop = False  # Signal background device thread to shut down
     window_width = 1020
     window_heigth = 750
 
     def __init__(self, *args, **kwargs):
         super().__init__(
             *args,
-            application_id='no.graph.bluedo',
+            application_id="no.graph.bluedo",
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
-            **kwargs
+            **kwargs,
         )
         self.window = None
 
@@ -77,7 +78,7 @@ class BlueDo(Gtk.Application):
         )
 
     def do_activate(self):
-        ''' Load config, populate UI '''
+        """Load config, populate UI"""
 
         # Load widgets from glade file
         self.builder = Gtk.Builder()
@@ -136,13 +137,15 @@ class BlueDo(Gtk.Application):
         try:
             self.window.set_icon_from_file(self.icon_path)
         except gi.repository.GLib.Error:
-            syslog.syslog("Unable to find icon %s"  % self.icon_path)
+            syslog.syslog("Unable to find icon %s" % self.icon_path)
 
         self.on_enable_state(self.button_enabled, self.enabled)
 
         # Signals
         self.builder.connect_signals(self)
-        self.handler_id = self.menuitem_enable.connect("toggled", self.menuitemenable_clicked)
+        self.handler_id = self.menuitem_enable.connect(
+            "toggled", self.menuitemenable_clicked
+        )
 
         self.window.show_all()
 
@@ -153,9 +156,13 @@ class BlueDo(Gtk.Application):
             self.check_resume.set_sensitive(True)
         except subprocess.CalledProcessError:
             self.check_awaypause.set_sensitive(False)
-            self.check_awaypause.set_label("Pause music - Install playerctl to enable this option")
+            self.check_awaypause.set_label(
+                "Pause music - Install playerctl to enable this option"
+            )
             self.check_resume.set_sensitive(False)
-            self.check_resume.set_label("Unpause music - Install playerctl to enable this option")
+            self.check_resume.set_label(
+                "Unpause music - Install playerctl to enable this option"
+            )
 
         # Check for dependency amixer
         try:
@@ -164,18 +171,24 @@ class BlueDo(Gtk.Application):
             self.check_unmute.set_sensitive(True)
         except subprocess.CalledProcessError:
             self.check_awaymute.set_sensitive(False)
-            self.check_awaymute.set_label("Pause music - Install amixer to enable this option")
+            self.check_awaymute.set_label(
+                "Pause music - Install amixer to enable this option"
+            )
             self.check_unmute.set_sensitive(False)
-            self.check_unmute.set_label("Unpause music - Install amixer to enable this option")
+            self.check_unmute.set_label(
+                "Unpause music - Install amixer to enable this option"
+            )
 
         # Menu for about, advanced
         self.menuitem_advanced.set_active(self.advanced)
         self.advanced_clicked(self.menuitem_advanced)
 
         # Tray icon
-        self.indicator = AppIndicator3.Indicator.new("customtray",
+        self.indicator = AppIndicator3.Indicator.new(
+            "customtray",
             self.run_path + "bluedo.png",
-            AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS,
+        )
         self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.indicator.set_menu(self.dropdown_menu)
 
@@ -183,8 +196,8 @@ class BlueDo(Gtk.Application):
             self.menuitem_minimize.set_active(True)
             self.window.hide()
 
-        self.start_devicethread() # Look for paired bluetooth devices
-        self.start_pingthread() # Ping selected device for RSSI
+        self.start_devicethread()  # Look for paired bluetooth devices
+        self.start_pingthread()  # Ping selected device for RSSI
 
         Gtk.main()
 
@@ -196,7 +209,7 @@ class BlueDo(Gtk.Application):
         Gtk.main_quit()
 
     def show_animation(self):
-        ''' Show a demo animation for 30 sec, then switch to static image '''
+        """Show a demo animation for 30 sec, then switch to static image"""
 
         path_animation = self.run_path + "lock_animation.gif"
         pixbufanim = GdkPixbuf.PixbufAnimation.new_from_file(path_animation)
@@ -207,24 +220,25 @@ class BlueDo(Gtk.Application):
         GLib.timeout_add(30000, self.stop_animation)
 
     def stop_animation(self):
-        ''' Switch demo animation to static image '''
+        """Switch demo animation to static image"""
 
         path_picture = self.run_path + "unlocked.png"
         if self.debug:
             syslog.syslog("Showing picture <%s>" % path_picture)
 
-        self.demo_image.set_from_animation(GdkPixbuf.PixbufAnimation.new_from_file(path_picture))
+        self.demo_image.set_from_animation(
+            GdkPixbuf.PixbufAnimation.new_from_file(path_picture)
+        )
         self.instructions_viewport.remove(self.instructions_viewport.get_child())
         self.instructions_viewport.add(self.demo_image)
         self.demo_image.show()
 
-
-#
-# Widgets
-#
+    #
+    # Widgets
+    #
 
     def on_enable_state(self, widget, state):
-        ''' When btnEnable changes state, start and stop pings'''
+        """When btnEnable changes state, start and stop pings"""
 
         if state == self.menuitem_enable.get_active():
             # Called from menu
@@ -234,13 +248,13 @@ class BlueDo(Gtk.Application):
             with self.menuitem_enable.handler_block(self.handler_id):
                 self.menuitem_enable.set_active(state)
 
-        syslog.syslog("%s enabled %s." % (__name__,state))
+        syslog.syslog("%s enabled %s." % (__name__, state))
         self.enabled = state
         self.save_config()
 
     def on_device_changed(self, widget):
-        ''' When combo_device changes '''
-        text = ''
+        """When combo_device changes"""
+        text = ""
         try:
             text = self.combo_device.get_active_text().strip()
         except AttributeError:
@@ -250,8 +264,8 @@ class BlueDo(Gtk.Application):
             self.button_enabled.set_sensitive(False)
             self.menuitem_enable.set_sensitive(False)
         else:
-            newaddress = text.split()[-1].replace('(', '').replace(')', '')
-            newname = text.replace(newaddress, '').replace('(', '').replace(')', '')
+            newaddress = text.split()[-1].replace("(", "").replace(")", "")
+            newname = text.replace(newaddress, "").replace("(", "").replace(")", "")
 
             if newaddress != self.bt_address:
                 self.bt_address = newaddress
@@ -261,22 +275,21 @@ class BlueDo(Gtk.Application):
                 self.save_config()
 
     def on_away_changed(self, widget):
-        ''' When entry_away changes '''
+        """When entry_away changes"""
         self.away_command = widget.get_text()
         self.save_config()
 
     def on_here_changed(self, widget):
-        ''' When entry_here changes '''
+        """When entry_here changes"""
         self.here_command = widget.get_text()
         self.save_config()
 
     def on_chkbutton_changed(self, widget):
-        ''' When a CheckButton changes '''
+        """When a CheckButton changes"""
         self.save_config()
 
     def disable_all(self):
         if self.button_enabled.get_sensitive():
-
             if self.debug:
                 syslog.syslog("disable_all")
 
@@ -286,7 +299,6 @@ class BlueDo(Gtk.Application):
 
     def enable_all(self):
         if not self.button_enabled.get_sensitive():
-
             if self.debug:
                 syslog.syslog("enable_all")
 
@@ -295,7 +307,7 @@ class BlueDo(Gtk.Application):
             self.label_info.set_text("Device should already be paired with computer.")
 
     def about_clicked(self, widget):
-        ''' Show about dialog '''
+        """Show about dialog"""
 
         dialog = Gtk.AboutDialog()
         dialog.set_title("About")
@@ -304,14 +316,16 @@ class BlueDo(Gtk.Application):
         dialog.set_comments("Bluetooth proximity automation")
         dialog.set_website("https://github.com/ways/BlueDo")
         dialog.set_authors(["Lars Falk-Petersen"])
-        dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size(self.icon_path, 256, 256))
-        dialog.connect('response', lambda dialog, data: dialog.destroy())
+        dialog.set_logo(
+            GdkPixbuf.Pixbuf.new_from_file_at_size(self.icon_path, 256, 256)
+        )
+        dialog.connect("response", lambda dialog, data: dialog.destroy())
         dialog.show_all()
 
     def advanced_clicked(self, state):
-        ''' Show advancd options '''
+        """Show advancd options"""
 
-        #menuitem_advanced = self.builder.get_object("menuitem_advanced")
+        # menuitem_advanced = self.builder.get_object("menuitem_advanced")
         self.advanced = self.menuitem_advanced.get_active()
 
         check_hererun = self.builder.get_object("check_hererun")
@@ -334,7 +348,7 @@ class BlueDo(Gtk.Application):
         self.save_config()
 
     def minimize_clicked(self, state):
-        ''' Toggle minimize to tray '''
+        """Toggle minimize to tray"""
 
         self.minimized = self.menuitem_minimize.get_active()
 
@@ -346,56 +360,71 @@ class BlueDo(Gtk.Application):
         self.save_config()
 
     def menuitemenable_clicked(self, state):
-        ''' Toggle enable '''
+        """Toggle enable"""
         self.button_enabled.set_active(not self.button_enabled.get_active())
 
     def autostart_clicked(self, state):
-        ''' Toggle autostart '''
+        """Toggle autostart"""
 
         self.create_autostart(ensure=self.menuitem_autostart.get_active())
 
     def bluetoothsettings_clicked(self, state):
-        ''' Open gnome-control-center on bluetooth '''
+        """Open gnome-control-center on bluetooth"""
 
-        os.system('gnome-control-center bluetooth &')
+        os.system("gnome-control-center bluetooth &")
 
-
-#
-# Config
-#
+    #
+    # Config
+    #
 
     def save_config(self):
-        ''' Save config '''
+        """Save config"""
 
         if not self.config.has_section(self.config_section):
             self.config.add_section(self.config_section)
 
-        self.config.set(self.config_section, 'debug', str(self.debug))
-        self.config.set(self.config_section, 'bt_address', self.bt_address)
-        self.config.set(self.config_section, 'threshold', str(self.threshold))
-        self.config.set(self.config_section, 'interval', str(self.interval))
-        self.config.set(self.config_section, 'away_count', str(self.away_count))
-        self.config.set(self.config_section, 'away_command', self.away_command)
-        self.config.set(self.config_section, 'here_command', self.here_command)
+        self.config.set(self.config_section, "debug", str(self.debug))
+        self.config.set(self.config_section, "bt_address", self.bt_address)
+        self.config.set(self.config_section, "threshold", str(self.threshold))
+        self.config.set(self.config_section, "interval", str(self.interval))
+        self.config.set(self.config_section, "away_count", str(self.away_count))
+        self.config.set(self.config_section, "away_command", self.away_command)
+        self.config.set(self.config_section, "here_command", self.here_command)
 
-        self.config.set(self.config_section, 'bt_name', self.bt_name)
-        self.config.set(self.config_section, 'here_unlock', str(self.check_hereunlock.get_active()))
-        self.config.set(self.config_section, 'check_resume', str(self.check_resume.get_active()))
-        self.config.set(self.config_section, 'check_unmute', str(self.check_unmute.get_active()))
-        self.config.set(self.config_section, 'here_run', str(self.check_hererun.get_active()))
-        self.config.set(self.config_section, 'away_lock', str(self.check_awaylock.get_active()))
-        self.config.set(self.config_section, 'away_run', str(self.check_awayrun.get_active()))
-        self.config.set(self.config_section, 'away_mute', str(self.check_awaymute.get_active()))
-        self.config.set(self.config_section, 'away_pause', str(self.check_awaypause.get_active()))
-        self.config.set(self.config_section, 'advanced', str(self.advanced))
-        self.config.set(self.config_section, 'minimized', str(self.minimized))
-        self.config.set(self.config_section, 'enabled', str(self.enabled))
+        self.config.set(self.config_section, "bt_name", self.bt_name)
+        self.config.set(
+            self.config_section, "here_unlock", str(self.check_hereunlock.get_active())
+        )
+        self.config.set(
+            self.config_section, "check_resume", str(self.check_resume.get_active())
+        )
+        self.config.set(
+            self.config_section, "check_unmute", str(self.check_unmute.get_active())
+        )
+        self.config.set(
+            self.config_section, "here_run", str(self.check_hererun.get_active())
+        )
+        self.config.set(
+            self.config_section, "away_lock", str(self.check_awaylock.get_active())
+        )
+        self.config.set(
+            self.config_section, "away_run", str(self.check_awayrun.get_active())
+        )
+        self.config.set(
+            self.config_section, "away_mute", str(self.check_awaymute.get_active())
+        )
+        self.config.set(
+            self.config_section, "away_pause", str(self.check_awaypause.get_active())
+        )
+        self.config.set(self.config_section, "advanced", str(self.advanced))
+        self.config.set(self.config_section, "minimized", str(self.minimized))
+        self.config.set(self.config_section, "enabled", str(self.enabled))
 
-        with open(self.config_path, mode='w', encoding="utf8") as f:
+        with open(self.config_path, mode="w", encoding="utf8") as f:
             self.config.write(f)
 
     def load_config(self):
-        ''' Load config '''
+        """Load config"""
 
         if self.debug:
             syslog.syslog("Loading config from %s" % self.config_path)
@@ -409,43 +438,113 @@ class BlueDo(Gtk.Application):
         if not self.config.has_section(self.config_section):
             self.config.add_section(self.config_section)
 
-        self.bt_address = self.config.get(self.config_section, 'bt_address', fallback='')
-        self.threshold = self.config.getint(self.config_section, 'threshold', fallback=-4)
-        self.interval = self.config.getint(self.config_section, 'interval', fallback=5)
-        self.away_count = self.config.getint(self.config_section, 'away_count', fallback=3)
-        self.away_command = self.config.get(self.config_section, 'away_command', fallback='')
-        self.here_command = self.config.get(self.config_section, 'here_command', fallback='')
-        self.bt_name = self.config.get(self.config_section, 'bt_name', fallback='(current)')
-        if "true" in self.config.get(self.config_section, 'debug', fallback='false').lower():
+        self.bt_address = self.config.get(
+            self.config_section, "bt_address", fallback=""
+        )
+        self.threshold = self.config.getint(
+            self.config_section, "threshold", fallback=-4
+        )
+        self.interval = self.config.getint(self.config_section, "interval", fallback=5)
+        self.away_count = self.config.getint(
+            self.config_section, "away_count", fallback=3
+        )
+        self.away_command = self.config.get(
+            self.config_section, "away_command", fallback=""
+        )
+        self.here_command = self.config.get(
+            self.config_section, "here_command", fallback=""
+        )
+        self.bt_name = self.config.get(
+            self.config_section, "bt_name", fallback="(current)"
+        )
+        if (
+            "true"
+            in self.config.get(self.config_section, "debug", fallback="false").lower()
+        ):
             self.debug = True
-        if "true" in self.config.get(self.config_section, 'here_unlock', fallback='true').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "here_unlock", fallback="true"
+            ).lower()
+        ):
             self.check_hereunlock.set_active(True)
-        if "true" in self.config.get(self.config_section, 'check_resume', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "check_resume", fallback="false"
+            ).lower()
+        ):
             self.check_resume.set_active(True)
-        if "true" in self.config.get(self.config_section, 'check_unmute', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "check_unmute", fallback="false"
+            ).lower()
+        ):
             self.check_unmute.set_active(True)
-        if "true" in self.config.get(self.config_section, 'here_run', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "here_run", fallback="false"
+            ).lower()
+        ):
             self.check_hererun.set_active(True)
-        if "true" in self.config.get(self.config_section, 'away_lock', fallback='true').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "away_lock", fallback="true"
+            ).lower()
+        ):
             self.check_awaylock.set_active(True)
-        if "true" in self.config.get(self.config_section, 'away_mute', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "away_mute", fallback="false"
+            ).lower()
+        ):
             self.check_awaymute.set_active(True)
-        if "true" in self.config.get(self.config_section, 'away_pause', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "away_pause", fallback="false"
+            ).lower()
+        ):
             self.check_awaypause.set_active(True)
-        if "true" in self.config.get(self.config_section, 'away_run', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "away_run", fallback="false"
+            ).lower()
+        ):
             self.check_awayrun.set_active(True)
-        if "true" in self.config.get(self.config_section, 'advanced', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "advanced", fallback="false"
+            ).lower()
+        ):
             self.advanced = True
-        if "true" in self.config.get(self.config_section, 'minimized', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(
+                self.config_section, "minimized", fallback="false"
+            ).lower()
+        ):
             self.minimized = True
-        if "true" in self.config.get(self.config_section, 'enabled', fallback='false').lower():
+        if (
+            "true"
+            in self.config.get(self.config_section, "enabled", fallback="false").lower()
+        ):
             self.enabled = True
 
     def create_autostart(self, ensure=True):
-        """ Create autostart file. Or deletes if not ensure. """
+        """Create autostart file. Or deletes if not ensure."""
 
         if ensure:
-            with open(self.autostart_dir + __name__ + '.desktop', mode='w', encoding="utf8") as f:
+            with open(
+                self.autostart_dir + __name__ + ".desktop", mode="w", encoding="utf8"
+            ) as f:
                 f.write("""[Desktop Entry]
 Name=BlueDo
 Comment=Bluetooth proximity automation
@@ -456,66 +555,65 @@ Type=Application
 Categories=Utility;
 """)
         else:
-            os.remove(self.autostart_dir + __name__ + '.desktop')
+            os.remove(self.autostart_dir + __name__ + ".desktop")
 
     def check_autostart(self):
-        return os.path.isfile(self.autostart_dir + __name__ + '.desktop')
+        return os.path.isfile(self.autostart_dir + __name__ + ".desktop")
 
-#
-# Bluetooth
-#
+    #
+    # Bluetooth
+    #
 
     def bluetooth_list(self, dryrun=False):
-        ''' Load bluetooth devices '''
+        """Load bluetooth devices"""
 
-        cmd = ['bluetoothctl', 'devices']
+        cmd = ["bluetoothctl", "devices"]
         devices = []
 
         if dryrun:
             self.devices = [
-                ('FP3', '84:cf:bf:8d:90:d4'),
-                ('[TV] TV stua', '8C:79:F5:B9:C4:BF'),
-                ('[TV] tv10b', '78:BD:BC:6E:C5:A3'),
+                ("FP3", "84:cf:bf:8d:90:d4"),
+                ("[TV] TV stua", "8C:79:F5:B9:C4:BF"),
+                ("[TV] tv10b", "78:BD:BC:6E:C5:A3"),
             ]
         else:
             with subprocess.Popen(
-                    args=cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True
+                args=cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
             ) as proc:
-
-                for line in iter(proc.stdout.readline, b''):
+                for line in iter(proc.stdout.readline, b""):
                     if BlueDo.debug:
                         syslog.syslog("bluetoothctl line: " + line)
-                    if line.strip() == '': # iter calls until output is ''
+                    if line.strip() == "":  # iter calls until output is ''
                         break
-                    if line == 'No default controller available\n':
+                    if line == "No default controller available\n":
                         break
-                    addr = ''
+                    addr = ""
                     try:
                         addr = line.split()[1]
                     except IndexError:
                         syslog.syslog("Info: Skipping empty line from bluetoothctl.")
                         continue
-                    name = ' '.join(line.split()[2:])
+                    name = " ".join(line.split()[2:])
                     devices += [(name, addr)]
 
-                proc.communicate() # Allow cmd to exit cleanly
+                proc.communicate()  # Allow cmd to exit cleanly
         return devices
 
     def start_devicethread(self):
         if self.debug:
             syslog.syslog("Staring thread update_combodevices")
-        t = threading.Thread(target = self.update_combodevices)
+        t = threading.Thread(target=self.update_combodevices)
         t.start()
 
     def update_combodevices(self):
-        ''' Run bluetooth_list and compare if new bluetoothdevices are
-            present. Update combo_devices with result '''
+        """Run bluetooth_list and compare if new bluetoothdevices are
+        present. Update combo_devices with result"""
 
         while True:
-            if self.scan_stop: # Check if asked to shut down
+            if self.scan_stop:  # Check if asked to shut down
                 break
 
             # Don't update combo if open
@@ -533,7 +631,7 @@ Categories=Utility;
 
             if newscan != self.nearby_devices:
                 self.nearby_devices = newscan
-                current = self.combo_device.get_active_text() or ''
+                current = self.combo_device.get_active_text() or ""
                 self.combo_device.remove_all()
                 self.combo_device.append_text(current)
                 self.combo_device.set_active(0)
@@ -544,7 +642,7 @@ Categories=Utility;
             time.sleep(self.interval)
 
     def do_command_line(self, command_line):
-        ''' Parse app startup commandline arguments '''
+        """Parse app startup commandline arguments"""
 
         options = command_line.get_options_dict()
         options = options.end().unpack()
@@ -564,19 +662,19 @@ Categories=Utility;
             target=self.bluetooth_ping,
             args=(),
             kwargs={
-                'here_callback': self.here_callback,
-                'away_callback': self.away_callback
-            }
+                "here_callback": self.here_callback,
+                "away_callback": self.away_callback,
+            },
         )
 
-        thread.daemon = True # Daemonize
-        thread.start() # Start the thread
+        thread.daemon = True  # Daemonize
+        thread.start()  # Start the thread
         return thread
 
     def bluetooth_ping(self, here_callback, away_callback):
-        ''' Ping selected bluetooth device. Perform actions based on RSSI. '''
+        """Ping selected bluetooth device. Perform actions based on RSSI."""
 
-        hcibin = 'hcitool'
+        hcibin = "hcitool"
         getrssicmd = [hcibin, "rssi"]
 
         lost_pings = 0
@@ -592,24 +690,26 @@ Categories=Utility;
                 continue
 
             if self.debug:
-                syslog.syslog("Running BT scanning command <%s" % ' '.join(getrssicmd + [self.bt_address]))
+                syslog.syslog(
+                    "Running BT scanning command <%s"
+                    % " ".join(getrssicmd + [self.bt_address])
+                )
             with subprocess.Popen(
-                    args=getrssicmd + [self.bt_address],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True
+                args=getrssicmd + [self.bt_address],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
             ) as proc:
-
-                for line in iter(proc.stdout.readline, b''):
+                for line in iter(proc.stdout.readline, b""):
                     if self.debug and len(line) > 0:
                         syslog.syslog("hcitool line: <%s>" % line.strip())
-                    if line.strip() == '': # iter calls until output is ''
+                    if line.strip() == "":  # iter calls until output is ''
                         break
                     rssi = int(line.strip().split()[-1])
 
             if rssi is None:
                 rssi = -99
-            self.levelSignal.set_value(10+rssi)
+            self.levelSignal.set_value(10 + rssi)
             # except Exception as err:
             #     syslog.syslog("Error: %s" % err)
 
@@ -618,7 +718,7 @@ Categories=Utility;
                     syslog.syslog("No connection")
                     if lost_pings > 0:
                         syslog.syslog("Lost %s" % lost_pings)
-                        if lost_pings%5 == 0:
+                        if lost_pings % 5 == 0:
                             attempt_bluetooth_connection(self.bt_address)
 
                 if self.enabled:
@@ -634,9 +734,9 @@ Categories=Utility;
 
             time.sleep(self.interval)
 
-#
-# Callbacks
-#
+    #
+    # Callbacks
+    #
 
     def here_callback(self):
         if self.debug:
@@ -660,7 +760,9 @@ Categories=Utility;
         if self.debug:
             syslog.syslog("Away")
 
-        self.indicator.set_icon_full(self.run_path + "phonelink_off-white-18dp.svg", "Away")
+        self.indicator.set_icon_full(
+            self.run_path + "phonelink_off-white-18dp.svg", "Away"
+        )
 
         if self.check_awaylock.get_active():
             lock()
@@ -679,41 +781,53 @@ Categories=Utility;
 # Static functions
 #
 
-def attempt_bluetooth_connection(device):
-    """ Sometimes ubuntu seems to not reconnect automatically. """
-    syslog.syslog("Attempting to start a bluetooth connection.")
-    subprocess.run(f"/usr/bin/bluetoothctl connect {device} > /dev/null", shell=True, check=False)
 
-def run_user_command(cmd=''):
-    ''' Run user supplied command '''
+def attempt_bluetooth_connection(device):
+    """Sometimes ubuntu seems to not reconnect automatically."""
+    syslog.syslog("Attempting to start a bluetooth connection.")
+    subprocess.run(
+        f"/usr/bin/bluetoothctl connect {device} > /dev/null", shell=True, check=False
+    )
+
+
+def run_user_command(cmd=""):
+    """Run user supplied command"""
     syslog.syslog("Running user command <%s>." % cmd)
     subprocess.run(cmd, shell=True, check=True)
 
+
 def mute():
-    ''' Mute sound '''
+    """Mute sound"""
     syslog.syslog("Muting sound.")
     subprocess.run("amixer set Master mute > /dev/null", shell=True, check=True)
 
+
 def unmute():
-    ''' Unmute sound '''
+    """Unmute sound"""
     syslog.syslog("Unmuting sound.")
-    subprocess.run("amixer set Master unmute > /dev/null; amixer set Speaker " +\
-        "unmute > /dev/null; amixer set Headphone unmute > /dev/null;",
-        shell=True, check=True)
+    subprocess.run(
+        "amixer set Master unmute > /dev/null; amixer set Speaker "
+        + "unmute > /dev/null; amixer set Headphone unmute > /dev/null;",
+        shell=True,
+        check=True,
+    )
+
 
 def pause_music():
-    ''' Pause music '''
+    """Pause music"""
     syslog.syslog("Pausing music.")
     subprocess.run("playerctl pause 2> /dev/null", shell=True, check=True)
 
+
 def resume_music():
-    ''' Resume music '''
+    """Resume music"""
     syslog.syslog("Resume music.")
     subprocess.run("playerctl play 2> /dev/null", shell=True, check=True)
 
+
 def unlock():
-    ''' Unlock desktop session '''
-    idledelay=600
+    """Unlock desktop session"""
+    idledelay = 600
     syslog.syslog("Unlocked session.")
 
     # Reset soft lock. Set lock time to something reasonable
@@ -724,22 +838,25 @@ def unlock():
 
     subprocess.run(cmd, shell=True, check=True)
 
+
 def lock():
-    ''' Lock desktop session '''
-    idledelay=10
+    """Lock desktop session"""
+    idledelay = 10
     syslog.syslog("Soft-locked session (%ss timeout)." % idledelay)
 
     # Hard lock. Is problematic if your phone refuse to connect
-    #cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
+    # cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
 
     # Soft lock. Set a very short lock time, 10 seconds
-    cmd = "gsettings set org.gnome.desktop.screensaver lock-enabled true; " +\
-        "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay +\
-        "gsettings set org.gnome.desktop.screensaver lock-delay 0; "
+    cmd = (
+        "gsettings set org.gnome.desktop.screensaver lock-enabled true; "
+        + "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay
+        + "gsettings set org.gnome.desktop.screensaver lock-delay 0; "
+    )
 
     subprocess.run(cmd, shell=True, check=True)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     app = BlueDo()
     sys.exit(app.run(sys.argv))
