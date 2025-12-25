@@ -1,7 +1,7 @@
 import sys
 
 __version__ = "2.5.0"
-__name__ = "bluedo"
+__projectname__ = "bluedo"
 
 try:
     from . import bluedoapp
@@ -11,7 +11,7 @@ except ImportError:
 
 def main(args=None):
     app = bluedoapp.BlueDo()
-    return app.run(sys.argv)
+    return app.run(args)
 
 
 if __name__ == "__main__":

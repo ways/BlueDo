@@ -15,7 +15,7 @@ import time
 
 import appdirs
 
-from . import __name__, __version__
+from . import __projectname__, __version__
 
 try:
     gi.require_version("AppIndicator3", "0.1")
@@ -29,7 +29,7 @@ except ValueError:  # Namespace AppIndicator3 not available
 
 
 class BlueDo(Gtk.Application):
-    config_path = appdirs.user_config_dir(__name__) + "/" + __name__ + ".ini"
+    config_path = appdirs.user_config_dir(__projectname__) + "/" + __projectname__ + ".ini"
     config_section = "CONFIG"
     run_path = os.path.dirname(os.path.realpath(__file__)) + "/"
     autostart_dir = os.getenv("HOME") + "/.config/autostart/"
@@ -80,7 +80,7 @@ class BlueDo(Gtk.Application):
             None,
         )
 
-    def do_activate(self):
+    def do_activate(self, *args):
         """Load config, populate UI"""
 
         # Load widgets from glade file
@@ -251,7 +251,7 @@ class BlueDo(Gtk.Application):
             with self.menuitem_enable.handler_block(self.handler_id):
                 self.menuitem_enable.set_active(state)
 
-        syslog.syslog(syslog.LOG_INFO, "%s enabled %s." % (__name__, state))
+        syslog.syslog(syslog.LOG_INFO, "%s enabled %s." % (__projectname__, state))
         self.enabled = state
         self.save_config()
 
@@ -312,7 +312,7 @@ class BlueDo(Gtk.Application):
 
         dialog = Gtk.AboutDialog()
         dialog.set_title("About")
-        dialog.set_name(__name__)
+        dialog.set_name(__projectname__)
         dialog.set_version(__version__)
         dialog.set_comments("Bluetooth proximity automation")
         dialog.set_website("https://github.com/ways/BlueDo")
@@ -544,7 +544,7 @@ class BlueDo(Gtk.Application):
 
         if ensure:
             with open(
-                self.autostart_dir + __name__ + ".desktop", mode="w", encoding="utf8"
+                self.autostart_dir + __projectname__ + ".desktop", mode="w", encoding="utf8"
             ) as f:
                 f.write("""[Desktop Entry]
 Name=BlueDo
@@ -556,10 +556,10 @@ Type=Application
 Categories=Utility;
 """)
         else:
-            os.remove(self.autostart_dir + __name__ + ".desktop")
+            os.remove(self.autostart_dir + __projectname__ + ".desktop")
 
     def check_autostart(self):
-        return os.path.isfile(self.autostart_dir + __name__ + ".desktop")
+        return os.path.isfile(self.autostart_dir + __projectname__ + ".desktop")
 
     #
     # Bluetooth
