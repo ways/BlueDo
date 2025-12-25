@@ -37,7 +37,7 @@ Use these system commands:
 * amixer (if using mute)
 * playerctl (if using pause)
 
-Version > 2.0 is only tested on Ubuntu 22.04 with GNOME.
+Version > 2.0 is only tested on Ubuntu 24.04, 22.04 with GNOME.
 
 Version < 2.0 is only tested on Ubuntu 20.04-21.04 with GNOME.
 
