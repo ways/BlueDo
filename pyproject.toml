@@ -51,26 +51,26 @@ urls.Repository = "https://github.com/ways/BlueDo"
 bluedo = "bluedo:main"
 
 [tool.setuptools]
-include-package-data = true
+
+[tool.setuptools.package-data]
+bluedo = [
+    "window.glade",
+    "images/bluedo.png",
+    "images/bluedo_indicator.svg",
+    "images/lock_animation.gif",
+    "images/phonelink*.svg",
+    "images/unlocked.png",
+]
 
 [tool.setuptools.packages.find]
 include = ["bluedo"]
 
 [tool.setuptools.data-files]
    "share/applications" = ["applications/bluedo.desktop"]
-   "share/icons/hicolor/256x256/apps" = ["share/icons/hicolor/256x256/apps/bluedo.png"]
+   "share/icons/hicolor/256x256/apps" = ["bluedo/images/bluedo.png"]
 
 [tool.setuptools.dynamic]
 version = {attr = "bluedo.__version__"}
-
-[tool.setuptools.package-data]
-bluedo = [
-    "window.glade",
-    "bluedo.png",
-    "bluedo_indicator.svg",
-    "lock_animation.gif",
-    "unlocked.png",
-]
 
 [tool.ruff]
 
