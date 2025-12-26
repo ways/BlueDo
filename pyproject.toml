@@ -12,7 +12,7 @@ authors = [
 ]
 description = "Bluetooth proximity automation"
 keywords = ["desktop", "automation", "bluetooth"]
-license = "GPL-3.0-or-later"
+license = { text = "GPL-3.0-or-later" }
 license-files = ["LICENSE"]
 readme = "README.md"
 
