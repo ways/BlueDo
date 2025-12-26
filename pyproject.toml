@@ -1,0 +1,90 @@
+[build-system]
+requires = [
+    "setuptools>=61",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bluedo"
+authors = [
+    {name = "Lars Falk-Petersen", email = "dev@falkp.no"},
+]
+description = "Bluetooth proximity automation"
+keywords = ["desktop", "automation", "bluetooth"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Desktop Environment",
+    "Topic :: Desktop Environment :: Gnome",
+    "Topic :: Security",
+    "Environment :: X11 Applications :: Gnome",
+    "Operating System :: POSIX :: Linux",
+    "Natural Language :: English"
+]
+dependencies = [
+    "appdirs",
+    "configparser",
+    "PyGObject",
+]
+
+optional-dependencies.dev = [
+  "tox",
+]
+
+dynamic = ["version"]
+
+urls.Documentation = "https://github.com/ways/BlueDo"
+urls.Homepage = "https://github.com/ways/BlueDo"
+urls.Issues = "https://github.com/ways/BlueDo/issues"
+urls.Repository = "https://github.com/ways/BlueDo"
+
+[project.scripts]
+bluedo = "bluedo:main"
+
+[tool.setuptools]
+
+[tool.setuptools.package-data]
+bluedo = [
+    "window.glade",
+    "images/bluedo.png",
+    "images/bluedo_indicator.svg",
+    "images/lock_animation.gif",
+    "images/phonelink*.svg",
+    "images/unlocked.png",
+]
+
+[tool.setuptools.packages.find]
+include = ["bluedo"]
+
+[tool.setuptools.data-files]
+   "share/applications" = ["applications/bluedo.desktop"]
+   "share/icons/hicolor/256x256/apps" = ["bluedo/images/bluedo.png"]
+
+[tool.setuptools.dynamic]
+version = {attr = "bluedo.__version__"}
+
+[tool.ruff]
+
+[tool.ruff.lint]
+fixable = ["I"]
+select = [
+    "E",  # pycodestyle
+    "F",  # Pyflakes
+    "UP", # pyupgrade
+    "B",  # flake8-bugbear
+    "SIM",# flake8-simplify
+    "I",  # isort
+]
+ignore = [
+    "E402", # module-import-not-at-top-of-file (E402)
+    "E501", # Line too long
+]

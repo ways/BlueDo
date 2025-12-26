@@ -1,4 +1,6 @@
-# Overview
+# BlueDo
+
+## Overview
 
 BlueDo - Bluetooth proximity automation
 
@@ -10,23 +12,18 @@ Not all bluetooth devices works for this. Some devices randomizes the bluetooth 
 
 Only Bluetooth is supported, not Bluetooth Low-Energy (BLE).
 
-# Maturity
+## Installation
 
-* 2 is in beta
-* 1 is deprecated
-
-# Installation
-
-## From pip
+### From pip
 
     sudo apt install python3-pip gir1.2-appindicator3-0.1
     pip3 install --upgrade bluedo
 
-## From deb
+### From deb
 
     Fetch deb file from https://github.com/ways/BlueDo/releases
 
-# Requirements
+## Requirements
 
 Use these system commands:
 
@@ -41,16 +38,16 @@ Version > 2.0 is only tested on Ubuntu 24.04, 22.04 with GNOME.
 
 Version < 2.0 is only tested on Ubuntu 20.04-21.04 with GNOME.
 
-# Command line options
+## Command line options
 
 * -e / --enable to start service on app start.
 * -m / --minimize to start minimized
 
-# Configuration
+## Configuration
 
 There are lots more options in the config file. Feel free to tune.
 
-# Screenshots
+## Screenshots
 
 ![v53](https://raw.githubusercontent.com/ways/BlueDo/master/images/v53.png)
 ![v49](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49.png)
@@ -58,7 +55,7 @@ There are lots more options in the config file. Feel free to tune.
 ![v3_2](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3_2.png)
 ![v3](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3.png)
 
-# System changes
+## System changes
 
 Note that this app will make these changes to your power management:
 
@@ -66,7 +63,7 @@ Note that this app will make these changes to your power management:
 * Set delay from screen blacking to locking to zero: ```org.gnome.desktop.screensaver lock-delay 0```
 * Set screen saver timeout to 10 seconds when device is away, 5 minutes when device is present: ```org.gnome.desktop.session idle-delay 600```
 
-# TODO
+## TODO
 
 * Check for dependencies on startup
 * Default lock / unlock ON.
@@ -81,7 +78,17 @@ Note that this app will make these changes to your power management:
   * for bluetooth settings, open blueman-manager
   * to lock/unlock change xscreensaver timeout, to match functionality from gnome
 
-# Development docs
+## Development docs
+
+## Run
+
+    uv run bluedo
+
+## Run tests
+
+    uv tool run tox
+
+## Notes
 
 * scan for devices: bluetoothctl devices
 * rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable?)
