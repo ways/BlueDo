@@ -2,7 +2,7 @@ Source: bluedo
 Section: contrib/python
 Priority: extra
 Maintainer: Lars Falk-Petersen <dev@falkp.no>
-Build-Depends: debhelper (>= 10), python3, dh-python, pybuild-plugin-pyproject, python3-setuptools, python3-wheel, python3-build
+Build-Depends: build-essential, debhelper (>= 10), python3, dh-python, pybuild-plugin-pyproject, python3-setuptools, python3-wheel, python3-build
 Standards-Version: 3.9.5
 Homepage: https://github.com/ways/bluedo
 X-Python3-Version: >= 3.10

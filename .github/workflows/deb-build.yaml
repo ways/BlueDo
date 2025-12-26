@@ -19,6 +19,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            build-essential \
             devscripts \
             dh-python \
             debhelper \
@@ -43,4 +44,3 @@ jobs:
         with:
           name: bluedo-${{ github.ref_name }}
           path: artifacts/*
-
