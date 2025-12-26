@@ -1,6 +1,6 @@
 import sys
 
-__version__ = "2.5.0"
+__version__ = "v2.5.0-dev"
 __projectname__ = "bluedo"
 
 try:
