@@ -4,7 +4,7 @@
 
 BlueDo - Bluetooth proximity automation
 
-![Logo](https://raw.githubusercontent.com/ways/BlueDo/master/images/bluedo.png)
+![Logo](bluedo/images/bluedo.png)
 
 Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
 
@@ -49,11 +49,11 @@ There are lots more options in the config file. Feel free to tune.
 
 ## Screenshots
 
-![v53](https://raw.githubusercontent.com/ways/BlueDo/master/images/v53.png)
-![v49](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49.png)
-![v49_advanced](https://raw.githubusercontent.com/ways/BlueDo/master/images/v49_advanced.png)
-![v3_2](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3_2.png)
-![v3](https://raw.githubusercontent.com/ways/BlueDo/master/images/v3.png)
+![v53](bluedo/images/v53.png)
+![v49](bluedo/images/v49.png)
+![v49_advanced](bluedo/images/v49_advanced.png)
+![v3_2](bluedo/images/v3_2.png)
+![v3](bluedo/images/v3.png)
 
 ## System changes
 
@@ -88,7 +88,7 @@ Note that this app will make these changes to your power management:
 
     uv tool run tox
 
-## Notes
+## Development notes
 
 * scan for devices: bluetoothctl devices
 * rssi for device: hcitool rssi ff:ff:ff:ff:ff:ff (unstable?)
