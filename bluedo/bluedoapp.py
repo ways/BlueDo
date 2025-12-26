@@ -2,18 +2,17 @@ import gi
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
-from gi.repository import GdkPixbuf, Gio, GLib, Gtk
-
 import configparser
-from contextlib import suppress
 import os
 import subprocess
 import sys
 import syslog
 import threading
 import time
+from contextlib import suppress
 
 import appdirs
+from gi.repository import GdkPixbuf, Gio, GLib, Gtk
 
 from . import __projectname__, __version__
 
@@ -120,7 +119,7 @@ class BlueDo(Gtk.Application):
 
         # Populate widgets
         if self.bt_address:
-            self.combo_device.append_text("%s (%s)" % (self.bt_name, self.bt_address))
+            self.combo_device.append_text(f"{self.bt_name} ({self.bt_address})")
             self.combo_device.set_active(0)
 
         if len(self.bt_address) > 0:
@@ -130,8 +129,8 @@ class BlueDo(Gtk.Application):
             self.button_enabled.set_sensitive(False)
             self.menuitem_enable.set_sensitive(False)
 
-        self.entry_away.set_text("%s" % self.away_command)
-        self.entry_here.set_text("%s" % self.here_command)
+        self.entry_away.set_text(f"{self.away_command}")
+        self.entry_here.set_text(f"{self.here_command}")
 
         # Icon
         self.icon_path = self.run_path + "/images/bluedo.png"
@@ -140,7 +139,7 @@ class BlueDo(Gtk.Application):
         try:
             self.window.set_icon_from_file(self.icon_path)
         except gi.repository.GLib.Error:
-            syslog.syslog("Unable to find icon %s" % self.icon_path)
+            syslog.syslog(f"Unable to find icon {self.icon_path}")
 
         self.on_enable_state(self.button_enabled, self.enabled)
 
@@ -227,7 +226,7 @@ class BlueDo(Gtk.Application):
 
         path_picture = self.run_path + "unlocked.png"
         if self.debug:
-            syslog.syslog(syslog.LOG_DEBUG, "Showing picture <%s>" % path_picture)
+            syslog.syslog(syslog.LOG_DEBUG, f"Showing picture <{path_picture}>")
 
         self.demo_image.set_from_animation(
             GdkPixbuf.PixbufAnimation.new_from_file(path_picture)
@@ -251,7 +250,7 @@ class BlueDo(Gtk.Application):
             with self.menuitem_enable.handler_block(self.handler_id):
                 self.menuitem_enable.set_active(state)
 
-        syslog.syslog(syslog.LOG_INFO, "%s enabled %s." % (__projectname__, state))
+        syslog.syslog(syslog.LOG_INFO, f"{__projectname__} enabled {state}.")
         self.enabled = state
         self.save_config()
 
@@ -428,7 +427,7 @@ class BlueDo(Gtk.Application):
         """Load config"""
 
         if self.debug:
-            syslog.syslog(syslog.LOG_DEBUG, "Loading config from %s" % self.config_path)
+            syslog.syslog(syslog.LOG_DEBUG, f"Loading config from {self.config_path}")
 
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(self.config_path)
@@ -640,7 +639,7 @@ Categories=Utility;
                 self.combo_device.set_active(0)
 
                 for address, name in newscan:
-                    self.combo_device.append_text("%s (%s)" % (address, name))
+                    self.combo_device.append_text(f"{address} ({name})")
 
             time.sleep(self.interval)
 
@@ -689,7 +688,7 @@ Categories=Utility;
                 if self.debug:
                     syslog.syslog(
                         syslog.LOG_DEBUG,
-                        "Invalid address %s, not scanning." % self.bt_address,
+                        f"Invalid address {self.bt_address}, not scanning.",
                     )
                 self.levelSignal.set_value(0)
                 time.sleep(self.interval)
@@ -698,8 +697,7 @@ Categories=Utility;
             if self.debug:
                 syslog.syslog(
                     syslog.LOG_DEBUG,
-                    "Running BT scanning command <%s"
-                    % " ".join(getrssicmd + [self.bt_address]),
+                    f"Running BT scanning command <{' '.join(getrssicmd + [self.bt_address])}>",
                 )
             with subprocess.Popen(
                 args=getrssicmd + [self.bt_address],
@@ -710,7 +708,7 @@ Categories=Utility;
                 for line in iter(proc.stdout.readline, b""):
                     if self.debug and len(line) > 0:
                         syslog.syslog(
-                            syslog.LOG_DEBUG, "hcitool line: <%s>" % line.strip()
+                            syslog.LOG_DEBUG, f"hcitool line: <{line.strip()}>"
                         )
                     if line.strip() == "":  # iter calls until output is ''
                         break
@@ -724,7 +722,7 @@ Categories=Utility;
                 if self.debug:
                     syslog.syslog(syslog.LOG_DEBUG, "No connection")
                     if lost_pings > 0:
-                        syslog.syslog(syslog.LOG_DEBUG, "Lost %s" % lost_pings)
+                        syslog.syslog(syslog.LOG_DEBUG, f"Lost {lost_pings}")
                         if lost_pings % 5 == 0:
                             attempt_bluetooth_connection(self.bt_address)
 
@@ -796,7 +794,7 @@ def attempt_bluetooth_connection(device):
 
 def run_user_command(cmd=""):
     """Run user supplied command"""
-    syslog.syslog(syslog.LOG_INFO, "Running user command <%s>." % cmd)
+    syslog.syslog(syslog.LOG_INFO, f"Running user command <{cmd}>.")
     subprocess.run(cmd, shell=True, check=True)
 
 
@@ -835,7 +833,7 @@ def unlock():
     syslog.syslog(syslog.LOG_INFO, "Unlocked session.")
 
     # Reset soft lock. Set lock time to something reasonable
-    cmd = "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay
+    cmd = f"gsettings set org.gnome.desktop.session idle-delay {idledelay}; "
 
     # Hard unlock.
     cmd += "loginctl unlock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' ); "
@@ -846,7 +844,7 @@ def unlock():
 def lock():
     """Lock desktop session"""
     idledelay = 10
-    syslog.syslog(syslog.LOG_INFO, "Soft-locked session (%ss timeout)." % idledelay)
+    syslog.syslog(syslog.LOG_INFO, f"Soft-locked session ({idledelay}s timeout).")
 
     # Hard lock. Is problematic if your phone refuse to connect
     # cmd = "/usr/bin/loginctl lock-session $( loginctl list-sessions --no-legend| cut -f1 -d' ' );"
@@ -854,7 +852,7 @@ def lock():
     # Soft lock. Set a very short lock time, 10 seconds
     cmd = (
         "gsettings set org.gnome.desktop.screensaver lock-enabled true; "
-        + "gsettings set org.gnome.desktop.session idle-delay %s; " % idledelay
+        + f"gsettings set org.gnome.desktop.session idle-delay {idledelay}; "
         + "gsettings set org.gnome.desktop.screensaver lock-delay 0; "
     )
 

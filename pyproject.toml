@@ -73,6 +73,7 @@ include = ["bluedo"]
 version = {attr = "bluedo.__version__"}
 
 [tool.ruff]
+exclude = ["debian/*"]
 
 [tool.ruff.lint]
 fixable = ["I"]
