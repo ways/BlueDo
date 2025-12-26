@@ -13,7 +13,6 @@ authors = [
 description = "Bluetooth proximity automation"
 keywords = ["desktop", "automation", "bluetooth"]
 license = { text = "GPL-3.0-or-later" }
-license-files = ["LICENSE"]
 readme = "README.md"
 
 requires-python = ">=3.10"
