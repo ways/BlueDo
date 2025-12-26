@@ -134,7 +134,7 @@ class BlueDo(Gtk.Application):
         self.entry_here.set_text("%s" % self.here_command)
 
         # Icon
-        self.icon_path = self.run_path + "/bluedo.png"
+        self.icon_path = self.run_path + "/images/bluedo.png"
 
         self.window = self.builder.get_object("main_window")
         try:
@@ -214,7 +214,7 @@ class BlueDo(Gtk.Application):
     def show_animation(self):
         """Show a demo animation for 30 sec, then switch to static image"""
 
-        path_animation = self.run_path + "lock_animation.gif"
+        path_animation = self.run_path + "images/lock_animation.gif"
         pixbufanim = GdkPixbuf.PixbufAnimation.new_from_file(path_animation)
         self.demo_image = Gtk.Image()
         self.demo_image.set_from_animation(pixbufanim)

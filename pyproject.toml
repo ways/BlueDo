@@ -12,13 +12,12 @@ authors = [
 ]
 description = "Bluetooth proximity automation"
 keywords = ["desktop", "automation", "bluetooth"]
-license = { file = "LICENSE" }
+license = "GPL-3.0-or-later"
 readme = "README.md"
 
 requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
