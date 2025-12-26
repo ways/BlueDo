@@ -1,0 +1,46 @@
+name: Build Debian Package
+
+on:
+  push:
+    tags:
+      - 'v*'        # adjust the glob if you use another tag format
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # ensures the runner sees the tag that triggered the build
+
+      - name: Install packaging toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            devscripts \
+            dh-python \
+            debhelper \
+            pybuild-plugin-pyproject \
+            python3-setuptools \
+            python3-wheel \
+            python3-build \
+            python3-gi \
+            gir1.2-gtk-3.0 \
+            gir1.2-appindicator3-0.1
+
+      - name: Build .deb
+        run: dpkg-buildpackage -us -uc -ui
+
+      - name: Collect artifacts
+        run: |
+          mkdir artifacts
+          mv ../bluedo_*.{deb,buildinfo,changes} artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bluedo-${{ github.ref_name }}
+          path: artifacts/*
+
