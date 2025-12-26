@@ -1,5 +1,8 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = [
+    "setuptools>=61",
+    "wheel"
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -29,10 +32,8 @@ classifiers = [
     "Natural Language :: English"
 ]
 dependencies = [
-    "setuptools>=78.1.1",
     "appdirs",
     "configparser",
-    "wheel",
     "PyGObject",
 ]
 
@@ -56,11 +57,21 @@ include-package-data = true
 [tool.setuptools.packages.find]
 include = ["bluedo"]
 
+[tool.setuptools.data-files]
+   "share/applications" = ["applications/bluedo.desktop"]
+   "share/icons/hicolor/256x256/apps" = ["share/icons/hicolor/256x256/apps/bluedo.png"]
+
 [tool.setuptools.dynamic]
 version = {attr = "bluedo.__version__"}
 
 [tool.setuptools.package-data]
-bris = ["bluedo/window.glade"]
+bluedo = [
+    "window.glade",
+    "bluedo.png",
+    "bluedo_indicator.svg",
+    "lock_animation.gif",
+    "unlocked.png",
+]
 
 [tool.ruff]
 
