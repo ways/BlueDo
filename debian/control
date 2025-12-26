@@ -12,4 +12,4 @@ Architecture: any
 Pre-Depends: dpkg (>= 1.16.1), python3, libbluetooth-dev, libgirepository1.0-dev, libcairo2-dev, gir1.2-appindicator3-0.1, ${misc:Pre-Depends}
 Depends: ${python3:Depends}, ${misc:Depends}, playerctl, python3-appdirs
 Description: BlueDo - Bluetooth proximity automation.
-  Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
+  Lock your desktop, mute music or run any other command when leaving your PC. There are other apps like this. This one just aims to make it beautiful, modern and easy. Not all bluetooth devices works for this purpose. Some devices randomizes the bluetooth address as a privacy feature, some disconnects to save power. If you have trouble using your phone, try a headset, watch, etc. Only Bluetooth is supported, not Bluetooth Low-Energy (BLE).

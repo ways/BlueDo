@@ -1,3 +1,10 @@
+bluedo (2.5.0-dev) unstable; urgency=medium
+
+  * Change how package is built.
+  * Lint and improve code.
+
+ -- Lars Falk-Petersen <dev@falkp.no>  Sat, 27 Dec 2025 00:00:00 +0200
+
 bluedo (2.4) unstable; urgency=medium
 
   * Reach out to bluetooth device if not connected.

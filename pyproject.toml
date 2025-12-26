@@ -10,7 +10,14 @@ name = "bluedo"
 authors = [
     {name = "Lars Falk-Petersen", email = "dev@falkp.no"},
 ]
-description = "Bluetooth proximity automation"
+description = """Bluetooth proximity automation
+
+Lock your desktop, mute music or run any other command when leaving your PC. There are other apps like this. This one just aims to make it beautiful, modern and easy.
+
+Not all bluetooth devices works for this purpose. Some devices randomizes the bluetooth address as a privacy feature, some disconnects to save power. If you have trouble using your phone, try a headset, watch, etc.
+
+Only Bluetooth is supported, not Bluetooth Low-Energy (BLE).
+"""
 keywords = ["desktop", "automation", "bluetooth"]
 license = { text = "GPL-3.0-or-later" }
 readme = "README.md"

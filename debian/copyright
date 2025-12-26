@@ -2,5 +2,5 @@ Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: https://github.com/ways/BlueDo/blob/master/LICENSE
 
 Files: *
-Copyright: 2020-2023 Lars Falk-Petersen <dev@falkp.no>
+Copyright: 2020-2025 Lars Falk-Petersen <dev@falkp.no>
 License: GPL-3+

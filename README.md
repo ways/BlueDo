@@ -6,22 +6,22 @@ BlueDo - Bluetooth proximity automation
 
 ![Logo](bluedo/images/bluedo.png)
 
-Lock your desktop, mute music or run any other command when leaving your PC. There are dozens of apps like this. This one just aims to make it beautiful, modern and easy.
+Lock your desktop, mute music or run any other command when leaving your PC. There are other apps like this. This one just aims to make it beautiful, modern and easy.
 
-Not all bluetooth devices works for this. Some devices randomizes the bluetooth address as a privacy feature, some disconnects to save power. If you have trouble using your phone, try a headset, watch, etc.
+Not all bluetooth devices works for this purpose. Some devices randomizes the bluetooth address as a privacy feature, some disconnects to save power. If you have trouble using your phone, try a headset, watch, etc.
 
 Only Bluetooth is supported, not Bluetooth Low-Energy (BLE).
 
 ## Installation
 
+### From deb (recommended)
+
+    Fetch deb file from <https://github.com/ways/BlueDo/releases> or latest action <https://github.com/ways/BlueDo/actions/workflows/deb-build.yaml>
+
 ### From pip
 
     sudo apt install python3-pip gir1.2-appindicator3-0.1
     pip3 install --upgrade bluedo
-
-### From deb
-
-    Fetch deb file from https://github.com/ways/BlueDo/releases
 
 ## Requirements
 
